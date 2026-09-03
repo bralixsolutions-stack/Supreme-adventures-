@@ -5,9 +5,15 @@ const multer = require("multer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, "data");
+const IS_VERCEL = process.env.VERCEL || process.env.NOW_BUILDER;
+const DATA_DIR = IS_VERCEL ? path.join("/tmp", "data") : path.join(__dirname, "data");
 const DB_FILE = path.join(DATA_DIR, "db.json");
-const UPLOADS_DIR = path.join(__dirname, "public", "uploads");
+const ORIGINAL_DB_FILE = path.join(__dirname, "data", "db.json");
+const UPLOADS_DIR = IS_VERCEL ? path.join("/tmp", "uploads") : path.join(__dirname, "public", "uploads");
+
+try { fs.mkdirSync(UPLOADS_DIR, { recursive: true }); } catch (e) {}
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOADS_DIR),
@@ -19,28 +25,36 @@ const upload = multer({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 app.use(express.static(path.join(__dirname, "public")));
 
 function ensureDb() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  try { if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
   if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify({
-      tours: seedTours(),
-      gallery: seedGallery(),
-      bookings: [],
-      enquiries: []
-    }, null, 2));
+    if (fs.existsSync(ORIGINAL_DB_FILE)) {
+      try { fs.copyFileSync(ORIGINAL_DB_FILE, DB_FILE); return; } catch (e) {}
+    }
+    try {
+      fs.writeFileSync(DB_FILE, JSON.stringify({
+        tours: seedTours(),
+        gallery: seedGallery(),
+        destinations: seedDestinations(),
+        bookings: [],
+        enquiries: []
+      }, null, 2));
+    } catch (e) {
+      console.error("Failed to seed db.json:", e);
+    }
   }
 }
 
 function readDb() {
   ensureDb();
-  const db = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-  if (!Array.isArray(db.gallery) || db.gallery.length === 0) {
-    db.gallery = seedGallery();
-    writeDb(db);
+  let db = { tours: seedTours(), gallery: seedGallery(), destinations: seedDestinations(), bookings: [], enquiries: [] };
+  if (fs.existsSync(DB_FILE)) {
+    try { db = JSON.parse(fs.readFileSync(DB_FILE, "utf8")); } catch (e) {}
   }
+  if (!Array.isArray(db.gallery) || db.gallery.length === 0) db.gallery = seedGallery();
+  if (!Array.isArray(db.destinations) || db.destinations.length === 0) db.destinations = seedDestinations();
   return db;
 }
 
@@ -450,7 +464,11 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
-  console.log(`Holidawn-style Tours website running at http://localhost:${PORT}`);
-  console.log(`Admin key: ${process.env.ADMIN_KEY || "admin123"}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Supreme Adventures website running at http://localhost:${PORT}`);
+    console.log(`Admin key: ${process.env.ADMIN_KEY || "admin123"}`);
+  });
+}
+
+module.exports = app;
