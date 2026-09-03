@@ -1,0 +1,200 @@
+/* ==========================================================================
+   Featured Tours Grid & Split Feature Section
+   ========================================================================== */
+
+.tour-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.tour-card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.tour-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  border-color: rgba(193, 18, 31, 0.2);
+}
+
+.tour-image {
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #ffffff;
+  color: var(--black);
+  padding: 6px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tour-body {
+  padding: 24px;
+}
+
+.tour-meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.tour-body h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 22px;
+  margin: 0 0 10px;
+  color: var(--black);
+  line-height: 1.25;
+}
+
+.tour-body p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  min-height: 66px;
+  margin: 0;
+}
+
+.tour-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.price {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--black);
+}
+
+.price small {
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.view-btn {
+  background: transparent;
+  border: 0;
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.2s ease;
+}
+
+.view-btn:hover {
+  color: var(--red-hover);
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 60px 20px;
+  font-size: 16px;
+}
+
+/* Why Choose Us Split Section */
+.split-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--soft-white);
+}
+
+.split-image {
+  min-height: 650px;
+  background-size: cover;
+  background-position: center;
+}
+
+.split-content {
+  padding: 90px 9%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.split-content h2 {
+  font-size: clamp(36px, 4vw, 50px);
+  margin-bottom: 20px;
+  line-height: 1.1;
+}
+
+.split-content > p {
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 500px;
+  font-size: 15px;
+}
+
+.features {
+  margin-top: 30px;
+}
+
+.features > div {
+  display: flex;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.features b {
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.features span {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.features strong {
+  color: var(--dark);
+  font-size: 15px;
+}
+
+@media (max-width: 900px) {
+  .tour-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .split-section {
+    grid-template-columns: 1fr;
+  }
+  .split-image {
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tour-grid {
+    grid-template-columns: 1fr;
+  }
+  .split-content {
+    padding: 50px 5%;
+  }
+}

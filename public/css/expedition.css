@@ -1,0 +1,358 @@
+/* ==========================================================================
+   Supreme Adventures - "Plan Your Trip With Us" Section (Supreme Dark Parallax)
+   ========================================================================== */
+
+.expedition-section {
+  padding: 105px 0;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.91) 50%, rgba(10, 15, 29, 0.95) 100%), url('/photos/jeep_safari.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #ffffff;
+}
+
+/* Ambient Radial Red Glow Overlay */
+.expedition-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(236, 31, 35, 0.18) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.supreme-plan-container {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 56px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* --------------------------------------------------------------------------
+   Left Column: Text Content & Features
+   -------------------------------------------------------------------------- */
+.supreme-plan-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.plan-script-tag {
+  font-family: 'Kaushan Script', 'Kalam', cursive;
+  font-size: 22px;
+  color: #ff3b3f;
+  margin-bottom: 8px;
+  display: inline-block;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.plan-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: clamp(34px, 3.4vw, 46px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin: 0 0 16px 0;
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.5);
+}
+
+.plan-desc {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #e2e8f0;
+  font-weight: 500;
+  margin-bottom: 28px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Features List */
+.plan-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.plan-feature-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.plan-feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #ffffff;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.plan-feature-row:hover .plan-feature-icon {
+  background: var(--red, #ec1f23);
+  border-color: var(--red, #ec1f23);
+  color: #ffffff;
+  transform: scale(1.08);
+  box-shadow: 0 6px 22px rgba(236, 31, 35, 0.5);
+}
+
+.plan-feature-info h4 {
+  font-family: 'Manrope', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.plan-feature-info p {
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  color: #cbd5e1;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.5;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.plan-action-wrapper {
+  margin-top: 10px;
+}
+
+/* Button */
+.btn-plan-supreme {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--red, #ec1f23);
+  color: #ffffff;
+  border: 0;
+  padding: 15px 34px;
+  border-radius: 30px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(236, 31, 35, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-plan-supreme:hover {
+  background: #d91b1f;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(236, 31, 35, 0.5);
+}
+
+.btn-plan-supreme i {
+  font-size: 13px;
+  transition: transform 0.25s ease;
+}
+
+.btn-plan-supreme:hover i {
+  transform: translateX(5px);
+}
+
+/* --------------------------------------------------------------------------
+   Right Column: 3-Overlapping Image Composition Showcase
+   -------------------------------------------------------------------------- */
+.supreme-plan-visual-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+.plan-visual-composition {
+  position: relative;
+  width: 350px;
+  height: 480px;
+}
+
+/* Main Background Image Card */
+.plan-main-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  background: #0f172a;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.plan-main-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.plan-main-card:hover img {
+  transform: scale(1.06);
+}
+
+/* Top-Left Floating Overlay Photo Card */
+.plan-overlay-card-left {
+  position: absolute;
+  top: 12%;
+  left: -85px;
+  width: 235px;
+  height: 235px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 5px solid #ffffff;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+  z-index: 4;
+  cursor: pointer;
+  background: #0f172a;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plan-overlay-card-left:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 24px 50px rgba(236, 31, 35, 0.35);
+}
+
+.plan-overlay-card-left img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Coordinate Badge on Top-Left Card */
+.plan-coord-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--red, #ec1f23);
+  border: 1px solid rgba(236, 31, 35, 0.5);
+  font-family: 'Space Grotesk', monospace, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 3px 12px;
+  border-radius: 6px;
+  z-index: 6;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+/* Bottom-Right Floating Overlay Photo Stamp Card */
+.plan-overlay-card-right {
+  position: absolute;
+  bottom: -15px;
+  right: -55px;
+  width: 175px;
+  height: 215px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 4px solid #ffffff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+  outline: 2.5px solid var(--red, #ec1f23);
+  z-index: 5;
+  cursor: pointer;
+  background: #0f172a;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.plan-overlay-card-right:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 24px 50px rgba(236, 31, 35, 0.4);
+}
+
+.plan-overlay-card-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Location Tag Stamp Badge */
+.plan-stamp-tag {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 4px;
+  z-index: 6;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Styles
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .expedition-section {
+    background-attachment: scroll;
+  }
+  .supreme-plan-container {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .supreme-plan-visual-wrapper {
+    margin-top: 30px;
+  }
+  .plan-visual-composition {
+    width: 320px;
+    height: 440px;
+  }
+  .plan-overlay-card-left {
+    left: -50px;
+    width: 200px;
+    height: 200px;
+  }
+  .plan-overlay-card-right {
+    right: -30px;
+    width: 150px;
+    height: 190px;
+  }
+}
+
+@media (max-width: 640px) {
+  .expedition-section {
+    padding: 60px 0;
+  }
+  .plan-visual-composition {
+    width: 270px;
+    height: 380px;
+  }
+  .plan-overlay-card-left {
+    left: -30px;
+    width: 160px;
+    height: 160px;
+  }
+  .plan-overlay-card-right {
+    right: -20px;
+    width: 130px;
+    height: 160px;
+  }
+}

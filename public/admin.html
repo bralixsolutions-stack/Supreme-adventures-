@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal | Supreme Adventures</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="/supreme-official-logo.png">
+<link rel="shortcut icon" href="/supreme-official-logo.png" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>.admin-gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding:12px 24px}.admin-gallery-card{overflow:hidden;border:1px solid var(--border);border-radius:12px;background:#fff}.admin-gallery-card>img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.admin-gallery-card>div{padding:14px}.admin-gallery-card p{min-height:32px;margin:8px 0;color:var(--muted);font-size:13px}.gallery-preview{margin:12px 0;position:relative;overflow:hidden;border-radius:12px;background:#ddd}.gallery-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.gallery-preview span{position:absolute;bottom:10px;left:12px;color:#fff;font-size:12px;font-weight:700}</style>
+</head>
+<body>
+<div class="login" id="login">
+  <div class="login-card">
+    <div class="logo"><img src="/supreme-official-logo.png" alt="Supreme Logo" style="height:44px;width:auto;"></div>
+    <h1>Admin Dashboard</h1>
+    <p>Sign in to manage tours and enquiries.</p>
+    <input id="adminKey" type="password" placeholder="Admin key"><button onclick="login()">Sign in</button><small>Default development key: admin123</small>
+  </div>
+</div>
+<div class="app hidden" id="app">
+<aside>
+  <div class="admin-brand"><img src="/supreme-official-logo.png" alt="Supreme Logo" style="height:42px;width:auto;filter:brightness(0) invert(1);"></div>
+  <nav>
+<a class="active" onclick="showSection('dashboard')">Dashboard</a><a onclick="showSection('tours')">Tours</a><a onclick="showSection('destinations')">Destinations</a><a onclick="showSection('gallery')">Gallery</a><a onclick="showSection('bookings')">Bookings</a><a onclick="showSection('enquiries')">Enquiries</a><a href="/">View website</a>
+</nav></aside>
+<main><header><h2 id="title">Dashboard</h2><button onclick="logout()">Logout</button></header>
+<section id="dashboard" class="section"><div class="stats" id="stats"></div><div class="panel"><h3>Quick actions</h3><button onclick="showSection('tours');openTourForm()">+ Add tour</button><button onclick="showSection('destinations');openDestForm()" style="margin-left: 10px;">+ Add destination</button></div></section>
+<section id="tours" class="section hidden"><div class="section-top"><div><h2>Tours / Packages</h2><p>Manage public tour listings & photos.</p></div><button onclick="openTourForm()">+ Add tour</button></div><div id="tourTable" class="panel"></div></section>
+<section id="destinations" class="section hidden"><div class="section-top"><div><h2>Destinations</h2><p>Manage destination cards & cover photos.</p></div><button onclick="openDestForm()">+ Add destination</button></div><div id="destTable" class="panel"></div></section>
+<section id="gallery" class="section hidden"><div class="section-top"><div><h2>Gallery</h2><p>Add images from places you have visited.</p></div><button onclick="openGalleryForm()">+ Add image</button></div><div id="galleryTable" class="panel"></div></section>
+<section id="bookings" class="section hidden"><div class="section-top"><div><h2>Bookings</h2><p>Incoming booking enquiries.</p></div></div><div id="bookingTable" class="panel"></div></section>
+<section id="enquiries" class="section hidden"><div class="section-top"><div><h2>Enquiries</h2><p>Messages from visitors.</p></div></div><div id="enquiryTable" class="panel"></div></section>
+</main></div>
+
+<div class="modal hidden" id="tourForm"><div class="form-card"><button class="x" onclick="closeTourForm()">×</button><h2 id="formTitle">Add Tour</h2>
+<form onsubmit="saveTour(event)"><input type="hidden" id="tourId"><label>Title<input id="fTitle" required></label><label>Slug<input id="fSlug" placeholder="4-days-masai-mara"></label><label>Destination<input id="fDestination" value="Kenya"></label><label>Location<input id="fLocation" placeholder="Masai Mara & Nakuru"></label><label>Category<select id="fCategory"><option>Safari</option><option>Beach</option><option>Adventure</option><option>Wildlife</option><option>Culture</option></select></label><label>Duration (days)<input id="fDuration" type="number" value="3"></label><label>Price (USD)<input id="fPrice" type="number" value="500" required></label><label>Upload Cover Photo<input id="fImageFile" type="file" accept="image/*" onchange="previewTourImage()"></label><label>Or Image URL<input id="fImage" placeholder="https://..." oninput="previewTourImage()"></label><div id="tourPreview" class="gallery-preview hidden"><img id="tourPreviewImage" alt="Tour preview"><span>Tour cover preview</span></div><label>Short description<textarea id="fShort"></textarea></label><label>Full description<textarea id="fDescription"></textarea></label><label><input id="fFeatured" type="checkbox"> Featured on Homepage</label><button class="save">Save tour</button></form></div></div>
+
+<div class="modal hidden" id="destForm"><div class="form-card"><button class="x" onclick="closeDestForm()">×</button><h2 id="destFormTitle">Add Destination</h2>
+<form onsubmit="saveDestination(event)"><input type="hidden" id="destId"><label>Destination Name<input id="dName" placeholder="Maasai Mara" required></label><label>Slug<input id="dSlug" placeholder="maasai-mara"></label><label>Upload Cover Photo<input id="dImageFile" type="file" accept="image/*" onchange="previewDestImage()"></label><label>Or Cover Image URL<input id="dImageUrl" placeholder="https://..." oninput="previewDestImage()"></label><div id="destPreview" class="gallery-preview hidden"><img id="destPreviewImage" alt="Destination preview"><span>Destination preview</span></div><label>Description<textarea id="dDescription" placeholder="Short highlights about this destination"></textarea></label><button class="save">Save destination</button></form></div></div>
+
+<div class="modal hidden" id="galleryForm"><div class="form-card"><button class="x" onclick="closeGalleryForm()">×</button><h2>Add Gallery Image</h2><form onsubmit="saveGalleryImage(event)"><label>Place or title<input id="gPlace" placeholder="Masai Mara" required></label><label>Image file (optional)<input id="gImage" type="file" accept="image/*" onchange="previewGalleryImage()"></label><label>Or image URL (optional)<input id="gImageUrl" type="url" placeholder="https://images.example/photo.jpg" oninput="previewGalleryImage()"></label><div id="galleryPreview" class="gallery-preview hidden"><img id="galleryPreviewImage" alt="Gallery preview"><span>Public gallery preview</span></div><label>Caption<textarea id="gCaption" placeholder="A short description (optional)"></textarea></label><button class="save">Save image</button></form></div></div>
+<script src="/admin.js"></script>
+</body></html>

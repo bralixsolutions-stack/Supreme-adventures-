@@ -1,0 +1,296 @@
+{
+  "tours": [
+    {
+      "id": "tour-002",
+      "title": "3 Days Amboseli National Park Safari",
+      "slug": "3-days-amboseli-safari",
+      "destination": "Kenya",
+      "location": "Amboseli",
+      "category": "Safari",
+      "duration": 3,
+      "price": 390,
+      "groupSize": 7,
+      "rating": 4.8,
+      "featured": true,
+      "image": "https://images.unsplash.com/photo-1535338454770-8be927b5a00b?auto=format&fit=crop&w=1400&q=85",
+      "shortDescription": "Elephants, open plains and iconic views of Mount Kilimanjaro.",
+      "description": "Discover Amboseli's famous elephant herds and dramatic landscapes on a compact three-day safari.",
+      "inclusions": [
+        "Safari transport",
+        "Park fees",
+        "Guide",
+        "Accommodation",
+        "Selected meals"
+      ],
+      "exclusions": [
+        "Flights",
+        "Insurance",
+        "Tips",
+        "Personal purchases"
+      ],
+      "itinerary": [
+        [
+          "Day 1",
+          "Nairobi to Amboseli",
+          "Travel south and enjoy an afternoon game drive."
+        ],
+        [
+          "Day 2",
+          "Amboseli Full Day",
+          "Full-day exploration with excellent opportunities for elephant sightings."
+        ],
+        [
+          "Day 3",
+          "Amboseli to Nairobi",
+          "Final morning drive and return to Nairobi."
+        ]
+      ]
+    },
+    {
+      "id": "tour-003",
+      "title": "5 Days Kenya Safari Explorer",
+      "slug": "5-days-kenya-safari-explorer",
+      "destination": "Kenya",
+      "location": "Nairobi, Nakuru & Masai Mara",
+      "category": "Adventure",
+      "duration": 5,
+      "price": 680,
+      "groupSize": 8,
+      "rating": 4.9,
+      "featured": true,
+      "image": "https://images.unsplash.com/photo-1519659528534-7fd733a832a0?auto=format&fit=crop&w=1400&q=85",
+      "shortDescription": "A balanced introduction to Kenya's most celebrated safari destinations.",
+      "description": "A five-day circuit designed for travelers who want wildlife, scenery and a taste of Kenya in one trip.",
+      "inclusions": [
+        "4x4 safari vehicle",
+        "Park fees",
+        "Guide",
+        "Accommodation",
+        "Selected meals"
+      ],
+      "exclusions": [
+        "Flights",
+        "Visa",
+        "Insurance",
+        "Tips"
+      ],
+      "itinerary": [
+        [
+          "Day 1",
+          "Nairobi",
+          "Arrival briefing and city transfer."
+        ],
+        [
+          "Day 2",
+          "Nairobi to Lake Nakuru",
+          "Rift Valley drive and Lake Nakuru safari."
+        ],
+        [
+          "Day 3",
+          "Lake Nakuru to Masai Mara",
+          "Scenic transfer and afternoon game drive."
+        ],
+        [
+          "Day 4",
+          "Masai Mara",
+          "Full day of wildlife exploration."
+        ],
+        [
+          "Day 5",
+          "Masai Mara to Nairobi",
+          "Final game drive and return."
+        ]
+      ]
+    },
+    {
+      "id": "tour-004",
+      "title": "6 Days Tanzania Wildlife Escape",
+      "slug": "6-days-tanzania-wildlife-escape",
+      "destination": "Tanzania",
+      "location": "Arusha, Tarangire & Ngorongoro",
+      "category": "Wildlife",
+      "duration": 6,
+      "price": 980,
+      "groupSize": 7,
+      "rating": 5,
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1549366021-9f761d450615?auto=format&fit=crop&w=1400&q=85",
+      "shortDescription": "A Tanzania adventure through iconic wildlife landscapes.",
+      "description": "Explore northern Tanzania with game drives, crater scenery and memorable wildlife encounters.",
+      "inclusions": [
+        "4x4 vehicle",
+        "Guide",
+        "Park fees",
+        "Accommodation",
+        "Selected meals"
+      ],
+      "exclusions": [
+        "International flights",
+        "Insurance",
+        "Tips",
+        "Personal expenses"
+      ],
+      "itinerary": [
+        [
+          "Day 1",
+          "Arusha",
+          "Arrival and orientation."
+        ],
+        [
+          "Day 2",
+          "Tarangire",
+          "Full day wildlife experience."
+        ],
+        [
+          "Day 3",
+          "Karatu",
+          "Scenic transfer and cultural experience."
+        ],
+        [
+          "Day 4",
+          "Ngorongoro",
+          "Crater exploration."
+        ],
+        [
+          "Day 5",
+          "Lake Manyara",
+          "Game drive and local landscapes."
+        ],
+        [
+          "Day 6",
+          "Departure",
+          "Transfer to airport."
+        ]
+      ]
+    },
+    {
+      "id": "tour-1787731642886",
+      "rating": 5,
+      "groupSize": 7,
+      "featured": false,
+      "inclusions": [],
+      "exclusions": [],
+      "itinerary": [],
+      "title": "fsfa",
+      "slug": "agad",
+      "destination": "Kenya",
+      "location": "agaea",
+      "category": "Safari",
+      "duration": 3,
+      "price": 500,
+      "image": "https://tse2.mm.bing.net/th/id/OIP.zP9hRFyYDGCkMShI0gXcoAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+      "shortDescription": "\\dbf\\df",
+      "description": "F\\bre"
+    }
+  ],
+  "bookings": [],
+  "enquiries": [],
+  "gallery": [
+    {
+      "id": "g-01",
+      "place": "Maasai Mara, Kenya",
+      "caption": "Big Game & 4x4 Safari Expeditions",
+      "category": "safari",
+      "tag": "Safari Expedition",
+      "image": "/photos/jeep_safari.jpg",
+      "featured": "wide"
+    },
+    {
+      "id": "g-02",
+      "place": "Savannah Plains",
+      "caption": "King of the Jungle in Masai Mara",
+      "category": "safari",
+      "tag": "Wildlife",
+      "image": "/photos/lion.jpg"
+    },
+    {
+      "id": "g-03",
+      "place": "Mara River Crossing",
+      "caption": "The Great Wildebeest Migration",
+      "category": "safari",
+      "tag": "Great Migration",
+      "image": "/photos/wild_beest.jpg"
+    },
+    {
+      "id": "g-04",
+      "place": "Amboseli National Park",
+      "caption": "Elephants & Mt Kilimanjaro Views",
+      "category": "safari",
+      "tag": "Amboseli Elephants",
+      "image": "/photos/amboseli.jpg"
+    },
+    {
+      "id": "g-05",
+      "place": "Zanzibar Archipelago",
+      "caption": "Turquoise Waters & Coral Reefs",
+      "category": "beach",
+      "tag": "Island Escape",
+      "image": "/photos/zanzibar.jpg",
+      "featured": "tall"
+    },
+    {
+      "id": "g-06",
+      "place": "Malindi Coast",
+      "caption": "Golden Sunsets & Tropical Breezes",
+      "category": "beach",
+      "tag": "Coastal Haven",
+      "image": "/photos/malindi.jpg"
+    },
+    {
+      "id": "g-07",
+      "place": "Mombasa Island",
+      "caption": "Swahili Heritage & Marine Adventures",
+      "category": "beach",
+      "tag": "Beach Resort",
+      "image": "/photos/mombasa.jpg"
+    },
+    {
+      "id": "g-08",
+      "place": "Lamu Archipelago",
+      "caption": "Traditional Dhow Sailing & Old Town",
+      "category": "adventure",
+      "tag": "Cultural Heritage",
+      "image": "/photos/lamu.jpg"
+    },
+    {
+      "id": "g-09",
+      "place": "Kigali & Virunga",
+      "caption": "Land of 1,000 Hills & Gorilla Trekking",
+      "category": "adventure",
+      "tag": "Rwanda Escape",
+      "image": "/photos/rwanda.jpg"
+    },
+    {
+      "id": "g-10",
+      "place": "Cape Peninsula",
+      "caption": "Table Mountain & Atlantic Oceans",
+      "category": "adventure",
+      "tag": "Cape Town",
+      "image": "/photos/capetown.jpg"
+    },
+    {
+      "id": "g-11",
+      "place": "Happy Adventurers",
+      "caption": "Memorable Group Journeys & Client Stories",
+      "category": "clients",
+      "tag": "Traveler Stories",
+      "image": "/photos/client_1.jpeg"
+    },
+    {
+      "id": "g-12",
+      "place": "Safari Crew",
+      "caption": "Group Joining & Unforgettable Moments",
+      "category": "clients",
+      "tag": "Safari Crew",
+      "image": "/photos/client_2.jpeg"
+    },
+    {
+      "id": "g-13",
+      "place": "Overland Truck Party",
+      "caption": "Road Trips & Celebrations across East Africa",
+      "category": "clients",
+      "tag": "Truck Party",
+      "image": "/photos/client_3.jpeg"
+    }
+  ]
+}

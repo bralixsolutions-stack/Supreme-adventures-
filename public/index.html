@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supreme Adventures | East Africa Safaris, Beach Escapes & Overland Trips</title>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Supreme Adventures | East Africa Safaris, Beach Escapes & Overland Trips">
+  <meta name="description"
+    content="Book unforgettable Kenya and Tanzania safari expeditions, Maasai Mara wildebeest migration tours, Zanzibar beach getaways, and Great Rift Valley overland adventures with Supreme Adventures.">
+  <meta name="keywords"
+    content="Kenya safaris, Maasai Mara migration, East Africa tours, Zanzibar beach holiday, overland truck party, Supreme Adventures, Kenya travel agency, safari bookings">
+  <meta name="author" content="Supreme Adventures">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://supremeadventures.com/">
+  <meta name="theme-color" content="#221F1F">
+
+  <!-- Favicon Links -->
+  <link rel="icon" type="image/png" href="/supreme-official-logo.png">
+  <link rel="shortcut icon" href="/supreme-official-logo.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/supreme-official-logo.png">
+
+  <!-- Open Graph / Facebook / WhatsApp Social Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://supremeadventures.com/">
+  <meta property="og:title" content="Supreme Adventures | East Africa Safaris & Expeditions">
+  <meta property="og:description"
+    content="Discover East Africa's wild soul with Supreme Adventures. Luxury & budget safari expeditions, Zanzibar getaways, and overland trips.">
+  <meta property="og:image" content="/supreme-official-logo.png">
+  <meta property="og:site_name" content="Supreme Adventures">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://supremeadventures.com/">
+  <meta name="twitter:title" content="Supreme Adventures | East Africa Safaris">
+  <meta name="twitter:description"
+    content="Discover East Africa's wild soul with Supreme Adventures. Luxury & budget safari expeditions, Zanzibar getaways, and overland trips.">
+  <meta name="twitter:image" content="/supreme-official-logo.png">
+
+  <!-- Structured Data / JSON-LD Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "Supreme Adventures",
+    "image": "https://supremeadventures.com/supreme-official-logo.png",
+    "@id": "https://supremeadventures.com",
+    "url": "https://supremeadventures.com",
+    "telephone": "+254759080100",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nairobi",
+      "addressCountry": "KE"
+    },
+    "sameAs": [
+      "https://wa.me/254759080100"
+    ],
+    "description": "Premium East Africa safaris, beach getaways, overland truck parties, and custom adventure tour operators in Kenya and Tanzania."
+  }
+  </script>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kalam:wght@700&family=Kaushan+Script&family=Manrope:wght@400;500;600;700;800&family=Permanent+Marker&family=Space+Grotesk:wght@700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
+  <!-- AOS (Animate On Scroll) Library CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css"></noscript>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a href="#home" class="nav-brand" title="Supreme Adventures Official Logo (supreme official logo.pdf)">
+        <img src="/supreme-official-logo.png" alt="Supreme Adventures Official Logo" class="nav-logo">
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <nav id="mainNav">
+        <a href="#home">Home</a>
+        <a href="#upcoming">Upcoming</a>
+        <a href="#destinations">Destinations</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a class="nav-cta" href="#upcoming">Upcoming Tours</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <!-- Dynamic Background Images Container -->
+      <div class="hero-slides" id="heroSlides"></div>
+      <div class="hero-overlay"></div>
+
+      <!-- Side Navigation Arrows -->
+      <button class="hero-side-arrow prev" id="heroPrevBtn" aria-label="Previous package"><i
+          class="fa-solid fa-chevron-left"></i></button>
+      <button class="hero-side-arrow next" id="heroNextBtn" aria-label="Next package"><i
+          class="fa-solid fa-chevron-right"></i></button>
+
+      <div class="container hero-content text-center">
+        <div class="hero-brand-headline">
+          <span class="hero-script-tag" id="heroScriptTag">Safari ya</span>
+          <h1 class="hero-destination-title" id="heroDestinationTitle">MAASAI MARA</h1>
+        </div>
+        <p class="hero-subheading" id="heroTitle">Maasai Mara Wildlife Safari</p>
+        <p class="hero-tagline" id="heroTagline">Witness the Great Wildebeest Migration & Big Five in Kenya's legendary
+          game reserve.</p>
+
+        <!-- White Pill CTA: Book Now -->
+        <div class="hero-actions">
+          <button class="hero-pill-btn" id="heroBookBtn" onclick="bookCurrentHeroPackage()">Book Now</button>
+        </div>
+      </div>
+
+      <!-- Slideshow Dots Control -->
+      <div class="hero-controls-bar container">
+        <div class="hero-dots" id="heroDots"></div>
+      </div>
+    </section>
+
+    <!-- SEARCH WIDGET -->
+    <div class="hero-search-wrapper" data-aos="fade-up" data-aos-duration="800">
+      <div class="search-panel">
+        <div class="search-field rel-field">
+          <label>DESTINATION</label>
+          <div class="custom-dropdown" id="destDropdown">
+            <div class="custom-trigger" id="destTrigger">
+              <span id="destSelectedText">All destinations</span>
+              <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+            </div>
+            <div class="custom-dropdown-menu hidden" id="destMenu"></div>
+          </div>
+          <select id="destination" class="hidden-select" aria-label="Select destination">
+            <option value="">All destinations</option>
+            <option value="Malindi">Malindi</option>
+            <option value="Zanzibar">Zanzibar</option>
+            <option value="Mombasa">Mombasa</option>
+            <option value="Lamu">Lamu</option>
+            <option value="Maasai Mara">Maasai Mara</option>
+            <option value="Amboseli">Amboseli</option>
+          </select>
+        </div>
+        <div class="search-field rel-field">
+          <label>TRIP TYPE</label>
+          <div class="custom-dropdown" id="typeDropdown">
+            <div class="custom-trigger" id="typeTrigger">
+              <span id="typeSelectedText">All types</span>
+              <i class="fa-solid fa-chevron-down trigger-chevron"></i>
+            </div>
+            <div class="custom-dropdown-menu hidden" id="typeMenu"></div>
+          </div>
+          <select id="category" class="hidden-select" aria-label="Select trip category">
+            <option value="">All types</option>
+            <option value="Safari">Safari</option>
+            <option value="Beach">Beach</option>
+            <option value="Culture">Culture</option>
+            <option value="Wildlife">Wildlife</option>
+          </select>
+        </div>
+        <div class="search-field">
+          <label for="duration">DURATION</label>
+          <div class="select-wrapper">
+            <i class="fa-solid fa-calendar-days select-icon"></i>
+            <select id="duration" aria-label="Select trip duration">
+              <option value="">Any duration</option>
+              <option value="3">3 days</option>
+              <option value="4">4 days</option>
+              <option value="5">5 days</option>
+            </select>
+          </div>
+        </div>
+        <button class="search-btn" id="searchBtn">Search</button>
+      </div>
+    </div>
+
+    <!-- ABOUT US SECTION (Immediately After Hero) -->
+    <section class="section about-section" id="about">
+      <div class="container">
+        <!-- Architectural Typographic Title (Mobile View) -->
+        <div class="architectural-brand-title mobile-about-title" data-aos="fade-up" data-aos-duration="800">
+          <div class="about-vertical-sidebar">ABOUT</div>
+          <div class="brand-title-content">
+            <div class="supreme-row">
+              <span class="text-sup">SUP</span>
+              <span class="focal-red-r">R</span>
+              <span class="text-eme">EME</span>
+            </div>
+            <div class="adventures-row">
+              <span class="brand-adventures-text">ADVENTURES</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-grid">
+          <!-- Left Column: Client Experience Photo Grid Showcase -->
+          <div class="about-image-wrapper" data-aos="fade-right" data-aos-duration="900">
+            <div class="about-client-grid">
+              <div class="client-photo-item main-photo" data-aos="zoom-in" data-aos-delay="100"
+                onclick="openLightbox('/photos/client_1.jpeg', 'Supreme Adventures Happy Adventurers')"
+                title="Click to enlarge">
+                <img src="/photos/client_1.jpeg" alt="Supreme Adventures Happy Travelers" class="about-client-img">
+              </div>
+              <div class="client-photo-item" data-aos="zoom-in" data-aos-delay="200"
+                onclick="openLightbox('/photos/lion.jpg', 'Lions king of the jungle')" title="Click to enlarge">
+                <img src="/photos/lion.jpg" alt="Lions king of the jungle" class="about-client-img">
+              </div>
+              <div class="client-photo-item" data-aos="zoom-in" data-aos-delay="300"
+                onclick="openLightbox('/photos/client_3.jpeg', 'Overland Party Group')" title="Click to enlarge">
+                <img src="/photos/client_3.jpeg" alt="Supreme Adventures Overland Party" class="about-client-img">
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Text Content Beside Images -->
+          <div class="about-content-box" data-aos="fade-left" data-aos-duration="900">
+            <!-- Architectural Typographic Title (Desktop View) -->
+            <div class="architectural-brand-title desktop-about-title" data-aos="fade-down" data-aos-duration="800">
+              <div class="about-vertical-sidebar">ABOUT</div>
+              <div class="brand-title-content">
+                <div class="supreme-row">
+                  <span class="text-sup">SUP</span>
+                  <span class="focal-red-r">R</span>
+                  <span class="text-eme">EME</span>
+                </div>
+                <div class="adventures-row">
+                  <span class="brand-adventures-text">ADVENTURES</span>
+                </div>
+              </div>
+            </div>
+            <h3 class="about-subtitle" data-aos="fade-up" data-aos-delay="100">Your Holiday Should Feel Like A Holiday — Not A Project</h3>
+            <p class="about-text-lead" data-aos="fade-up" data-aos-delay="200">
+              From choosing destinations to organizing transfers and luxury lodges, Supreme Adventures handles the logistics so you can focus entirely on enjoying the experience.
+            </p>
+            <p class="about-text-body" data-aos="fade-up" data-aos-delay="300">
+             We create travel experiences around you, whether you are exploring solo, travelling with family, or chasing an adventure with friends, giving you the freedom to travel your way with clear and transparent pricing.
+            </p>
+
+            <div class="about-cta-action" data-aos="zoom-in" data-aos-delay="400">
+              <button class="btn about-whatsapp-btn" onclick="openInquireModal()">
+                Plan My Custom Trip
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPCOMING TOURS SECTION -->
+    <section class="section upcoming-section" id="upcoming">
+      <div class="container">
+        <div class="section-heading">
+          <div class="section-heading-left" data-aos="fade-right" data-aos-duration="800">
+            <span class="section-script-subtitle" data-aos="fade-down">“Don't wait for extraordinary moments — create them.”</span>
+            <h2>Upcoming Tours & Events</h2>
+          </div>
+          <div class="upcoming-heading-right">
+            <p data-aos="fade-left" data-aos-duration="800" data-aos-delay="100">Reserve your spot early for exclusive
+              upcoming safari expeditions, annual charity runs, and live cultural events.</p>
+            <div class="upcoming-scroll-nav">
+              <button class="upcoming-nav-btn prev" onclick="scrollUpcoming(-1)" aria-label="Previous package"><i
+                  class="fa-solid fa-arrow-left"></i></button>
+              <button class="upcoming-nav-btn next" onclick="scrollUpcoming(1)" aria-label="Next package"><i
+                  class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+        <div id="upcomingGrid" class="upcoming-grid cards-container" data-aos="fade-up" data-aos-duration="900"
+          data-aos-delay="200"></div>
+      </div>
+    </section>
+
+    <!-- PLAN YOUR TRIP WITH US SECTION (SUPREME THEME) -->
+    <section class="section expedition-section" id="expedition">
+      <div class="container">
+        <div class="supreme-plan-container">
+          <!-- Left Column: Content & Features -->
+          <div class="supreme-plan-left" data-aos="fade-right" data-aos-duration="900">
+            <span class="plan-script-tag">“Your holiday should feel like a holiday — not a project.”</span>
+            <h2 class="plan-title">Plan Your Trip With Us</h2>
+            <p class="plan-desc">
+              Not every traveller wants the same trip. Why should your itinerary be the same? From choosing destinations to organizing 4x4 transfers, gorilla permits, and luxury lodges, we handle all logistics so you can focus on the experience.
+            </p>
+
+            <div class="plan-features-list">
+              <div class="plan-feature-row">
+                <div class="plan-feature-icon">
+                  <i class="fa-solid fa-route"></i>
+                </div>
+                <div class="plan-feature-info">
+                  <h4>Trips Built Around You</h4>
+                  <p>Tailor-made itineraries for safaris, beach escapes, day tours, and group overland trips.</p>
+                </div>
+              </div>
+
+              <div class="plan-feature-row">
+                <div class="plan-feature-icon">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="plan-feature-info">
+                  <h4>Value For Your Money</h4>
+                  <p>Adventure shouldn't have to empty your pockets. Transparent, highly competitive pricing.</p>
+                </div>
+              </div>
+
+              <div class="plan-feature-row">
+                <div class="plan-feature-icon">
+                  <i class="fa-solid fa-headset"></i>
+                </div>
+                <div class="plan-feature-info">
+                  <h4>Support Beyond The Booking</h4>
+                  <p>The booking is only the beginning — dedicated 24/7 assistance throughout your entire journey.</p>
+                </div>
+              </div>
+
+              <div class="plan-action-wrapper">
+                <button class="btn-plan-supreme" onclick="openInquireModal()">
+                  Plan Your Trip <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: 3-Overlapping Image Composition -->
+          <div class="supreme-plan-visual-wrapper" data-aos="fade-left" data-aos-duration="900" data-aos-delay="150">
+            <div class="plan-visual-composition">
+              <!-- Main Background Image Card -->
+              <div class="plan-main-card" onclick="openLightbox('/photos/zanzibar.jpg', 'Zanzibar Coastal Haven')" title="Click to enlarge">
+                <img src="/photos/zanzibar.jpg" alt="Zanzibar Beach Aerial View" loading="lazy">
+              </div>
+
+              <!-- Top-Left Floating Overlay Photo Card -->
+              <div class="plan-overlay-card-left" onclick="openLightbox('/photos/client_1.jpeg', 'Supreme Travelers')" title="Click to enlarge">
+                <!-- Dark Red Digital Coordinate Badge -->
+                <div class="plan-coord-badge">2,008.5 km</div>
+                <img src="/photos/client_1.jpeg" alt="Happy Couple Beach Escapes" loading="lazy">
+              </div>
+
+              <!-- Bottom-Right Floating Overlay Polaroid Card -->
+              <div class="plan-overlay-card-right" onclick="openLightbox('/photos/amboseli.jpg', 'Amboseli National Park')" title="Click to enlarge">
+                <!-- Location Tag Badge -->
+                <div class="plan-stamp-tag">Amboseli, KE</div>
+                <img src="/photos/amboseli.jpg" alt="Majestic Elephant Safari" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POPULAR DESTINATIONS SECTION (3D PARABOLIC DOME CAROUSEL) -->
+    <section class="section destinations-section" id="destinations">
+      <div class="container">
+        <div class="destinations-heading">
+          <p class="destinations-script-subtitle" data-aos="fade-down">“Don't just visit places — experience them.”</p>
+          <h2 class="destinations-title center" data-aos="fade-up" data-aos-delay="100">Popular Destinations</h2>
+        </div>
+
+        <div class="destinations-dome-wrapper" data-aos="fade-up" data-aos-delay="200">
+          <div class="destinations-dome-container" id="destinationsDome">
+            <!-- Card 1: Maasai Mara -->
+            <div class="destination-card" data-index="0" data-pos="0" onclick="handleDomeCardClick(0, 'Maasai Mara National Reserve')">
+              <div class="dest-img-box">
+                <img src="/photos/lion.jpg" alt="Maasai Mara Safari" loading="lazy">
+              </div>
+              <div class="dest-card-info">
+                <h3>Maasai Mara</h3>
+              </div>
+            </div>
+
+            <!-- Card 2: Zanzibar Coast -->
+            <div class="destination-card" data-index="1" data-pos="1" onclick="handleDomeCardClick(1, 'Zanzibar Beach Escape')">
+              <div class="dest-img-box">
+                <img src="/photos/zanzibar.jpg" alt="Zanzibar Island" loading="lazy">
+              </div>
+              <div class="dest-card-info">
+                <h3>Zanzibar Coast</h3>
+              </div>
+            </div>
+
+            <!-- Card 3: Amboseli Park (Center Apex Peak) -->
+            <div class="destination-card" data-index="2" data-pos="2" onclick="handleDomeCardClick(2, 'Amboseli National Park')">
+              <div class="dest-img-box">
+                <img src="/photos/amboseli.jpg" alt="Amboseli Elephants" loading="lazy">
+              </div>
+              <div class="dest-card-info">
+                <h3>Amboseli Park</h3>
+              </div>
+            </div>
+
+            <!-- Card 4: Serengeti -->
+            <div class="destination-card" data-index="3" data-pos="3" onclick="handleDomeCardClick(3, 'Serengeti National Park')">
+              <div class="dest-img-box">
+                <img src="/photos/jeep_safari.jpg" alt="Serengeti Safari" loading="lazy">
+              </div>
+              <div class="dest-card-info">
+                <h3>Serengeti</h3>
+              </div>
+            </div>
+
+            <!-- Card 5: Great Rift Valley -->
+            <div class="destination-card" data-index="4" data-pos="4" onclick="handleDomeCardClick(4, 'Great Rift Valley')">
+              <div class="dest-img-box">
+                <img src="/photos/client_3.jpeg" alt="Great Rift Valley" loading="lazy">
+              </div>
+              <div class="dest-card-info">
+                <h3>Rift Valley</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls & Dome Dots -->
+          <div class="destinations-dome-controls">
+            <button class="dome-nav-btn prev" onclick="rotateDome(-1)" aria-label="Previous destination"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="destinations-pagination" id="domePagination">
+              <span class="dot" onclick="setDomeApex(0)"></span>
+              <span class="dot" onclick="setDomeApex(1)"></span>
+              <span class="dot active" onclick="setDomeApex(2)"></span>
+              <span class="dot" onclick="setDomeApex(3)"></span>
+              <span class="dot" onclick="setDomeApex(4)"></span>
+            </div>
+            <button class="dome-nav-btn next" onclick="rotateDome(1)" aria-label="Next destination"><i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery-section" id="gallery">
+      <div class="container">
+        <div class="section-heading" data-aos="fade-up" data-aos-duration="800">
+          <div class="section-heading-left">
+            <p class="section-script-subtitle" style="font-family:'Kaushan Script', cursive; color:var(--red,#ec1f23); font-size:19px; margin-bottom:4px;">“Your holiday shouldn't end when you get home.”</p>
+            <h2>Captured Memories</h2>
+          </div>
+          <p>Go for the experience — come back with the memories. We provide high-quality photography so every moment of your adventure lives on forever.</p>
+        </div>
+
+
+        <div id="galleryGrid" class="gallery-grid" data-aos="fade-up" data-aos-duration="900" data-aos-delay="150">
+        </div>
+        <div id="galleryActions" class="gallery-actions text-center" data-aos="fade-up" data-aos-delay="200"></div>
+      </div>
+    </section>
+
+    <!-- REAL TRIPADVISOR CUSTOMER REVIEWS SECTION -->
+    <section class="testimonial-section" id="reviews">
+      <div class="container" data-aos="fade-up" data-aos-duration="900">
+        <div class="reviews-header text-center">
+          <div class="tripadvisor-rating-pill" data-aos="fade-down">
+            <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+            <span class="rating-text"><strong>5.0 / 5.0 Rating</strong> from 48+ Verified TripAdvisor Reviews</span>
+          </div>
+          <p class="section-script-subtitle">“Don't take our word for it. Ask the people who've travelled with us.”</p>
+          <h2 class="reviews-main-title">Stories From Our Travelers</h2>
+        </div>
+
+        <div class="reviews-grid">
+          <!-- Card 1: First-Timer & Social Vibe -->
+          <div class="review-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="review-card-top">
+              <span class="card-badge"><i class="fa-solid fa-users"></i> First-Timer & Social Vibe</span>
+              <div class="review-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+            </div>
+            <h3 class="review-headline">“Nothing but great fun!”</h3>
+            <p class="review-body">
+              “Being the first time travelling with Supreme Adventures, I had nothing but great fun. I met new people, not forgetting how welcoming they were. It was such an amazing experience.”
+            </p>
+            <div class="review-author">
+              <div class="author-avatar">MN</div>
+              <div class="author-info">
+                <h4>Mercy N.</h4>
+                <span class="source-tag"><i class="fa-brands fa-tripadvisor"></i> Verified TripAdvisor Review</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Break the Routine / Adventure -->
+          <div class="review-card featured" data-aos="fade-up" data-aos-delay="200">
+            <div class="review-card-top">
+              <span class="card-badge"><i class="fa-solid fa-compass"></i> Break the Routine</span>
+              <div class="review-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+            </div>
+            <h3 class="review-headline">“Total awesomeness.”</h3>
+            <p class="review-body">
+              “Supreme Adventures made me realize I had been indoors for so long! Thank you for making my first time unforgettable. To many more adventures.”
+            </p>
+            <div class="review-author">
+              <div class="author-avatar">NR</div>
+              <div class="author-info">
+                <h4>Njihia R.</h4>
+                <span class="source-tag"><i class="fa-brands fa-tripadvisor"></i> Verified TripAdvisor Review</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Service & Recommendation -->
+          <div class="review-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="review-card-top">
+              <span class="card-badge"><i class="fa-solid fa-award"></i> Service & Recommendation</span>
+              <div class="review-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+              </div>
+            </div>
+            <h3 class="review-headline">“Keep up the great service!”</h3>
+            <p class="review-body">
+              “It was such a nice experience travelling with you guys. I would definitely want to do it again and will be recommending them to others. Keep up the great service!”
+            </p>
+            <div class="review-author">
+              <div class="author-avatar">AS</div>
+              <div class="author-info">
+                <h4>Abigail S.</h4>
+                <span class="source-tag"><i class="fa-brands fa-tripadvisor"></i> Verified TripAdvisor Review</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Carousel Dots Indicator -->
+        <div class="reviews-dots text-center" id="reviewsDots">
+          <button class="reviews-dot active" onclick="scrollToReview(0)" aria-label="Review 1"></button>
+          <button class="reviews-dot" onclick="scrollToReview(1)" aria-label="Review 2"></button>
+          <button class="reviews-dot" onclick="scrollToReview(2)" aria-label="Review 3"></button>
+        </div>
+
+        <!-- MORE REVIEWS CTA AT BOTTOM OF SECTION -->
+        <div class="reviews-cta text-center" data-aos="fade-up" data-aos-delay="350">
+          <a href="https://www.tripadvisor.com/Attraction_Review-g294207-d25310777-Reviews-Supreme_Adventures-Nairobi.html" target="_blank" rel="noopener noreferrer" class="btn-more-reviews">
+            More Reviews <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT & ADVENTURE CTA SECTION (PARALLAX EFFECT & REAL SAFARI IMAGE) -->
+    <section class="cta-section" id="contact">
+      <div class="container" data-aos="zoom-in" data-aos-duration="900">
+        <span class="cta-script-tag" data-aos="fade-down">“Ready when you are — let's make it happen.”</span>
+        <h2 class="cta-main-title" data-aos="fade-up" data-aos-delay="100">Your Next Adventure Starts Here.</h2>
+        <p class="cta-subtitle-text" data-aos="fade-up" data-aos-delay="150">
+          Connect directly with our East Africa travel experts via phone or WhatsApp.
+        </p>
+
+        <!-- Elevated Direct Contact Action Buttons (Call & WhatsApp) -->
+        <div class="cta-contact-actions" data-aos="fade-up" data-aos-delay="200">
+          <a href="tel:+254759080100" class="contact-action-btn call-btn" title="Call Us Directly">
+            <i class="fa-solid fa-phone"></i> Call Us
+          </a>
+          <a href="https://wa.me/254759080100" target="_blank" rel="noopener noreferrer" class="contact-action-btn wa-btn" title="Chat on WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+          </a>
+        </div>
+
+        <!-- Social Media Floating Glass Pill with Icon-Only Badges -->
+        <div class="cta-social-connect" data-aos="fade-up" data-aos-delay="250">
+          <p class="connect-label">FOLLOW OUR JOURNEYS</p>
+          <div class="social-glass-pill">
+            <a href="https://www.facebook.com/Supremeadvke/" target="_blank" rel="noopener noreferrer" class="social-badge fb" title="Facebook" aria-label="Facebook">
+              <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            <a href="https://www.instagram.com/supremeadventurers/" target="_blank" rel="noopener noreferrer" class="social-badge ig" title="Instagram" aria-label="Instagram">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://www.tiktok.com/@supremeadventureske?_r=1&_t=ZS-99CfA9Iq6lw" target="_blank" rel="noopener noreferrer" class="social-badge tt" title="TikTok" aria-label="TikTok">
+              <i class="fa-brands fa-tiktok"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- LIGHT LUXURY FOOTER (MATCHING REFERENCE DESIGN) -->
+  <footer>
+    <div class="container footer-light-grid">
+      <!-- Column 1: Brand Info & Socials -->
+      <div class="footer-brand-col" data-aos="fade-up" data-aos-delay="100">
+        <a href="#home" class="nav-brand">
+          <img src="/supreme-official-logo.png" alt="Supreme Adventures" class="footer-logo-img">
+        </a>
+        <p class="footer-brand-desc">
+          Authentic East African adventures, bespoke safaris, beach escapes, and overland trips created by local experts.
+        </p>
+        <div class="footer-social-circles">
+          <a href="https://www.facebook.com/Supremeadvke/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+          <a href="https://www.instagram.com/supremeadventurers/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="https://www.tiktok.com/@supremeadventureske?_r=1&_t=ZS-99CfA9Iq6lw" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
+          <a href="https://wa.me/254759080100" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Useful Links -->
+      <div class="footer-links-col" data-aos="fade-up" data-aos-delay="200">
+        <h4 class="footer-col-title">Useful Link</h4>
+        <ul class="footer-links-list">
+          <li><a href="#home"><i class="fa-solid fa-chevron-right"></i> Home</a></li>
+          <li><a href="#about"><i class="fa-solid fa-chevron-right"></i> About Us</a></li>
+          <li><a href="#upcoming"><i class="fa-solid fa-chevron-right"></i> Upcoming Tours</a></li>
+          <li><a href="#destinations"><i class="fa-solid fa-chevron-right"></i> Popular Destinations</a></li>
+          <li><a href="#gallery"><i class="fa-solid fa-chevron-right"></i> Captured Memories</a></li>
+          <li><a href="#contact" onclick="openInquireModal()"><i class="fa-solid fa-chevron-right"></i> Tour Booking Now</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Get In Touch -->
+      <div class="footer-touch-col" data-aos="fade-up" data-aos-delay="300">
+        <h4 class="footer-col-title">Get In Touch</h4>
+        <div class="footer-touch-list">
+          <div class="touch-item">
+            <div class="touch-icon-badge">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <div class="touch-text">
+              <a href="tel:+254759080100">+254 759 080 100</a>
+            </div>
+          </div>
+
+          <div class="touch-item">
+            <div class="touch-icon-badge">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="touch-text">
+              <a href="mailto:supremeadventuresofficial@gmail.com">supremeadventuresofficial@gmail.com</a>
+            </div>
+          </div>
+
+          <div class="touch-item">
+            <div class="touch-icon-badge">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="touch-text">
+              <span>789 Inner Lane, Nairobi, Kenya</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-copyright-bar">
+      <p>© 2026 Supreme Adventures. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/254759080100" target="_blank" rel="noopener noreferrer"
+    aria-label="Chat with us on WhatsApp" title="Chat with us on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+
+  <div class="modal hidden" id="tourModal">
+    <div class="modal-card"><button class="close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- WhatsApp Inquire Now Modal -->
+  <div class="modal hidden" id="inquireModal">
+    <div class="modal-card inquire-modal-card">
+      <button class="close" onclick="closeInquireModal()">×</button>
+      <div class="inquire-modal-header">
+        <h2>Inquire Now</h2>
+        <p>Complete the form below to connect directly with our travel team on WhatsApp.</p>
+      </div>
+      <form class="inquire-form" id="inquireForm" onsubmit="submitInquiry(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="inquireName"><i class="fa-solid fa-user"></i> Full Name *</label>
+            <input type="text" id="inquireName" name="name" placeholder="e.g. Jane Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="inquireEmail"><i class="fa-solid fa-envelope"></i> Email Address *</label>
+            <input type="email" id="inquireEmail" name="email" placeholder="e.g. jane@example.com" required>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="inquirePhone"><i class="fa-solid fa-phone"></i> Phone Number *</label>
+            <input type="tel" id="inquirePhone" name="phone" placeholder="e.g. +254 700 123456" required>
+          </div>
+          <div class="form-group">
+            <label for="inquireSubject"><i class="fa-solid fa-calendar-days"></i> Subject / Trip Dates *</label>
+            <input type="text" id="inquireSubject" name="subject" placeholder="e.g. Maasai Mara Safari - July 15-20"
+              required>
+          </div>
+        </div>
+        <div class="form-group full-width">
+          <label for="inquireMessage"><i class="fa-solid fa-message"></i> What would you like to inquire about?
+            *</label>
+          <textarea id="inquireMessage" name="message" rows="3"
+            placeholder="Tell us about your preferred destinations, group size, special requests, or questions..."
+            required></textarea>
+        </div>
+        <div class="form-consent">
+          <label class="checkbox-container">
+            <input type="checkbox" id="inquireConsent" name="consent" required>
+            <span class="checkmark"></span>
+            <span class="consent-text">I agree to be contacted by Supreme Adventures</span>
+          </label>
+        </div>
+        <button type="submit" class="btn submit-inquiry-btn" disabled>Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- AOS (Animate On Scroll) Library JS & Application Scripts -->
+  <script src="https://unpkg.com/aos@next/dist/aos.js" defer></script>
+  <script src="/constants.js" defer></script>
+  <script src="/app.js" defer></script>
+</body>
+
+</html>

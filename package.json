@@ -1,0 +1,19 @@
+{
+  "name": "holidawn-style-tours",
+  "version": "1.0.0",
+  "description": "Full-stack East Africa tours website inspired by modern safari travel sites.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.114.0",
+    "express": "^5.1.0",
+    "multer": "^2.2.0",
+    "pdfjs-dist": "^6.2.108"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.4"
+  }
+}

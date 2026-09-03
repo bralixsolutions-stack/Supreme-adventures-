@@ -1,0 +1,297 @@
+:root {
+  --red: #EC1F23;
+  --black: #221F1F;
+  --dark: #403D3D;
+  --white: #FFFFFF;
+  --muted: #767474;
+  --border: #403D3D;
+  --cream: #f8f8f8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: var(--cream);
+  color: var(--black);
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #172c25;
+}
+
+.login-card {
+  background: #ffffff;
+  width: min(400px, 92%);
+  padding: 40px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 16px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+.login-card h1 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 28px;
+  margin: 0 0 8px;
+}
+
+.login-card p, .login-card small {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 13px;
+  margin: 18px 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.login-card button, .section-top button, .panel > button {
+  background: var(--green);
+  color: #ffffff;
+  border: 0;
+  padding: 13px 20px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+aside {
+  background: #172c25;
+  color: #ffffff;
+  padding: 30px 20px;
+}
+
+.admin-brand {
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+}
+
+aside nav a {
+  display: block;
+  padding: 13px 15px;
+  color: #cbd2ce;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  transition: background 0.2s ease;
+}
+
+aside nav a:hover, aside nav a.active {
+  background: #2a5144;
+  color: #ffffff;
+}
+
+main header {
+  height: 75px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 35px;
+}
+
+header h2 {
+  font: 24px Georgia, serif;
+  margin: 0;
+}
+
+header button {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.section {
+  padding: 35px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.stat, .panel {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 25px;
+}
+
+.stat small {
+  color: var(--muted);
+}
+
+.stat strong {
+  display: block;
+  font: 35px Georgia, serif;
+  margin-top: 8px;
+}
+
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.section-top h2 {
+  margin: 0;
+  font: 30px Georgia, serif;
+}
+
+.section-top p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  text-align: left;
+  padding: 13px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.action {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.danger {
+  color: #a33;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.form-card {
+  background: #ffffff;
+  width: min(650px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 30px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.form-card h2 {
+  font: 30px Georgia, serif;
+  margin-top: 0;
+}
+
+.x {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  border: 0;
+  background: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.form-card form {
+  display: grid;
+  gap: 13px;
+}
+
+.form-card label {
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  gap: 5px;
+}
+
+.form-card input, .form-card textarea, .form-card select {
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.form-card textarea {
+  min-height: 80px;
+}
+
+.save {
+  background: var(--green);
+  color: #ffffff;
+  border: 0;
+  padding: 14px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+  aside {
+    display: none;
+  }
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .section {
+    padding: 20px;
+  }
+  main header {
+    padding: 0 20px;
+  }
+}
