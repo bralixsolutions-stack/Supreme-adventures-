@@ -67,9 +67,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kalam:wght@700&family=Kaushan+Script&family=Manrope:wght@400;500;600;700;800&family=Permanent+Marker&family=Space+Grotesk:wght@700;800;900&display=swap"
-    rel="stylesheet">
+  <link rel="preload" as="image" href="/photos/wild_beest.webp">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kalam:wght@700&family=Kaushan+Script&family=Manrope:wght@400;500;600;700;800&family=Permanent+Marker&family=Space+Grotesk:wght@700;800;900&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kalam:wght@700&family=Kaushan+Script&family=Manrope:wght@400;500;600;700;800&family=Permanent+Marker&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kalam:wght@700&family=Kaushan+Script&family=Manrope:wght@400;500;600;700;800&family=Permanent+Marker&family=Space+Grotesk:wght@700;800;900&display=swap"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"></noscript>
   <!-- AOS (Animate On Scroll) Library CSS -->
@@ -82,7 +83,7 @@
   <header class="site-header" id="siteHeader">
     <div class="container nav">
       <a href="#home" class="nav-brand" title="Supreme Adventures Official Logo (supreme official logo.pdf)">
-        <img src="/supreme-official-logo.png" alt="Supreme Adventures Official Logo" class="nav-logo">
+        <img src="/supreme-official-logo.webp" alt="Supreme Adventures Official Logo" class="nav-logo" width="160" height="40" fetchpriority="high" decoding="async">
       </a>
       <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation menu">
         <i class="fa-solid fa-bars"></i>
@@ -210,17 +211,17 @@
           <div class="about-image-wrapper" data-aos="fade-right" data-aos-duration="900">
             <div class="about-client-grid">
               <div class="client-photo-item main-photo" data-aos="zoom-in" data-aos-delay="100"
-                onclick="openLightbox('/photos/client_1.jpeg', 'Supreme Adventures Happy Adventurers')"
+                onclick="openLightbox('/photos/client_1.webp', 'Supreme Adventures Happy Adventurers')"
                 title="Click to enlarge">
-                <img src="/photos/client_1.jpeg" alt="Supreme Adventures Happy Travelers" class="about-client-img">
+                <img src="/photos/client_1.webp" alt="Supreme Adventures Happy Travelers" class="about-client-img" loading="lazy" decoding="async">
               </div>
               <div class="client-photo-item" data-aos="zoom-in" data-aos-delay="200"
-                onclick="openLightbox('/photos/lion.jpg', 'Lions king of the jungle')" title="Click to enlarge">
-                <img src="/photos/lion.jpg" alt="Lions king of the jungle" class="about-client-img">
+                onclick="openLightbox('/photos/lion.webp', 'Lions king of the jungle')" title="Click to enlarge">
+                <img src="/photos/lion.webp" alt="Lions king of the jungle" class="about-client-img" loading="lazy" decoding="async">
               </div>
               <div class="client-photo-item" data-aos="zoom-in" data-aos-delay="300"
-                onclick="openLightbox('/photos/client_3.jpeg', 'Overland Party Group')" title="Click to enlarge">
-                <img src="/photos/client_3.jpeg" alt="Supreme Adventures Overland Party" class="about-client-img">
+                onclick="openLightbox('/photos/client_3.webp', 'Overland Party Group')" title="Click to enlarge">
+                <img src="/photos/client_3.webp" alt="Supreme Adventures Overland Party" class="about-client-img" loading="lazy" decoding="async">
               </div>
             </div>
           </div>
@@ -338,22 +339,22 @@
           <div class="supreme-plan-visual-wrapper" data-aos="fade-left" data-aos-duration="900" data-aos-delay="150">
             <div class="plan-visual-composition">
               <!-- Main Background Image Card -->
-              <div class="plan-main-card" onclick="openLightbox('/photos/zanzibar.jpg', 'Zanzibar Coastal Haven')" title="Click to enlarge">
-                <img src="/photos/zanzibar.jpg" alt="Zanzibar Beach Aerial View" loading="lazy">
+              <div class="plan-main-card" onclick="openLightbox('/photos/zanzibar.webp', 'Zanzibar Coastal Haven')" title="Click to enlarge">
+                <img src="/photos/zanzibar.webp" alt="Zanzibar Beach Aerial View" loading="lazy" decoding="async">
               </div>
 
               <!-- Top-Left Floating Overlay Photo Card -->
-              <div class="plan-overlay-card-left" onclick="openLightbox('/photos/client_1.jpeg', 'Supreme Travelers')" title="Click to enlarge">
+              <div class="plan-overlay-card-left" onclick="openLightbox('/photos/client_1.webp', 'Supreme Travelers')" title="Click to enlarge">
                 <!-- Dark Red Digital Coordinate Badge -->
                 <div class="plan-coord-badge">2,008.5 km</div>
-                <img src="/photos/client_1.jpeg" alt="Happy Couple Beach Escapes" loading="lazy">
+                <img src="/photos/client_1.webp" alt="Happy Couple Beach Escapes" loading="lazy" decoding="async">
               </div>
 
               <!-- Bottom-Right Floating Overlay Polaroid Card -->
-              <div class="plan-overlay-card-right" onclick="openLightbox('/photos/amboseli.jpg', 'Amboseli National Park')" title="Click to enlarge">
+              <div class="plan-overlay-card-right" onclick="openLightbox('/photos/amboseli.webp', 'Amboseli National Park')" title="Click to enlarge">
                 <!-- Location Tag Badge -->
                 <div class="plan-stamp-tag">Amboseli, KE</div>
-                <img src="/photos/amboseli.jpg" alt="Majestic Elephant Safari" loading="lazy">
+                <img src="/photos/amboseli.webp" alt="Majestic Elephant Safari" loading="lazy" decoding="async">
               </div>
             </div>
           </div>
@@ -374,7 +375,7 @@
             <!-- Card 1: Maasai Mara -->
             <div class="destination-card" data-index="0" data-pos="0" onclick="handleDomeCardClick(0, 'Maasai Mara National Reserve')">
               <div class="dest-img-box">
-                <img src="/photos/lion.jpg" alt="Maasai Mara Safari" loading="lazy">
+                <img src="/photos/lion.webp" alt="Maasai Mara Safari" loading="lazy" decoding="async">
               </div>
               <div class="dest-card-info">
                 <h3>Maasai Mara</h3>
@@ -384,7 +385,7 @@
             <!-- Card 2: Zanzibar Coast -->
             <div class="destination-card" data-index="1" data-pos="1" onclick="handleDomeCardClick(1, 'Zanzibar Beach Escape')">
               <div class="dest-img-box">
-                <img src="/photos/zanzibar.jpg" alt="Zanzibar Island" loading="lazy">
+                <img src="/photos/zanzibar.webp" alt="Zanzibar Island" loading="lazy" decoding="async">
               </div>
               <div class="dest-card-info">
                 <h3>Zanzibar Coast</h3>
@@ -394,7 +395,7 @@
             <!-- Card 3: Amboseli Park (Center Apex Peak) -->
             <div class="destination-card" data-index="2" data-pos="2" onclick="handleDomeCardClick(2, 'Amboseli National Park')">
               <div class="dest-img-box">
-                <img src="/photos/amboseli.jpg" alt="Amboseli Elephants" loading="lazy">
+                <img src="/photos/amboseli.webp" alt="Amboseli Elephants" loading="lazy" decoding="async">
               </div>
               <div class="dest-card-info">
                 <h3>Amboseli Park</h3>
@@ -404,7 +405,7 @@
             <!-- Card 4: Serengeti -->
             <div class="destination-card" data-index="3" data-pos="3" onclick="handleDomeCardClick(3, 'Serengeti National Park')">
               <div class="dest-img-box">
-                <img src="/photos/jeep_safari.jpg" alt="Serengeti Safari" loading="lazy">
+                <img src="/photos/jeep_safari.webp" alt="Serengeti Safari" loading="lazy" decoding="async">
               </div>
               <div class="dest-card-info">
                 <h3>Serengeti</h3>
@@ -414,12 +415,11 @@
             <!-- Card 5: Great Rift Valley -->
             <div class="destination-card" data-index="4" data-pos="4" onclick="handleDomeCardClick(4, 'Great Rift Valley')">
               <div class="dest-img-box">
-                <img src="/photos/client_3.jpeg" alt="Great Rift Valley" loading="lazy">
+                <img src="/photos/client_3.webp" alt="Great Rift Valley" loading="lazy" decoding="async">
               </div>
               <div class="dest-card-info">
                 <h3>Rift Valley</h3>
               </div>
-            </div>
           </div>
 
           <!-- Controls & Dome Dots -->
@@ -592,7 +592,7 @@
       <!-- Column 1: Brand Info & Socials -->
       <div class="footer-brand-col" data-aos="fade-up" data-aos-delay="100">
         <a href="#home" class="nav-brand">
-          <img src="/supreme-official-logo.png" alt="Supreme Adventures" class="footer-logo-img">
+          <img src="/supreme-official-logo.webp" alt="Supreme Adventures" class="footer-logo-img" width="140" height="35" loading="lazy" decoding="async">
         </a>
         <p class="footer-brand-desc">
           Authentic East African adventures, bespoke safaris, beach escapes, and overland trips created by local experts.

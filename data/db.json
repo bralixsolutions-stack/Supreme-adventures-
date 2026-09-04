@@ -192,7 +192,7 @@
       "caption": "Big Game & 4x4 Safari Expeditions",
       "category": "safari",
       "tag": "Safari Expedition",
-      "image": "/photos/jeep_safari.jpg",
+      "image": "/photos/jeep_safari.webp",
       "featured": "wide"
     },
     {
@@ -201,7 +201,7 @@
       "caption": "King of the Jungle in Masai Mara",
       "category": "safari",
       "tag": "Wildlife",
-      "image": "/photos/lion.jpg"
+      "image": "/photos/lion.webp"
     },
     {
       "id": "g-03",
@@ -209,7 +209,7 @@
       "caption": "The Great Wildebeest Migration",
       "category": "safari",
       "tag": "Great Migration",
-      "image": "/photos/wild_beest.jpg"
+      "image": "/photos/wild_beest.webp"
     },
     {
       "id": "g-04",
@@ -217,7 +217,7 @@
       "caption": "Elephants & Mt Kilimanjaro Views",
       "category": "safari",
       "tag": "Amboseli Elephants",
-      "image": "/photos/amboseli.jpg"
+      "image": "/photos/amboseli.webp"
     },
     {
       "id": "g-05",
@@ -225,7 +225,7 @@
       "caption": "Turquoise Waters & Coral Reefs",
       "category": "beach",
       "tag": "Island Escape",
-      "image": "/photos/zanzibar.jpg",
+      "image": "/photos/zanzibar.webp",
       "featured": "tall"
     },
     {
@@ -234,7 +234,7 @@
       "caption": "Golden Sunsets & Tropical Breezes",
       "category": "beach",
       "tag": "Coastal Haven",
-      "image": "/photos/malindi.jpg"
+      "image": "/photos/malindi.webp"
     },
     {
       "id": "g-07",
@@ -242,7 +242,7 @@
       "caption": "Swahili Heritage & Marine Adventures",
       "category": "beach",
       "tag": "Beach Resort",
-      "image": "/photos/mombasa.jpg"
+      "image": "/photos/mombasa.webp"
     },
     {
       "id": "g-08",
@@ -250,7 +250,7 @@
       "caption": "Traditional Dhow Sailing & Old Town",
       "category": "adventure",
       "tag": "Cultural Heritage",
-      "image": "/photos/lamu.jpg"
+      "image": "/photos/lamu.webp"
     },
     {
       "id": "g-09",
@@ -258,7 +258,7 @@
       "caption": "Land of 1,000 Hills & Gorilla Trekking",
       "category": "adventure",
       "tag": "Rwanda Escape",
-      "image": "/photos/rwanda.jpg"
+      "image": "/photos/rwanda.webp"
     },
     {
       "id": "g-10",
@@ -266,7 +266,7 @@
       "caption": "Table Mountain & Atlantic Oceans",
       "category": "adventure",
       "tag": "Cape Town",
-      "image": "/photos/capetown.jpg"
+      "image": "/photos/capetown.webp"
     },
     {
       "id": "g-11",
@@ -274,7 +274,7 @@
       "caption": "Memorable Group Journeys & Client Stories",
       "category": "clients",
       "tag": "Traveler Stories",
-      "image": "/photos/client_1.jpeg"
+      "image": "/photos/client_1.webp"
     },
     {
       "id": "g-12",
@@ -282,7 +282,7 @@
       "caption": "Group Joining & Unforgettable Moments",
       "category": "clients",
       "tag": "Safari Crew",
-      "image": "/photos/client_2.jpeg"
+      "image": "/photos/client_2.webp"
     },
     {
       "id": "g-13",
@@ -290,7 +290,44 @@
       "caption": "Road Trips & Celebrations across East Africa",
       "category": "clients",
       "tag": "Truck Party",
-      "image": "/photos/client_3.jpeg"
+      "image": "/photos/client_3.webp"
+    }
+  ],
+  "destinations": [
+    {
+      "id": "dest-mara",
+      "name": "Maasai Mara National Reserve",
+      "slug": "maasai-mara",
+      "image": "/photos/lion.webp",
+      "description": "World-famous Great Migration & Big Five game drives."
+    },
+    {
+      "id": "dest-zanzibar",
+      "name": "Zanzibar Tropical Island",
+      "slug": "zanzibar",
+      "image": "/photos/zanzibar.webp",
+      "description": "White sand beaches, Stone Town culture & dhow cruises."
+    },
+    {
+      "id": "dest-amboseli",
+      "name": "Amboseli National Park",
+      "slug": "amboseli",
+      "image": "/photos/amboseli.webp",
+      "description": "Majestic elephant herds under snow-capped Mt Kilimanjaro."
+    },
+    {
+      "id": "dest-serengeti",
+      "name": "Serengeti National Park",
+      "slug": "serengeti",
+      "image": "/photos/jeep_safari.webp",
+      "description": "Endless savannah plains & legendary predator encounters."
+    },
+    {
+      "id": "dest-rift",
+      "name": "Great Rift Valley & Lakes",
+      "slug": "rift-valley",
+      "image": "/photos/client_3.webp",
+      "description": "Geysers, flamingos & volcanic crater adventures."
     }
   ]
 }

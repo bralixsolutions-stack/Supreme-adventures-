@@ -12,7 +12,7 @@ const HERO_PACKAGES = [
     price: 520,
     duration: "4 Days",
     category: "Safari",
-    image: "/photos/wild_beest.jpg"
+    image: "/photos/wild_beest.webp"
   },
   {
     id: "pkg-zanzibar",
@@ -22,7 +22,7 @@ const HERO_PACKAGES = [
     price: 650,
     duration: "5 Days",
     category: "Beach & Culture",
-    image: "/photos/zanzibar.jpg" 
+    image: "/photos/zanzibar.webp" 
   },
   {
     id: "pkg-mombasa",
@@ -32,7 +32,7 @@ const HERO_PACKAGES = [
     price: 450,
     duration: "3 Days",
     category: "Coastal Beach",
-    image: "/photos/mombasa.jpg" 
+    image: "/photos/mombasa.webp" 
   },
   {
     id: "pkg-malindi",
@@ -42,7 +42,7 @@ const HERO_PACKAGES = [
     price: 480,
     duration: "4 Days",
     category: "Marine & Beach",
-    image: "/photos/malindi.jpg"
+    image: "/photos/malindi.webp"
   },
   {
     id: "pkg-lamu",
@@ -52,7 +52,7 @@ const HERO_PACKAGES = [
     price: 590,
     duration: "4 Days",
     category: "Island Culture",
-    image: "/photos/lamu.jpg"
+    image: "/photos/lamu.webp"
   },
   {
     id: "pkg-amboseli",
@@ -62,7 +62,7 @@ const HERO_PACKAGES = [
     price: 390,
     duration: "3 Days",
     category: "Wildlife Safari",
-    image: "/photos/amboseli.jpg"
+    image: "/photos/amboseli.webp"
   }
 ];
 
@@ -101,7 +101,7 @@ const UPCOMING_TOURS = [
     date: "From 05th Sep, 2026",
     price: 350,
     category: "Overland Truck Party", 
-    image: "/packages/lake_Bogoria.jpeg", 
+    image: "/packages/lake_Bogoria.webp", 
     description: "Discover the stunning landscapes of Lake Baringo and Lake Bogoria on this adventure-filled tour."
   },
   {
@@ -112,7 +112,7 @@ const UPCOMING_TOURS = [
     date: "From 05th Sep, 2026",
     price: 150,
     category: "Culture",
-    image: "/packages/rwanda.jpeg", 
+    image: "/packages/rwanda.webp", 
     description: "Participate in the Strathmore University Foundation Annual Run followed by a guided Great Rift Valley Naivasha excursion."
   },
   {
@@ -123,7 +123,7 @@ const UPCOMING_TOURS = [
     date: "From 1st July to 1st October 2026",
     price: 520,
     category: "Wildlife Safari",
-    image: "/packages/wildbeest.jpeg",
+    image: "/packages/wildbeest.webp",
     description: "Witness millions of wildebeest braving the Mara River on this exclusive luxury safari expedition."
   },
   {
@@ -134,7 +134,7 @@ const UPCOMING_TOURS = [
     date: "From 12th to 14th December, 2026",
     price: 520,
     category: "Safari",
-    image: "/packages/capetown.jpeg",
+    image: "/packages/capetown.webp",
     description: "Explore the stunning beauty of Cape Town with our full-day peninsular tour. Experience the iconic Table Mountain, Cape Point, and the charming coastal towns along the way."
   },
   {
@@ -145,7 +145,7 @@ const UPCOMING_TOURS = [
     date: "From 14th to 18th October 2026",
     price: 650,
     category: "Beach & Culture",
-    image: "/packages/zanzibar.jpeg", 
+    image: "/packages/zanzibar.webp", 
     description: "Relax on Zanzibar's turquoise coast with sunset dhow cruises and authentic Swahili spice tours."
   }
 ];

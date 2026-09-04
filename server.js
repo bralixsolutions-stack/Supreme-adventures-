@@ -23,9 +23,15 @@ const upload = multer({
   limits: { fileSize: 8 * 1024 * 1024 }
 });
 
+const compression = require("compression");
+
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: "7d",
+  etag: true
+}));
 
 function ensureDb() {
   try { if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
@@ -60,19 +66,19 @@ function readDb() {
 
 function seedGallery() {
   return [
-    { id: "g-01", place: "Maasai Mara, Kenya", caption: "Big Game & 4x4 Safari Expeditions", category: "safari", tag: "Safari Expedition", image: "/photos/jeep_safari.jpg", featured: "wide" },
-    { id: "g-02", place: "Savannah Plains", caption: "King of the Jungle in Masai Mara", category: "safari", tag: "Wildlife", image: "/photos/lion.jpg" },
-    { id: "g-03", place: "Mara River Crossing", caption: "The Great Wildebeest Migration", category: "safari", tag: "Great Migration", image: "/photos/wild_beest.jpg" },
-    { id: "g-04", place: "Amboseli National Park", caption: "Elephants & Mt Kilimanjaro Views", category: "safari", tag: "Amboseli Elephants", image: "/photos/amboseli.jpg" },
-    { id: "g-05", place: "Zanzibar Archipelago", caption: "Turquoise Waters & Coral Reefs", category: "beach", tag: "Island Escape", image: "/photos/zanzibar.jpg", featured: "tall" },
-    { id: "g-06", place: "Malindi Coast", caption: "Golden Sunsets & Tropical Breezes", category: "beach", tag: "Coastal Haven", image: "/photos/malindi.jpg" },
-    { id: "g-07", place: "Mombasa Island", caption: "Swahili Heritage & Marine Adventures", category: "beach", tag: "Beach Resort", image: "/photos/mombasa.jpg" },
-    { id: "g-08", place: "Lamu Archipelago", caption: "Traditional Dhow Sailing & Old Town", category: "adventure", tag: "Cultural Heritage", image: "/photos/lamu.jpg" },
-    { id: "g-09", place: "Kigali & Virunga", caption: "Land of 1,000 Hills & Gorilla Trekking", category: "adventure", tag: "Rwanda Escape", image: "/photos/rwanda.jpg" },
-    { id: "g-10", place: "Cape Peninsula", caption: "Table Mountain & Atlantic Oceans", category: "adventure", tag: "Cape Town", image: "/photos/capetown.jpg" },
-    { id: "g-11", place: "Happy Adventurers", caption: "Memorable Group Journeys & Client Stories", category: "clients", tag: "Traveler Stories", image: "/photos/client_1.jpeg" },
-    { id: "g-12", place: "Safari Crew", caption: "Group Joining & Unforgettable Moments", category: "clients", tag: "Safari Crew", image: "/photos/client_2.jpeg" },
-    { id: "g-13", place: "Overland Truck Party", caption: "Road Trips & Celebrations across East Africa", category: "clients", tag: "Truck Party", image: "/photos/client_3.jpeg" }
+    { id: "g-01", place: "Maasai Mara, Kenya", caption: "Big Game & 4x4 Safari Expeditions", category: "safari", tag: "Safari Expedition", image: "/photos/jeep_safari.webp", featured: "wide" },
+    { id: "g-02", place: "Savannah Plains", caption: "King of the Jungle in Masai Mara", category: "safari", tag: "Wildlife", image: "/photos/lion.webp" },
+    { id: "g-03", place: "Mara River Crossing", caption: "The Great Wildebeest Migration", category: "safari", tag: "Great Migration", image: "/photos/wild_beest.webp" },
+    { id: "g-04", place: "Amboseli National Park", caption: "Elephants & Mt Kilimanjaro Views", category: "safari", tag: "Amboseli Elephants", image: "/photos/amboseli.webp" },
+    { id: "g-05", place: "Zanzibar Archipelago", caption: "Turquoise Waters & Coral Reefs", category: "beach", tag: "Island Escape", image: "/photos/zanzibar.webp", featured: "tall" },
+    { id: "g-06", place: "Malindi Coast", caption: "Golden Sunsets & Tropical Breezes", category: "beach", tag: "Coastal Haven", image: "/photos/malindi.webp" },
+    { id: "g-07", place: "Mombasa Island", caption: "Swahili Heritage & Marine Adventures", category: "beach", tag: "Beach Resort", image: "/photos/mombasa.webp" },
+    { id: "g-08", place: "Lamu Archipelago", caption: "Traditional Dhow Sailing & Old Town", category: "adventure", tag: "Cultural Heritage", image: "/photos/lamu.webp" },
+    { id: "g-09", place: "Kigali & Virunga", caption: "Land of 1,000 Hills & Gorilla Trekking", category: "adventure", tag: "Rwanda Escape", image: "/photos/rwanda.webp" },
+    { id: "g-10", place: "Cape Peninsula", caption: "Table Mountain & Atlantic Oceans", category: "adventure", tag: "Cape Town", image: "/photos/capetown.webp" },
+    { id: "g-11", place: "Happy Adventurers", caption: "Memorable Group Journeys & Client Stories", category: "clients", tag: "Traveler Stories", image: "/photos/client_1.webp" },
+    { id: "g-12", place: "Safari Crew", caption: "Group Joining & Unforgettable Moments", category: "clients", tag: "Safari Crew", image: "/photos/client_2.webp" },
+    { id: "g-13", place: "Overland Truck Party", caption: "Road Trips & Celebrations across East Africa", category: "clients", tag: "Truck Party", image: "/photos/client_3.webp" }
   ];
 }
 
@@ -185,11 +191,11 @@ function seedTours() {
 
 ensureDb();function seedDestinations() {
   return [
-    { id: "dest-mara", name: "Maasai Mara National Reserve", slug: "maasai-mara", image: "/photos/lion.jpg", description: "World-famous Great Migration & Big Five game drives." },
-    { id: "dest-zanzibar", name: "Zanzibar Tropical Island", slug: "zanzibar", image: "/photos/zanzibar.jpg", description: "White sand beaches, Stone Town culture & dhow cruises." },
-    { id: "dest-amboseli", name: "Amboseli National Park", slug: "amboseli", image: "/photos/amboseli.jpg", description: "Majestic elephant herds under snow-capped Mt Kilimanjaro." },
-    { id: "dest-serengeti", name: "Serengeti National Park", slug: "serengeti", image: "/photos/jeep_safari.jpg", description: "Endless savannah plains & legendary predator encounters." },
-    { id: "dest-rift", name: "Great Rift Valley & Lakes", slug: "rift-valley", image: "/photos/client_3.jpeg", description: "Geysers, flamingos & volcanic crater adventures." }
+    { id: "dest-mara", name: "Maasai Mara National Reserve", slug: "maasai-mara", image: "/photos/lion.webp", description: "World-famous Great Migration & Big Five game drives." },
+    { id: "dest-zanzibar", name: "Zanzibar Tropical Island", slug: "zanzibar", image: "/photos/zanzibar.webp", description: "White sand beaches, Stone Town culture & dhow cruises." },
+    { id: "dest-amboseli", name: "Amboseli National Park", slug: "amboseli", image: "/photos/amboseli.webp", description: "Majestic elephant herds under snow-capped Mt Kilimanjaro." },
+    { id: "dest-serengeti", name: "Serengeti National Park", slug: "serengeti", image: "/photos/jeep_safari.webp", description: "Endless savannah plains & legendary predator encounters." },
+    { id: "dest-rift", name: "Great Rift Valley & Lakes", slug: "rift-valley", image: "/photos/client_3.webp", description: "Geysers, flamingos & volcanic crater adventures." }
   ];
 }
 

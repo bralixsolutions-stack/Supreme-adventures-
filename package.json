@@ -8,7 +8,9 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@supabase/server": "^1.5.3",
     "@supabase/supabase-js": "^2.114.0",
+    "compression": "^1.8.1",
     "express": "^5.1.0",
     "multer": "^2.2.0",
     "pdfjs-dist": "^6.2.108"
