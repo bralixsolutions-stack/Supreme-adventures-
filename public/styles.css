@@ -3266,23 +3266,39 @@ nav a.active:not(.nav-cta)::after {
 }
 
 .author-avatar {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: linear-gradient(135deg, #0f172a, #334155);
   color: #ffffff;
   font-family: "Manrope", sans-serif;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.author-avatar i {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.review-card:hover .author-avatar {
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
 }
 
 .review-card.featured .author-avatar {
   background: linear-gradient(135deg, #ec1f23, #b91c1c);
+  box-shadow: 0 4px 14px rgba(236, 31, 35, 0.35);
+}
+
+.review-card.featured:hover .author-avatar {
+  box-shadow: 0 6px 20px rgba(236, 31, 35, 0.5);
 }
 
 .author-info h4 {
@@ -3793,6 +3809,23 @@ footer {
   color: #ffffff;
   margin: 0;
   letter-spacing: 0.3px;
+}
+
+.flaticon-attribution {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 12.5px;
+  transition: color 0.2s ease;
+}
+
+.flaticon-attribution:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.attribution-sep {
+  margin: 0 8px;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* Floating WhatsApp Button */
