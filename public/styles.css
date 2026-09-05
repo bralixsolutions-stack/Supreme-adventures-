@@ -639,6 +639,8 @@ nav a.active:not(.nav-cta)::after {
   justify-content: center;
   margin-bottom: 8px;
   position: relative;
+  min-height: 180px;
+  contain: layout;
 }
 
 .hero-script-tag {
@@ -658,6 +660,7 @@ nav a.active:not(.nav-cta)::after {
   line-height: 1;
   letter-spacing: 0.5px;
   user-select: none;
+  min-height: 1em;
   -webkit-text-stroke: 1.5px #000000;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
 }
@@ -674,6 +677,7 @@ nav a.active:not(.nav-cta)::after {
   position: relative;
   z-index: 1;
   display: inline-block;
+  min-height: 1em;
   -webkit-text-stroke: 4px #ffffff;
   paint-order: stroke fill;
   filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.6));
@@ -687,7 +691,7 @@ nav a.active:not(.nav-cta)::after {
   margin: 12px 0 14px 0;
   text-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
   letter-spacing: -0.3px;
-  min-height: 1.25em;
+  min-height: 1.3em;
 }
 
 /* Typewriter Cursor */
