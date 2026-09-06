@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "source": "/api/:path*",
+      "destination": "https://supreme-adventures.onrender.com/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://supreme-adventures.onrender.com/uploads/:path*"
     }
   ]
 }
