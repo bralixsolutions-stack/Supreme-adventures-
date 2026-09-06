@@ -1,6 +1,6 @@
 -- ==========================================================================
--- SUPREME ADVENTURES - SUPABASE POSTGRESQL DATABASE SCHEMA
--- Execute this SQL script in your Supabase SQL Editor (https://supabase.com)
+-- SUPREME ADVENTURES - POSTGRESQL / SUPABASE DATABASE SCHEMA
+-- Execute this SQL script in your Supabase / PostgreSQL SQL Editor
 -- ==========================================================================
 
 -- 1. Enable UUID Extension
@@ -38,7 +38,21 @@ create table if not exists public.destinations (
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
--- 4. Gallery Images Table
+-- 4. Upcoming Tours & Events Table
+create table if not exists public.upcoming (
+  id text primary key default ('up-' || extract(epoch from now())::bigint),
+  title text not null,
+  subtitle text,
+  location text,
+  date text,
+  price numeric default 0.00,
+  category text default 'Safari',
+  image text default '/packages/lake_Bogoria.webp',
+  description text,
+  created_at timestamp with time zone default timezone('utc'::text, now())
+);
+
+-- 5. Gallery Images Table
 create table if not exists public.gallery (
   id text primary key default ('gallery-' || extract(epoch from now())::bigint),
   place text not null,
@@ -50,58 +64,31 @@ create table if not exists public.gallery (
   created_at timestamp with time zone default timezone('utc'::text, now())
 );
 
--- 5. Bookings Enquiries Table
-create table if not exists public.bookings (
-  id text primary key default ('BK-' || extract(epoch from now())::bigint),
-  name text,
-  email text,
-  phone text,
-  tour_id text,
-  tour_title text,
-  travel_date text,
-  guests text,
-  notes text,
-  status text default 'Pending',
-  created_at timestamp with time zone default timezone('utc'::text, now())
-);
-
--- 6. Contact Form Enquiries Table
-create table if not exists public.enquiries (
-  id text primary key default ('ENQ-' || extract(epoch from now())::bigint),
-  name text,
-  email text,
-  phone text,
-  subject text,
-  message text,
-  source text default 'Inquire Now Form',
-  status text default 'New',
-  created_at timestamp with time zone default timezone('utc'::text, now())
-);
-
--- Indexing for Fast Query Speed
+-- ==========================================================================
+-- INDEXES FOR FAST QUERYING
+-- ==========================================================================
 create index if not exists idx_tours_destination on public.tours (destination);
 create index if not exists idx_tours_category on public.tours (category);
 create index if not exists idx_tours_featured on public.tours (featured);
+create index if not exists idx_upcoming_category on public.upcoming (category);
+create index if not exists idx_gallery_category on public.gallery (category);
 
--- Enable Row Level Security (RLS)
+-- ==========================================================================
+-- ROW LEVEL SECURITY (RLS)
+-- ==========================================================================
 alter table public.tours enable row level security;
 alter table public.destinations enable row level security;
+alter table public.upcoming enable row level security;
 alter table public.gallery enable row level security;
-alter table public.bookings enable row level security;
-alter table public.enquiries enable row level security;
 
--- Public Read Policies
+-- Public Read Policies (Allow anyone to view listings)
 create policy "Public read access for tours" on public.tours for select using (true);
 create policy "Public read access for destinations" on public.destinations for select using (true);
+create policy "Public read access for upcoming" on public.upcoming for select using (true);
 create policy "Public read access for gallery" on public.gallery for select using (true);
 
--- Public Insert Policies for Bookings & Enquiries
-create policy "Public insert access for bookings" on public.bookings for insert with check (true);
-create policy "Public insert access for enquiries" on public.enquiries for insert with check (true);
-
--- Service Role Full Access Policies
+-- Service Role Full Access Policies (Allow backend admin full CRUD)
 create policy "Service role full access on tours" on public.tours for all using (true);
 create policy "Service role full access on destinations" on public.destinations for all using (true);
+create policy "Service role full access on upcoming" on public.upcoming for all using (true);
 create policy "Service role full access on gallery" on public.gallery for all using (true);
-create policy "Service role full access on bookings" on public.bookings for all using (true);
-create policy "Service role full access on enquiries" on public.enquiries for all using (true);

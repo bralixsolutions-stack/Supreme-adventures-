@@ -1,10 +1,12 @@
 :root {
   --red: #EC1F23;
+  --green: #172c25;
+  --green-hover: #23453a;
   --black: #221F1F;
   --dark: #403D3D;
   --white: #FFFFFF;
   --muted: #767474;
-  --border: #403D3D;
+  --border: #e2e8f0;
   --cream: #f8f8f8;
 }
 
@@ -36,7 +38,7 @@ button, input, textarea, select {
 
 .login-card {
   background: #ffffff;
-  width: min(400px, 92%);
+  width: min(420px, 92%);
   padding: 40px;
   text-align: center;
   border-radius: 12px;
@@ -64,17 +66,37 @@ h1, h2, h3, h4, h5, h6 {
 .login-card p, .login-card small {
   color: var(--muted);
   font-size: 13px;
+  display: block;
 }
 
 .login-card input {
   width: 100%;
-  padding: 13px;
-  margin: 18px 0;
-  border: 1px solid var(--border);
+  padding: 13px 15px;
+  margin: 18px 0 12px;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
+  font-size: 14px;
 }
 
-.login-card button, .section-top button, .panel > button {
+.login-card button {
+  width: 100%;
+  background: var(--red);
+  color: #ffffff;
+  border: 0;
+  padding: 13px 20px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-bottom: 14px;
+  transition: opacity 0.2s;
+}
+
+.login-card button:hover {
+  opacity: 0.9;
+}
+
+.section-top button, .panel > button {
   background: var(--green);
   color: #ffffff;
   border: 0;

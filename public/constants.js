@@ -24,6 +24,26 @@ const HERO_PACKAGES = [
     category: "Beach & Culture",
     image: "/photos/zanzibar.webp" 
   },
+   {
+    id: "pkg-tsavo",
+    destination: "Tsavo",
+    title: "Into the wild ",
+    tagline: "Where untamed landscapes meet unforgattable encounters",
+    price: 390,
+    duration: "3 Days",
+    category: "Wildlife Safari",
+    image: "/photos/tsavo_1.jpg" 
+  },
+ {
+    id: "pkg-sagana",
+    destination: "Sagana",
+    title: "Where Adventure Begins ",
+    tagline: " Get outdoors. Get your adrenaline going",
+    price: 390,
+    duration: "3 Days",
+    category: "Wildlife Safari",
+    image: "/photos/sagana_1.avif" 
+  },
   {
     id: "pkg-mombasa",
     destination: "Mombasa",
@@ -33,37 +53,8 @@ const HERO_PACKAGES = [
     duration: "3 Days",
     category: "Coastal Beach",
     image: "/photos/mombasa.webp" 
-  },
-  {
-    id: "pkg-malindi",
-    destination: "Malindi",
-    title: "Malindi Marine Adventure",
-    tagline: "Vibrant coral reefs, golden sands & relaxing coastal ocean breezes.",
-    price: 480,
-    duration: "4 Days",
-    category: "Marine & Beach",
-    image: "/photos/malindi.webp"
-  },
-  {
-    id: "pkg-lamu",
-    destination: "Lamu",
-    title: "Lamu Island Cultural Escape",
-    tagline: "Traditional dhow sailing cruises, UNESCO World Heritage architecture & tranquil island life.",
-    price: 590,
-    duration: "4 Days",
-    category: "Island Culture",
-    image: "/photos/lamu.webp"
-  },
-  {
-    id: "pkg-amboseli",
-    destination: "Amboseli",
-    title: "Amboseli Elephant Kingdom",
-    tagline: "Majestic elephant herds roaming below the snow-capped peak of Mount Kilimanjaro.",
-    price: 390,
-    duration: "3 Days",
-    category: "Wildlife Safari",
-    image: "/photos/amboseli.webp"
   }
+  
 ];
 
 const DESTINATIONS = [
@@ -80,7 +71,9 @@ const DESTINATIONS = [
   "Burundi",
   "Tanzania",
   "Uganda",
-  "Diani"
+  "Diani",
+  "Tsavo",
+  "Sagana"
 ];
 
 const TRIP_TYPES = [

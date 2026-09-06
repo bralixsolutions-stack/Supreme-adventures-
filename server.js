@@ -44,6 +44,7 @@ function ensureDb() {
         tours: seedTours(),
         gallery: seedGallery(),
         destinations: seedDestinations(),
+        upcoming: seedUpcoming(),
         bookings: [],
         enquiries: []
       }, null, 2));
@@ -55,12 +56,16 @@ function ensureDb() {
 
 function readDb() {
   ensureDb();
-  let db = { tours: seedTours(), gallery: seedGallery(), destinations: seedDestinations(), bookings: [], enquiries: [] };
+  let db = { tours: seedTours(), gallery: seedGallery(), destinations: seedDestinations(), upcoming: seedUpcoming(), bookings: [], enquiries: [] };
   if (fs.existsSync(DB_FILE)) {
     try { db = JSON.parse(fs.readFileSync(DB_FILE, "utf8")); } catch (e) {}
   }
+  if (!Array.isArray(db.tours) || db.tours.length === 0) db.tours = seedTours();
   if (!Array.isArray(db.gallery) || db.gallery.length === 0) db.gallery = seedGallery();
   if (!Array.isArray(db.destinations) || db.destinations.length === 0) db.destinations = seedDestinations();
+  if (!Array.isArray(db.upcoming) || db.upcoming.length === 0) db.upcoming = seedUpcoming();
+  if (!Array.isArray(db.bookings)) db.bookings = [];
+  if (!Array.isArray(db.enquiries)) db.enquiries = [];
   return db;
 }
 
@@ -189,7 +194,7 @@ function seedTours() {
   ];
 }
 
-ensureDb();function seedDestinations() {
+function seedDestinations() {
   return [
     { id: "dest-mara", name: "Maasai Mara National Reserve", slug: "maasai-mara", image: "/photos/lion.webp", description: "World-famous Great Migration & Big Five game drives." },
     { id: "dest-zanzibar", name: "Zanzibar Tropical Island", slug: "zanzibar", image: "/photos/zanzibar.webp", description: "White sand beaches, Stone Town culture & dhow cruises." },
@@ -199,35 +204,64 @@ ensureDb();function seedDestinations() {
   ];
 }
 
-function ensureDb() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(DB_FILE)) {
-    fs.writeFileSync(DB_FILE, JSON.stringify({
-      tours: seedTours(),
-      gallery: seedGallery(),
-      destinations: seedDestinations(),
-      bookings: [],
-      enquiries: []
-    }, null, 2));
-  }
-}
-
-function readDb() {
-  ensureDb();
-  const db = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-  if (!Array.isArray(db.gallery) || db.gallery.length === 0) {
-    db.gallery = seedGallery();
-    writeDb(db);
-  }
-  if (!Array.isArray(db.destinations) || db.destinations.length === 0) {
-    db.destinations = seedDestinations();
-    writeDb(db);
-  }
-  return db;
-}
-
-function writeDb(db) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+function seedUpcoming() {
+  return [
+    {
+      id: "up-fally",
+      title: "Lakes Baringo & Bogoria",
+      subtitle: "Overland Truck party adventure",
+      location: "Lake Baringo & Bogoria",
+      date: "From 05th Sep, 2026",
+      price: 350,
+      category: "Overland Truck Party",
+      image: "/packages/lake_Bogoria.webp",
+      description: "Discover the stunning landscapes of Lake Baringo and Lake Bogoria on this adventure-filled tour."
+    },
+    {
+      id: "up-strathmore",
+      title: "Rwanda Cultural Safari",
+      subtitle: "Get a chance to visit the diverse Rwandan culture",
+      location: "Rwanda",
+      date: "From 05th Sep, 2026",
+      price: 150,
+      category: "Culture",
+      image: "/packages/rwanda.webp",
+      description: "Participate in the Strathmore University Foundation Annual Run followed by a guided Great Rift Valley Naivasha excursion."
+    },
+    {
+      id: "up-mara",
+      title: "WILDEBEEST MIGRATION",
+      subtitle: "Prime season river crossing & Big Five wildlife viewing",
+      location: "Maasai Mara",
+      date: "From 1st July to 1st October 2026",
+      price: 520,
+      category: "Wildlife Safari",
+      image: "/packages/wildbeest.webp",
+      description: "Witness millions of wildebeest braving the Mara River on this exclusive luxury safari expedition."
+    },
+    {
+      id: "up-cape",
+      title: "CAPE TOWN STAYCATION",
+      subtitle: "Full day Peninsular Tour",
+      location: "Cape Town",
+      date: "From 12th to 14th December, 2026",
+      price: 520,
+      category: "Safari",
+      image: "/packages/capetown.webp",
+      description: "Explore the stunning beauty of Cape Town with our full-day peninsular tour. Experience the iconic Table Mountain, Cape Point, and the charming coastal towns along the way."
+    },
+    {
+      id: "up-zanzibar",
+      title: "ZANZIBAR CULTURAL & OCEAN BEACH GETAWAY",
+      subtitle: "Tropical white sand beaches, Stone Town & Dhow sailing",
+      location: "Zanzibar",
+      date: "From 14th to 18th October 2026",
+      price: 650,
+      category: "Beach & Culture",
+      image: "/packages/zanzibar.webp",
+      description: "Relax on Zanzibar's turquoise coast with sunset dhow cruises and authentic Swahili spice tours."
+    }
+  ];
 }
 
 app.get("/api/tours", (req, res) => {
@@ -291,6 +325,7 @@ app.get("/api/tours/:slug", (req, res) => {
 });
 
 app.get("/api/gallery", (req, res) => res.json(readDb().gallery));
+app.get("/api/upcoming", (req, res) => res.json(readDb().upcoming));
 
 app.post("/api/bookings", (req, res) => {
   const db = readDb();
@@ -318,29 +353,105 @@ app.post("/api/enquiries", (req, res) => {
   res.status(201).json({ message: "Message received", enquiry });
 });
 
+function getAdminKey() {
+  const db = readDb();
+  return db.adminKey || process.env.ADMIN_KEY || "admin123";
+}
+
 function adminAuth(req, res, next) {
   const key = req.headers["x-admin-key"];
-  if (key !== (process.env.ADMIN_KEY || "admin123")) {
+  const currentKey = getAdminKey();
+  if (!key || key !== currentKey) {
     return res.status(401).json({ error: "Unauthorized" });
   }
   next();
 }
 
+app.post("/api/admin/change-password", adminAuth, (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const currentKey = getAdminKey();
+
+  if (!currentPassword || currentPassword !== currentKey) {
+    return res.status(400).json({ error: "Current password is incorrect" });
+  }
+
+  if (!newPassword || newPassword.trim().length < 4) {
+    return res.status(400).json({ error: "New password must be at least 4 characters long" });
+  }
+
+  const db = readDb();
+  db.adminKey = newPassword.trim();
+  writeDb(db);
+
+  res.json({ message: "Password updated successfully" });
+});
+
 app.get("/api/admin/stats", adminAuth, (req, res) => {
   const db = readDb();
   res.json({
-    tours: db.tours.length,
-    destinations: db.destinations.length,
-    bookings: db.bookings.length,
-    enquiries: db.enquiries.length,
-    featured: db.tours.filter(t => t.featured).length
+    tours: (db.tours || []).length,
+    destinations: (db.destinations || []).length,
+    upcoming: (db.upcoming || []).length,
+    gallery: (db.gallery || []).length,
+    featured: (db.tours || []).filter(t => t.featured).length
   });
 });
 
-app.get("/api/admin/bookings", adminAuth, (req, res) => res.json(readDb().bookings));
-app.get("/api/admin/enquiries", adminAuth, (req, res) => res.json(readDb().enquiries));
 app.get("/api/admin/gallery", adminAuth, (req, res) => res.json(readDb().gallery));
 app.get("/api/admin/destinations", adminAuth, (req, res) => res.json(readDb().destinations));
+app.get("/api/admin/upcoming", adminAuth, (req, res) => res.json(readDb().upcoming));
+
+app.post("/api/admin/upcoming", adminAuth, upload.single("image"), (req, res) => {
+  const db = readDb();
+  const item = {
+    id: "up-" + Date.now(),
+    title: req.body.title || "",
+    subtitle: req.body.subtitle || "",
+    location: req.body.location || "",
+    date: req.body.date || "",
+    price: Number(req.body.price) || 0,
+    category: req.body.category || "Safari",
+    image: req.file ? "/uploads/" + req.file.filename : (req.body.imageUrl || req.body.image || "/packages/lake_Bogoria.webp"),
+    description: req.body.description || ""
+  };
+  if (!item.title) return res.status(400).json({ error: "Title is required" });
+  db.upcoming.push(item);
+  writeDb(db);
+  res.status(201).json(item);
+});
+
+app.put("/api/admin/upcoming/:id", adminAuth, upload.single("image"), (req, res) => {
+  const db = readDb();
+  const item = db.upcoming.find(u => u.id === req.params.id);
+  if (!item) return res.status(404).json({ error: "Upcoming tour/event not found" });
+
+  item.title = req.body.title !== undefined ? req.body.title : item.title;
+  item.subtitle = req.body.subtitle !== undefined ? req.body.subtitle : item.subtitle;
+  item.location = req.body.location !== undefined ? req.body.location : item.location;
+  item.date = req.body.date !== undefined ? req.body.date : item.date;
+  if (req.body.price !== undefined) item.price = Number(req.body.price) || 0;
+  item.category = req.body.category !== undefined ? req.body.category : item.category;
+  if (req.file) item.image = "/uploads/" + req.file.filename;
+  else if (req.body.imageUrl || req.body.image) item.image = req.body.imageUrl || req.body.image;
+  item.description = req.body.description !== undefined ? req.body.description : item.description;
+
+  writeDb(db);
+  res.json(item);
+});
+
+app.delete("/api/admin/upcoming/:id", adminAuth, (req, res) => {
+  const db = readDb();
+  const item = db.upcoming.find(u => u.id === req.params.id);
+  if (item?.image?.startsWith("/uploads/")) {
+    const file = path.join(__dirname, "public", item.image.slice("/uploads/".length));
+    if (file.startsWith(UPLOADS_DIR + path.sep) && fs.existsSync(file)) {
+      try { fs.unlinkSync(file); } catch (e) {}
+    }
+  }
+  db.upcoming = db.upcoming.filter(u => u.id !== req.params.id);
+  writeDb(db);
+  res.json({ message: "Upcoming tour/event deleted" });
+});
 
 app.post("/api/admin/destinations", adminAuth, upload.single("image"), (req, res) => {
   const db = readDb();

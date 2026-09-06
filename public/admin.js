@@ -1,6 +1,7 @@
 let KEY = sessionStorage.getItem("adminKey") || "";
 let editingId = null;
 let editingDestId = null;
+let editingUpcomingId = null;
 
 async function api(url, options={}) {
   options.headers = {...options.headers, "x-admin-key": KEY};
@@ -11,7 +12,8 @@ async function api(url, options={}) {
 }
 
 async function login(){
-  KEY = document.getElementById("adminKey").value;
+  KEY = document.getElementById("adminKey").value.trim();
+  if(!KEY){ alert("Please enter the admin key"); return; }
   try { 
     await api("/api/admin/stats"); 
     sessionStorage.setItem("adminKey", KEY); 
@@ -25,25 +27,27 @@ function logout(){sessionStorage.removeItem("adminKey");location.reload()}
 
 function showSection(id){
   document.querySelectorAll(".section").forEach(s=>s.classList.add("hidden"));
+  document.querySelectorAll("aside nav a").forEach(a => a.classList.remove("active"));
   const target = document.getElementById(id);
   if (target) target.classList.remove("hidden");
-  document.getElementById("title").textContent = id[0].toUpperCase() + id.slice(1);
+  const navLink = Array.from(document.querySelectorAll("aside nav a")).find(a => a.getAttribute("onclick")?.includes(id));
+  if (navLink) navLink.classList.add("active");
+  document.getElementById("title").textContent = id === "upcoming" ? "Upcoming Tours & Events" : id[0].toUpperCase() + id.slice(1);
   if(id==="dashboard") loadDashboard(); 
   if(id==="tours") loadTours(); 
   if(id==="destinations") loadDestinations();
+  if(id==="upcoming") loadUpcoming();
   if(id==="gallery") loadGallery(); 
-  if(id==="bookings") loadBookings(); 
-  if(id==="enquiries") loadEnquiries();
 }
 
 async function loadDashboard(){
   const s = await api("/api/admin/stats");
   document.getElementById("stats").innerHTML = [
-    ["Tours", s.tours],
+    ["Tours", s.tours || 0],
     ["Destinations", s.destinations || 0],
-    ["Featured", s.featured],
-    ["Bookings", s.bookings],
-    ["Enquiries", s.enquiries]
+    ["Upcoming Tours", s.upcoming || 0],
+    ["Gallery Photos", s.gallery || 0],
+    ["Featured Packages", s.featured || 0]
   ].map(x => `<div class="stat"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join("");
 }
 
@@ -102,24 +106,6 @@ async function loadGallery(){
           </div>
         </article>`).join("")}
     </div>` : "<p style='padding:20px;'>No gallery images yet.</p>";
-}
-
-async function loadBookings(){
-  const b = await api("/api/admin/bookings");
-  document.getElementById("bookingTable").innerHTML = b.length ? `
-    <table class="table">
-      <tr><th>Name</th><th>Tour</th><th>Date</th><th>Guests</th><th>Status</th></tr>
-      ${b.map(x => `<tr><td>${esc(x.name)}</td><td>${esc(x.tourTitle)}</td><td>${esc(x.travelDate)}</td><td>${x.guests||""}</td><td>${x.status}</td></tr>`).join("")}
-    </table>` : "<p style='padding:20px;'>No bookings yet.</p>";
-}
-
-async function loadEnquiries(){
-  const b = await api("/api/admin/enquiries");
-  document.getElementById("enquiryTable").innerHTML = b.length ? `
-    <table class="table">
-      <tr><th>Name</th><th>Email</th><th>Message</th><th>Status</th></tr>
-      ${b.map(x => `<tr><td>${esc(x.name)}</td><td>${esc(x.email)}</td><td>${esc(x.message)}</td><td>${x.status}</td></tr>`).join("")}
-    </table>` : "<p style='padding:20px;'>No enquiries yet.</p>";
 }
 
 function openTourForm(t=null){
@@ -264,6 +250,100 @@ async function deleteDestination(id){
   }
 }
 
+async function loadUpcoming(){
+  const upcoming = await fetch("/api/upcoming").then(r => r.json());
+  document.getElementById("upcomingTable").innerHTML = upcoming.length ? `
+    <table class="table">
+      <tr><th>Cover</th><th>Title / Event</th><th>Location</th><th>Date</th><th>Category</th><th>Price</th><th>Actions</th></tr>
+      ${upcoming.map(u => `
+        <tr>
+          <td><img src="${esc(u.image)}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
+          <td><b>${esc(u.title)}</b><br><small style="color:var(--muted)">${esc(u.subtitle || "")}</small></td>
+          <td>${esc(u.location || "-")}</td>
+          <td><small>${esc(u.date || "-")}</small></td>
+          <td><span style="font-size:12px;background:#eee;padding:2px 6px;border-radius:4px;">${esc(u.category || "Safari")}</span></td>
+          <td><b>$${u.price || 0}</b></td>
+          <td>
+            <button class="action" onclick='editUpcoming(${JSON.stringify(u).replace(/'/g, "&#39;")})'>Edit</button>
+            <button class="action danger" onclick="deleteUpcoming('${u.id}')">Delete</button>
+          </td>
+        </tr>`).join("")}
+    </table>` : "<p style='padding:20px;'>No upcoming tours or events added yet.</p>";
+}
+
+function openUpcomingForm(u=null){
+  editingUpcomingId = u?.id || "";
+  document.getElementById("upcomingForm").classList.remove("hidden");
+  document.getElementById("upcomingFormTitle").textContent = u ? "Edit Upcoming Tour / Event" : "Add Upcoming Tour / Event";
+  document.getElementById("upId").value = editingUpcomingId;
+  document.getElementById("uTitle").value = u?.title || "";
+  document.getElementById("uSubtitle").value = u?.subtitle || "";
+  document.getElementById("uLocation").value = u?.location || "";
+  document.getElementById("uDate").value = u?.date || "";
+  document.getElementById("uPrice").value = u?.price !== undefined ? u.price : 350;
+  document.getElementById("uCategory").value = u?.category || "Safari";
+  document.getElementById("uImageFile").value = "";
+  document.getElementById("uImageUrl").value = u?.image || "";
+  document.getElementById("uDescription").value = u?.description || "";
+  previewUpcomingImage();
+}
+
+function editUpcoming(u){ openUpcomingForm(u); }
+function closeUpcomingForm(){ document.getElementById("upcomingForm").classList.add("hidden"); }
+
+function previewUpcomingImage(){
+  const file = document.getElementById("uImageFile").files[0];
+  const url = g("uImageUrl").trim();
+  const preview = document.getElementById("upcomingPreview");
+  const img = document.getElementById("upcomingPreviewImage");
+
+  if (file) {
+    img.src = URL.createObjectURL(file);
+    preview.classList.remove("hidden");
+  } else if (url) {
+    img.src = url;
+    preview.classList.remove("hidden");
+  } else {
+    img.removeAttribute("src");
+    preview.classList.add("hidden");
+  }
+}
+
+async function saveUpcoming(e){
+  e.preventDefault();
+  const file = document.getElementById("uImageFile").files[0];
+  const url = g("uImageUrl").trim();
+  const id = document.getElementById("upId").value;
+
+  const formData = new FormData();
+  formData.append("title", g("uTitle"));
+  formData.append("subtitle", g("uSubtitle"));
+  formData.append("location", g("uLocation"));
+  formData.append("date", g("uDate"));
+  formData.append("price", g("uPrice"));
+  formData.append("category", g("uCategory"));
+  formData.append("description", g("uDescription"));
+  if (file) formData.append("image", file);
+  if (url) formData.append("imageUrl", url);
+
+  await api(id ? "/api/admin/upcoming/" + id : "/api/admin/upcoming", {
+    method: id ? "PUT" : "POST",
+    body: formData
+  });
+
+  closeUpcomingForm();
+  loadUpcoming();
+  loadDashboard();
+}
+
+async function deleteUpcoming(id){
+  if(confirm("Delete this upcoming tour/event?")){
+    await api("/api/admin/upcoming/" + id, { method: "DELETE" });
+    loadUpcoming();
+    loadDashboard();
+  }
+}
+
 function openGalleryForm(){
   document.getElementById("galleryForm").classList.remove("hidden");
   document.getElementById("gPlace").value = "";
@@ -315,6 +395,58 @@ function previewGalleryImage(){
   if(file){ image.src = URL.createObjectURL(file); preview.classList.remove("hidden"); }
   else if(url){ image.src = url; preview.classList.remove("hidden"); }
   else{ image.removeAttribute("src"); preview.classList.add("hidden"); }
+}
+
+function openChangePasswordModal(){
+  document.getElementById("changePasswordModal").classList.remove("hidden");
+  document.getElementById("cpCurrent").value = "";
+  document.getElementById("cpNew").value = "";
+  document.getElementById("cpConfirm").value = "";
+  const err = document.getElementById("cpError");
+  if (err) { err.textContent = ""; err.classList.add("hidden"); }
+}
+
+function closeChangePasswordModal(){
+  document.getElementById("changePasswordModal").classList.add("hidden");
+}
+
+async function changePassword(e){
+  e.preventDefault();
+  const current = document.getElementById("cpCurrent").value;
+  const newPass = document.getElementById("cpNew").value;
+  const confirmPass = document.getElementById("cpConfirm").value;
+  const errEl = document.getElementById("cpError");
+
+  if(newPass !== confirmPass){
+    errEl.textContent = "New passwords do not match.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  if(newPass.length < 4){
+    errEl.textContent = "Password must be at least 4 characters long.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  try {
+    const res = await api("/api/admin/change-password", {
+      method: "POST",
+      body: JSON.stringify({ currentPassword: current, newPassword: newPass })
+    });
+    if(res.error){
+      errEl.textContent = res.error;
+      errEl.classList.remove("hidden");
+      return;
+    }
+    KEY = newPass;
+    sessionStorage.setItem("adminKey", KEY);
+    alert("Password updated successfully! Please keep your new password safe.");
+    closeChangePasswordModal();
+  } catch(err){
+    errEl.textContent = err.message || "Failed to update password.";
+    errEl.classList.remove("hidden");
+  }
 }
 
 function g(id){ return document.getElementById(id) ? document.getElementById(id).value : ""; }

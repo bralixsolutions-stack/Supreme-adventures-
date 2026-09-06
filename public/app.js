@@ -740,16 +740,32 @@ function initUpcomingCarousel() {
   }, 3500);
 }
 
-function renderUpcomingTours() {
-  const grid = $("upcomingGrid");
-  if (!grid || typeof UPCOMING_TOURS === "undefined") return;
+let upcomingToursData = typeof UPCOMING_TOURS !== "undefined" ? UPCOMING_TOURS : [];
 
-  grid.innerHTML = UPCOMING_TOURS.map((t, index) => `
+async function renderUpcomingTours() {
+  const grid = $("upcomingGrid");
+  if (!grid) return;
+
+  try {
+    const res = await fetch("/api/upcoming");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        upcomingToursData = data;
+      }
+    }
+  } catch (e) {
+    console.warn("Using local upcoming data", e);
+  }
+
+  if (!upcomingToursData || upcomingToursData.length === 0) return;
+
+  grid.innerHTML = upcomingToursData.map((t, index) => `
     <div class="upcoming-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}" onclick="openUpcomingTour('${t.id}')">
       <div class="upcoming-image-box">
         <img src="${t.image}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
         <div class="upcoming-location-badge">
-          <i class="fa-solid fa-location-dot"></i> <span>${escapeHtml(t.location)}</span>
+          <i class="fa-solid fa-location-dot"></i> <span>${escapeHtml(t.location || t.title)}</span>
         </div>
       </div>
     </div>
@@ -759,7 +775,7 @@ function renderUpcomingTours() {
 }
 
 function openUpcomingTour(id) {
-  const pkg = UPCOMING_TOURS.find(item => item.id === id);
+  const pkg = upcomingToursData.find(item => item.id === id);
   if (!pkg) return;
 
   $("modalContent").innerHTML = `
@@ -769,16 +785,16 @@ function openUpcomingTour(id) {
     </div>
     <div class="modal-body compact-modal-body text-center">
       <div class="modal-header-compact">
-        <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(pkg.location.toUpperCase())} · <i class="fa-solid fa-calendar-days"></i> ${escapeHtml(pkg.date)}</p>
+        <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((pkg.location || "").toUpperCase())} · <i class="fa-solid fa-calendar-days"></i> ${escapeHtml(pkg.date || "")}</p>
         <h2 style="margin: 6px 0 10px; font-size: 24px; text-transform: uppercase;">${escapeHtml(pkg.title)}</h2>
         <div class="tour-meta compact-meta" style="justify-content: center; gap: 16px; margin-bottom: 12px;">
-          <span>Category: <b>${escapeHtml(pkg.category)}</b></span>
-          <span>Starting at: <b>$${Number(pkg.price).toLocaleString()}</b> / person</span>
+          <span>Category: <b>${escapeHtml(pkg.category || "Safari")}</b></span>
+          <span>Starting at: <b>$${Number(pkg.price || 0).toLocaleString()}</b> / person</span>
         </div>
       </div>
-      <p class="modal-desc" style="margin: 10px 0 20px; font-size: 14.5px; color: #403D3D;">${escapeHtml(pkg.description || pkg.subtitle)}</p>
+      <p class="modal-desc" style="margin: 10px 0 20px; font-size: 14.5px; color: #403D3D;">${escapeHtml(pkg.description || pkg.subtitle || "")}</p>
       
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${escapeHtml(pkg.title).replace(/'/g, "\\'")}', '${escapeHtml(pkg.location).replace(/'/g, "\\'")}', '${escapeHtml(pkg.date)}', '${pkg.price}')">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${escapeHtml(pkg.title).replace(/'/g, "\\'")}', '${escapeHtml(pkg.location || "").replace(/'/g, "\\'")}', '${escapeHtml(pkg.date || "")}', '${pkg.price || 0}')">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
@@ -912,21 +928,42 @@ function updateDomePositions() {
   const dots = document.querySelectorAll('#domePagination .dot');
   const total = cards.length;
 
-  if (!cards.length) return;
+  if (!total) return;
 
   cards.forEach((card) => {
     const idx = parseInt(card.getAttribute('data-index'), 10);
-    let offset = idx - currentDomeCenter;
 
-    // Wrap offset around for infinite 5-card loop (-2, -1, 0, 1, 2)
-    if (offset < -2) offset += total;
-    if (offset > 2) offset -= total;
+    // Shortest circular signed distance from currentDomeCenter to idx
+    let diff = (idx - currentDomeCenter) % total;
+    if (diff > total / 2) diff -= total;
+    if (diff < -total / 2) diff += total;
 
-    let posIndex = offset + 2;
-    if (posIndex < 0) posIndex = -1;
-    if (posIndex > 4) posIndex = 5;
+    // Map diff to posIndex:
+    // diff = 0 -> pos 2 (Apex)
+    // diff = -1 -> pos 1, diff = -2 -> pos 0, diff < -2 -> pos -1 (offscreen left)
+    // diff = 1 -> pos 3, diff = 2 -> pos 4, diff > 2 -> pos 5 (offscreen right)
+    let posIndex;
+    if (diff === 0) posIndex = 2;
+    else if (diff === -1) posIndex = 1;
+    else if (diff === -2) posIndex = 0;
+    else if (diff < -2) posIndex = -1;
+    else if (diff === 1) posIndex = 3;
+    else if (diff === 2) posIndex = 4;
+    else posIndex = 5;
 
-    card.setAttribute('data-pos', posIndex);
+    const prevPos = parseInt(card.getAttribute('data-pos'), 10);
+
+    // If flipping between off-screen boundaries (-1 <-> 5), silence CSS transition so card does not fly across screen
+    if ((prevPos === -1 && posIndex === 5) || (prevPos === 5 && posIndex === -1)) {
+      card.classList.add('no-transition');
+      card.setAttribute('data-pos', posIndex);
+      void card.offsetWidth; // force synchronous reflow
+      requestAnimationFrame(() => {
+        card.classList.remove('no-transition');
+      });
+    } else {
+      card.setAttribute('data-pos', posIndex);
+    }
   });
 
   dots.forEach((dot, idx) => {
@@ -935,14 +972,17 @@ function updateDomePositions() {
 }
 
 function rotateDome(direction) {
-  const total = 5;
+  const cards = document.querySelectorAll('#destinationsDome .destination-card');
+  const total = cards.length || 10;
   currentDomeCenter = (currentDomeCenter + direction + total) % total;
   updateDomePositions();
   resetDomeTimer();
 }
 
 function setDomeApex(index) {
-  currentDomeCenter = index;
+  const cards = document.querySelectorAll('#destinationsDome .destination-card');
+  const total = cards.length || 10;
+  currentDomeCenter = ((index % total) + total) % total;
   updateDomePositions();
   resetDomeTimer();
 }
@@ -957,9 +997,7 @@ function handleDomeCardClick(index, destName) {
 
 function startDomeAutoPlay() {
   stopDomeAutoPlay();
-  domeAutoPlayTimer = setInterval(() => {
-    rotateDome(1);
-  }, 2000);
+  domeAutoPlayTimer = setInterval(() => { rotateDome(1); }, 3000);
 }
 
 function stopDomeAutoPlay() {
