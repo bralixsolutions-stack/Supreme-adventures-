@@ -37,3 +37,9 @@ public/uploads/*
 .cache/
 dist/
 build/
+
+# Database Files & SQL
+*.sql
+*.sqlite
+*.sqlite3
+*.db

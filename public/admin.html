@@ -9,9 +9,9 @@
 <link rel="shortcut icon" href="/supreme-official-logo.png" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="/admin.css">
-<style>.admin-gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding:12px 24px}.admin-gallery-card{overflow:hidden;border:1px solid var(--border);border-radius:12px;background:#fff}.admin-gallery-card>img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.admin-gallery-card>div{padding:14px}.admin-gallery-card p{min-height:32px;margin:8px 0;color:var(--muted);font-size:13px}.gallery-preview{margin:12px 0;position:relative;overflow:hidden;border-radius:12px;background:#ddd}.gallery-preview img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}.gallery-preview span{position:absolute;bottom:10px;left:12px;color:#fff;font-size:12px;font-weight:700}</style>
 </head>
 <body>
 <div class="login" id="login">
@@ -23,34 +23,315 @@
       <input id="adminKey" type="password" placeholder="Admin key" autofocus autocomplete="current-password">
       <button type="submit">Sign in</button>
     </form>
-    <small>Default development key: admin123</small>
   </div>
 </div>
+
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div class="sidebar-backdrop hidden" id="sidebarBackdrop" onclick="toggleAdminSidebar(false)"></div>
+
 <div class="app hidden" id="app">
-<aside>
-  <div class="admin-brand"><img src="/supreme-official-logo.png" alt="Supreme Logo" style="height:42px;width:auto;filter:brightness(0) invert(1);"></div>
+<aside id="adminSidebar">
+  <div class="sidebar-header">
+    <div class="admin-brand"><img src="/supreme-official-logo.png" alt="Supreme Logo" style="height:38px;width:auto;filter:brightness(0) invert(1);"></div>
+    <button type="button" class="sidebar-close-btn" onclick="toggleAdminSidebar(false)" aria-label="Close navigation">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
   <nav>
-<a class="active" onclick="showSection('dashboard')">Dashboard</a><a onclick="showSection('tours')">Tours</a><a onclick="showSection('destinations')">Destinations</a><a onclick="showSection('upcoming')">Upcoming Tours</a><a onclick="showSection('gallery')">Gallery</a><a href="/">View website</a>
-</nav></aside>
-<main><header><h2 id="title">Dashboard</h2><div style="display:flex;gap:8px;"><button onclick="openChangePasswordModal()" style="background:#334155;font-size:13px;padding:9px 14px;">Change password</button><button onclick="logout()">Logout</button></div></header>
-<section id="dashboard" class="section"><div class="stats" id="stats"></div><div class="panel"><h3>Quick actions</h3><button onclick="showSection('tours');openTourForm()">+ Add tour</button><button onclick="showSection('destinations');openDestForm()" style="margin-left: 10px;">+ Add destination</button><button onclick="showSection('upcoming');openUpcomingForm()" style="margin-left: 10px;">+ Add upcoming</button><button onclick="showSection('gallery');openGalleryForm()" style="margin-left: 10px;">+ Add photo to gallery</button><button onclick="openChangePasswordModal()" style="margin-left: 10px; background: #334155;">Change password</button></div></section>
-<section id="tours" class="section hidden"><div class="section-top"><div><h2>Tours / Packages</h2><p>Manage public tour listings & photos.</p></div><button onclick="openTourForm()">+ Add tour</button></div><div id="tourTable" class="panel"></div></section>
-<section id="destinations" class="section hidden"><div class="section-top"><div><h2>Destinations</h2><p>Manage destination cards & cover photos.</p></div><button onclick="openDestForm()">+ Add destination</button></div><div id="destTable" class="panel"></div></section>
-<section id="upcoming" class="section hidden"><div class="section-top"><div><h2>Upcoming Tours & Events</h2><p>Manage upcoming safari expeditions, runs, and events.</p></div><button onclick="openUpcomingForm()">+ Add upcoming event</button></div><div id="upcomingTable" class="panel"></div></section>
-<section id="gallery" class="section hidden"><div class="section-top"><div><h2>Gallery</h2><p>Add images from places you have visited.</p></div><button onclick="openGalleryForm()">+ Add image</button></div><div id="galleryTable" class="panel"></div></section>
-</main></div>
+    <a class="active" onclick="showSection('dashboard')"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+    <a onclick="showSection('tours')"><i class="fa-solid fa-map-location-dot"></i><span>Tours & Packages</span></a>
+    <a onclick="showSection('destinations')"><i class="fa-solid fa-mountain-sun"></i><span>Destinations</span></a>
+    <a onclick="showSection('upcoming')"><i class="fa-solid fa-calendar-check"></i><span>Upcoming Tours</span></a>
+    <a onclick="showSection('gallery')"><i class="fa-solid fa-images"></i><span>Photo Gallery</span></a>
+    
+    <div class="nav-divider"></div>
+    <a onclick="openChangePasswordModal()"><i class="fa-solid fa-key"></i><span>Change Password</span></a>
+    <a href="/" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>View Website</span></a>
+    <a onclick="logout()" class="nav-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+  </nav>
+</aside>
 
-<div class="modal hidden" id="tourForm"><div class="form-card"><button class="x" onclick="closeTourForm()">×</button><h2 id="formTitle">Add Tour</h2>
-<form onsubmit="saveTour(event)"><input type="hidden" id="tourId"><label>Title<input id="fTitle" required></label><label>Slug<input id="fSlug" placeholder="4-days-masai-mara"></label><label>Destination<input id="fDestination" value="Kenya"></label><label>Location<input id="fLocation" placeholder="Masai Mara & Nakuru"></label><label>Category<select id="fCategory"><option>Safari</option><option>Beach</option><option>Adventure</option><option>Wildlife</option><option>Culture</option></select></label><label>Duration (days)<input id="fDuration" type="number" value="3"></label><label>Price (USD)<input id="fPrice" type="number" value="500" required></label><label>Upload Cover Photo<input id="fImageFile" type="file" accept="image/*" onchange="previewTourImage()"></label><label>Or Image URL<input id="fImage" placeholder="https://..." oninput="previewTourImage()"></label><div id="tourPreview" class="gallery-preview hidden"><img id="tourPreviewImage" alt="Tour preview"><span>Tour cover preview</span></div><label>Short description<textarea id="fShort"></textarea></label><label>Full description<textarea id="fDescription"></textarea></label><label><input id="fFeatured" type="checkbox"> Featured on Homepage</label><button class="save">Save tour</button></form></div></div>
+<main>
+  <header>
+    <div class="header-left">
+      <button type="button" class="mobile-toggle-btn" id="mobileToggleBtn" onclick="toggleAdminSidebar(true)" aria-label="Open Navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <h2 id="title">Dashboard</h2>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="header-btn" onclick="openChangePasswordModal()" title="Change Password"><i class="fa-solid fa-key"></i><span class="btn-text">Password</span></button>
+      <button type="button" class="header-btn danger-hover" onclick="logout()" title="Logout"><i class="fa-solid fa-right-from-bracket"></i><span class="btn-text">Logout</span></button>
+    </div>
+  </header>
 
-<div class="modal hidden" id="destForm"><div class="form-card"><button class="x" onclick="closeDestForm()">×</button><h2 id="destFormTitle">Add Destination</h2>
-<form onsubmit="saveDestination(event)"><input type="hidden" id="destId"><label>Destination Name<input id="dName" placeholder="Maasai Mara" required></label><label>Slug<input id="dSlug" placeholder="maasai-mara"></label><label>Upload Cover Photo<input id="dImageFile" type="file" accept="image/*" onchange="previewDestImage()"></label><label>Or Cover Image URL<input id="dImageUrl" placeholder="https://..." oninput="previewDestImage()"></label><div id="destPreview" class="gallery-preview hidden"><img id="destPreviewImage" alt="Destination preview"><span>Destination preview</span></div><label>Description<textarea id="dDescription" placeholder="Short highlights about this destination"></textarea></label><button class="save">Save destination</button></form></div></div>
+  <div class="breadcrumbs-container">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <span class="breadcrumb-item" onclick="showSection('dashboard')"><i class="fa-solid fa-house"></i> Admin</span>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-item active" id="currentBreadcrumb">Dashboard</span>
+    </div>
+  </div>
 
-<div class="modal hidden" id="upcomingForm"><div class="form-card"><button class="x" onclick="closeUpcomingForm()">×</button><h2 id="upcomingFormTitle">Add Upcoming Tour / Event</h2>
-<form onsubmit="saveUpcoming(event)"><input type="hidden" id="upId"><label>Title / Event Name<input id="uTitle" placeholder="Lakes Baringo & Bogoria" required></label><label>Subtitle / Hook<input id="uSubtitle" placeholder="Overland Truck party adventure"></label><label>Location<input id="uLocation" placeholder="Lake Baringo & Bogoria"></label><label>Date / Timeframe<input id="uDate" placeholder="From 05th Sep, 2026"></label><label>Price (USD)<input id="uPrice" type="number" value="350"></label><label>Category<input id="uCategory" placeholder="Overland Truck Party"></label><label>Upload Event Photo<input id="uImageFile" type="file" accept="image/*" onchange="previewUpcomingImage()"></label><label>Or Photo URL<input id="uImageUrl" placeholder="https://..." oninput="previewUpcomingImage()"></label><div id="upcomingPreview" class="gallery-preview hidden"><img id="upcomingPreviewImage" alt="Upcoming preview"><span>Upcoming tour cover preview</span></div><label>Description<textarea id="uDescription" placeholder="Short highlights about this upcoming tour or event"></textarea></label><button class="save">Save upcoming event</button></form></div></div>
+  <section id="dashboard" class="section">
+    <div class="stats" id="stats"></div>
+    <div class="panel" style="margin-top:24px;">
+      <h3>Quick Actions</h3>
+      <div class="quick-actions-grid">
+        <button onclick="showSection('tours');openTourForm()"><i class="fa-solid fa-plus"></i> Add Tour</button>
+        <button onclick="showSection('destinations');openDestForm()"><i class="fa-solid fa-plus"></i> Add Destination</button>
+        <button onclick="showSection('upcoming');openUpcomingForm()"><i class="fa-solid fa-plus"></i> Add Upcoming Tour</button>
+        <button onclick="showSection('gallery');openGalleryForm()"><i class="fa-solid fa-plus"></i> Add Gallery Image</button>
+        <button onclick="openChangePasswordModal()"><i class="fa-solid fa-key"></i> Change Password</button>
+      </div>
+    </div>
+  </section>
 
-<div class="modal hidden" id="galleryForm"><div class="form-card"><button class="x" onclick="closeGalleryForm()">×</button><h2>Add Gallery Image</h2><form onsubmit="saveGalleryImage(event)"><label>Place or title<input id="gPlace" placeholder="Masai Mara" required></label><label>Upload Image file<input id="gImage" type="file" accept="image/*" onchange="previewGalleryImage()"></label><label>Or image URL<input id="gImageUrl" type="url" placeholder="https://images.example/photo.jpg" oninput="previewGalleryImage()"></label><div id="galleryPreview" class="gallery-preview hidden"><img id="galleryPreviewImage" alt="Gallery preview"><span>Public gallery preview</span></div><label>Caption<textarea id="gCaption" placeholder="A short description (optional)"></textarea></label><button class="save">Save image</button></form></div></div>
+  <section id="tours" class="section hidden">
+    <div class="section-top">
+      <div><h2>Tours / Packages</h2><p>Manage public tour listings & photos (Max 5MB per upload).</p></div>
+      <button onclick="openTourForm()"><i class="fa-solid fa-plus"></i> Add tour</button>
+    </div>
+    <div id="tourTable" class="panel"></div>
+  </section>
 
-<div class="modal hidden" id="changePasswordModal"><div class="form-card"><button class="x" onclick="closeChangePasswordModal()">×</button><h2>Change Admin Password</h2><p style="color:var(--muted);font-size:13px;margin:-6px 0 16px;">Update your admin portal key / password.</p><form onsubmit="changePassword(event)"><label>Current Password<input id="cpCurrent" type="password" placeholder="Enter current password" required autocomplete="current-password"></label><label>New Password<input id="cpNew" type="password" placeholder="Enter new password (min 4 chars)" minlength="4" required autocomplete="new-password"></label><label>Confirm New Password<input id="cpConfirm" type="password" placeholder="Re-enter new password" minlength="4" required autocomplete="new-password"></label><div id="cpError" style="color:#ef4444;font-size:13px;margin:8px 0;" class="hidden"></div><button class="save" type="submit">Update password</button></form></div></div>
+  <section id="destinations" class="section hidden">
+    <div class="section-top">
+      <div><h2>Destinations</h2><p>Manage destination cards & cover photos (Max 5MB per upload).</p></div>
+      <button onclick="openDestForm()"><i class="fa-solid fa-plus"></i> Add destination</button>
+    </div>
+    <div id="destTable" class="panel"></div>
+  </section>
+
+  <section id="upcoming" class="section hidden">
+    <div class="section-top">
+      <div><h2>Upcoming Tours & Events</h2><p>Manage upcoming safari expeditions, runs, and events (Max 5MB per upload).</p></div>
+      <button onclick="openUpcomingForm()"><i class="fa-solid fa-plus"></i> Add upcoming event</button>
+    </div>
+    <div id="upcomingTable" class="panel"></div>
+  </section>
+
+  <section id="gallery" class="section hidden">
+    <div class="section-top">
+      <div><h2>Gallery</h2><p>Add images from places you have visited (Max 5MB per upload).</p></div>
+      <button onclick="openGalleryForm()"><i class="fa-solid fa-plus"></i> Add image</button>
+    </div>
+    <div id="galleryTable" class="panel"></div>
+  </section>
+</main>
+</div>
+
+<!-- Tour Form Modal -->
+<div class="modal hidden" id="tourForm">
+  <div class="form-card">
+    <button class="x" onclick="closeTourForm()">×</button>
+    <h2 id="formTitle">Add Tour</h2>
+    <form onsubmit="saveTour(event)">
+      <input type="hidden" id="tourId">
+      <label>Title<input id="fTitle" required></label>
+      <label>Slug<input id="fSlug" placeholder="4-days-masai-mara"></label>
+      <div class="form-row-2">
+        <label>Destination<input id="fDestination" value="Kenya"></label>
+        <label>Location<input id="fLocation" placeholder="Masai Mara & Nakuru"></label>
+      </div>
+      <div class="form-row-2">
+        <label>Category<select id="fCategory"><option>Safari</option><option>Beach</option><option>Adventure</option><option>Wildlife</option><option>Culture</option></select></label>
+        <label>Duration (days)<input id="fDuration" type="number" value="3"></label>
+      </div>
+      <label>Price (KES)<input id="fPrice" type="number" value="65000" required></label>
+      
+      <!-- Styled File Upload -->
+      <div class="form-group">
+        <span class="custom-file-label">Upload Cover Photo <small>(Max 5MB)</small></span>
+        <div class="custom-file-dropzone" id="fImageDropzone" onclick="document.getElementById('fImageFile').click()">
+          <input id="fImageFile" type="file" accept="image/*" class="file-hidden-input" onchange="handleFileInputChange('fImageFile', 'fImageFileName', previewTourImage)">
+          <div class="file-dropzone-inner" id="fImageFileInner">
+            <i class="fa-solid fa-cloud-arrow-up file-icon"></i>
+            <div class="file-text">
+              <span class="file-title">Choose image file</span>
+              <span class="file-sub">JPG, PNG, WEBP up to 5MB</span>
+            </div>
+          </div>
+          <div id="fImageFileName" class="file-selected-pill hidden">
+            <i class="fa-solid fa-image"></i>
+            <span class="pill-text"></span>
+            <button type="button" class="pill-remove" onclick="event.stopPropagation(); clearFileInput('fImageFile', 'fImageFileName', previewTourImage);">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <label>Or Image URL<input id="fImage" placeholder="https://..." oninput="previewTourImage()"></label>
+      <div id="tourPreview" class="gallery-preview hidden"><img id="tourPreviewImage" alt="Tour preview"><span>Tour cover preview</span></div>
+      <label>Short description<textarea id="fShort"></textarea></label>
+      <label>Full description<textarea id="fDescription"></textarea></label>
+      <label class="checkbox-label"><input id="fFeatured" type="checkbox"> Featured on Homepage</label>
+      <button class="save" type="submit">Save tour</button>
+    </form>
+  </div>
+</div>
+
+<!-- Destination Form Modal -->
+<div class="modal hidden" id="destForm">
+  <div class="form-card">
+    <button class="x" onclick="closeDestForm()">×</button>
+    <h2 id="destFormTitle">Add Destination</h2>
+    <form onsubmit="saveDestination(event)">
+      <input type="hidden" id="destId">
+      <label>Destination Name<input id="dName" placeholder="Maasai Mara" required></label>
+      <label>Slug<input id="dSlug" placeholder="maasai-mara"></label>
+      
+      <!-- Styled File Upload -->
+      <div class="form-group">
+        <span class="custom-file-label">Upload Cover Photo <small>(Max 5MB)</small></span>
+        <div class="custom-file-dropzone" id="dImageDropzone" onclick="document.getElementById('dImageFile').click()">
+          <input id="dImageFile" type="file" accept="image/*" class="file-hidden-input" onchange="handleFileInputChange('dImageFile', 'dImageFileName', previewDestImage)">
+          <div class="file-dropzone-inner" id="dImageFileInner">
+            <i class="fa-solid fa-cloud-arrow-up file-icon"></i>
+            <div class="file-text">
+              <span class="file-title">Choose image file</span>
+              <span class="file-sub">JPG, PNG, WEBP up to 5MB</span>
+            </div>
+          </div>
+          <div id="dImageFileName" class="file-selected-pill hidden">
+            <i class="fa-solid fa-image"></i>
+            <span class="pill-text"></span>
+            <button type="button" class="pill-remove" onclick="event.stopPropagation(); clearFileInput('dImageFile', 'dImageFileName', previewDestImage);">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <label>Or Cover Image URL<input id="dImageUrl" placeholder="https://..." oninput="previewDestImage()"></label>
+      <div id="destPreview" class="gallery-preview hidden"><img id="destPreviewImage" alt="Destination preview"><span>Destination preview</span></div>
+      <label>Description<textarea id="dDescription" placeholder="Short highlights about this destination"></textarea></label>
+      <button class="save" type="submit">Save destination</button>
+    </form>
+  </div>
+</div>
+
+<!-- Upcoming Form Modal -->
+<div class="modal hidden" id="upcomingForm">
+  <div class="form-card">
+    <button class="x" onclick="closeUpcomingForm()">×</button>
+    <h2 id="upcomingFormTitle">Add Upcoming Tour / Event</h2>
+    <form onsubmit="saveUpcoming(event)">
+      <input type="hidden" id="upId">
+      <label>Title / Event Name<input id="uTitle" placeholder="Lakes Baringo & Bogoria" required></label>
+      <label>Subtitle / Hook<input id="uSubtitle" placeholder="Overland Truck party adventure"></label>
+      <div class="form-row-2">
+        <label>Location<input id="uLocation" placeholder="Lake Baringo & Bogoria"></label>
+        <label>Date / Timeframe<input id="uDate" placeholder="From 05th Sep, 2026"></label>
+      </div>
+      <div class="form-row-2">
+        <label>Price (KES)<input id="uPrice" type="number" value="45000"></label>
+        <label>Category<input id="uCategory" placeholder="Overland Truck Party"></label>
+      </div>
+      
+      <!-- Styled File Upload -->
+      <div class="form-group">
+        <span class="custom-file-label">Upload Event Photo <small>(Max 5MB)</small></span>
+        <div class="custom-file-dropzone" id="uImageDropzone" onclick="document.getElementById('uImageFile').click()">
+          <input id="uImageFile" type="file" accept="image/*" class="file-hidden-input" onchange="handleFileInputChange('uImageFile', 'uImageFileName', previewUpcomingImage)">
+          <div class="file-dropzone-inner" id="uImageFileInner">
+            <i class="fa-solid fa-cloud-arrow-up file-icon"></i>
+            <div class="file-text">
+              <span class="file-title">Choose image file</span>
+              <span class="file-sub">JPG, PNG, WEBP up to 5MB</span>
+            </div>
+          </div>
+          <div id="uImageFileName" class="file-selected-pill hidden">
+            <i class="fa-solid fa-image"></i>
+            <span class="pill-text"></span>
+            <button type="button" class="pill-remove" onclick="event.stopPropagation(); clearFileInput('uImageFile', 'uImageFileName', previewUpcomingImage);">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <label>Or Photo URL<input id="uImageUrl" placeholder="https://..." oninput="previewUpcomingImage()"></label>
+      <div id="upcomingPreview" class="gallery-preview hidden"><img id="upcomingPreviewImage" alt="Upcoming preview"><span>Upcoming tour cover preview</span></div>
+      <label>Description<textarea id="uDescription" placeholder="Short highlights about this upcoming tour or event"></textarea></label>
+      <button class="save" type="submit">Save upcoming event</button>
+    </form>
+  </div>
+</div>
+
+<!-- Gallery Form Modal -->
+<div class="modal hidden" id="galleryForm">
+  <div class="form-card">
+    <button class="x" onclick="closeGalleryForm()">×</button>
+    <h2>Add Gallery Image</h2>
+    <form onsubmit="saveGalleryImage(event)">
+      <label>Place or title<input id="gPlace" placeholder="Masai Mara" required></label>
+      
+      <!-- Styled File Upload -->
+      <div class="form-group">
+        <span class="custom-file-label">Upload Image File <small>(Max 5MB)</small></span>
+        <div class="custom-file-dropzone" id="gImageDropzone" onclick="document.getElementById('gImage').click()">
+          <input id="gImage" type="file" accept="image/*" class="file-hidden-input" onchange="handleFileInputChange('gImage', 'gImageFileName', previewGalleryImage)">
+          <div class="file-dropzone-inner" id="gImageFileInner">
+            <i class="fa-solid fa-cloud-arrow-up file-icon"></i>
+            <div class="file-text">
+              <span class="file-title">Choose image file</span>
+              <span class="file-sub">JPG, PNG, WEBP up to 5MB</span>
+            </div>
+          </div>
+          <div id="gImageFileName" class="file-selected-pill hidden">
+            <i class="fa-solid fa-image"></i>
+            <span class="pill-text"></span>
+            <button type="button" class="pill-remove" onclick="event.stopPropagation(); clearFileInput('gImage', 'gImageFileName', previewGalleryImage);">&times;</button>
+          </div>
+        </div>
+      </div>
+
+      <label>Or Image URL<input id="gImageUrl" type="url" placeholder="https://images.example/photo.jpg" oninput="previewGalleryImage()"></label>
+      <div id="galleryPreview" class="gallery-preview hidden"><img id="galleryPreviewImage" alt="Gallery preview"><span>Public gallery preview</span></div>
+      <label>Caption<textarea id="gCaption" placeholder="A short description (optional)"></textarea></label>
+      <button class="save" type="submit">Save image</button>
+    </form>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal hidden" id="changePasswordModal">
+  <div class="form-card">
+    <button class="x" onclick="closeChangePasswordModal()">×</button>
+    <h2>Change Admin Password</h2>
+    <p style="color:var(--muted);font-size:13px;margin:-6px 0 16px;">Update your admin portal key / password.</p>
+    <form onsubmit="changePassword(event)">
+      <label>Current Password<input id="cpCurrent" type="password" placeholder="Enter current password" required autocomplete="current-password"></label>
+      <label>New Password<input id="cpNew" type="password" placeholder="Enter new password (min 6 chars)" minlength="6" required autocomplete="new-password"></label>
+      <label>Confirm New Password<input id="cpConfirm" type="password" placeholder="Re-enter new password" minlength="6" required autocomplete="new-password"></label>
+      <div id="cpError" style="color:#ef4444;font-size:13px;margin:8px 0;" class="hidden"></div>
+      <button class="save" type="submit">Update password</button>
+    </form>
+  </div>
+</div>
+
+<!-- Feedback Result Modal (Success / Error) -->
+<div class="modal hidden" id="feedbackModal">
+  <div class="form-card feedback-card">
+    <div id="feedbackIcon" class="feedback-icon success"><i id="feedbackIconI" class="fa-solid fa-circle-check"></i></div>
+    <h2 id="feedbackTitle">Success</h2>
+    <p id="feedbackMessage">Operation completed successfully.</p>
+    <button class="save feedback-btn" onclick="closeFeedbackModal()">OK</button>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal hidden" id="confirmModal">
+  <div class="form-card feedback-card">
+    <div id="confirmIcon" class="feedback-icon warning"><i id="confirmIconI" class="fa-solid fa-triangle-exclamation"></i></div>
+    <h2 id="confirmTitle">Confirm Action</h2>
+    <p id="confirmMessage">Are you sure you want to proceed?</p>
+    <div style="display:flex;gap:12px;margin-top:16px;justify-content:center;">
+      <button class="action" onclick="closeConfirmModal()" style="padding:10px 20px;min-width:90px;">Cancel</button>
+      <button id="confirmActionBtn" class="action danger" style="padding:10px 20px;min-width:110px;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notifications Container -->
+<div id="toastContainer" class="toast-container"></div>
+
 <script src="/admin.js"></script>
-</body></html>
+</body>
+</html>

@@ -9,7 +9,7 @@ const HERO_PACKAGES = [
     destination: "Maasai Mara",
     title: "Maasai Mara Wildlife Safari",
     tagline: "Witness the Great Wildebeest Migration & the Big Five in Kenya's legendary game reserve.",
-    price: 520,
+    price: 68000,
     duration: "4 Days",
     category: "Safari",
     image: "/photos/wild_beest.webp"
@@ -19,7 +19,7 @@ const HERO_PACKAGES = [
     destination: "Zanzibar",
     title: "Zanzibar Tropical Beach Paradise",
     tagline: "Pristine white sand beaches, turquoise Indian Ocean waters & historic Stone Town charm.",
-    price: 650,
+    price: 85000,
     duration: "5 Days",
     category: "Beach & Culture",
     image: "/photos/zanzibar.webp" 
@@ -29,7 +29,7 @@ const HERO_PACKAGES = [
     destination: "Tsavo",
     title: "Into the wild ",
     tagline: "Where untamed landscapes meet unforgattable encounters",
-    price: 390,
+    price: 48000,
     duration: "3 Days",
     category: "Wildlife Safari",
     image: "/photos/tsavo_1.jpg" 
@@ -39,7 +39,7 @@ const HERO_PACKAGES = [
     destination: "Sagana",
     title: "Where Adventure Begins ",
     tagline: " Get outdoors. Get your adrenaline going",
-    price: 390,
+    price: 48000,
     duration: "3 Days",
     category: "Wildlife Safari",
     image: "/photos/sagana_1.avif" 
@@ -49,7 +49,7 @@ const HERO_PACKAGES = [
     destination: "Mombasa",
     title: "Coastal Getaway",
     tagline: "Sun-drenched palm beaches, ancient Fort Jesus & rich authentic Swahili hospitality.",
-    price: 450,
+    price: 55000,
     duration: "3 Days",
     category: "Coastal Beach",
     image: "/photos/mombasa.webp" 
@@ -92,7 +92,7 @@ const UPCOMING_TOURS = [
     subtitle: "Overland Truck party adventure",
     location: "Lake Baringo & Bogoria",
     date: "From 05th Sep, 2026",
-    price: 350,
+    price: 45000,
     category: "Overland Truck Party", 
     image: "/packages/lake_Bogoria.webp", 
     description: "Discover the stunning landscapes of Lake Baringo and Lake Bogoria on this adventure-filled tour."
@@ -103,7 +103,7 @@ const UPCOMING_TOURS = [
     subtitle: "Get a chance to visit the diverse Rwandan culture",
     location: "Rwanda",
     date: "From 05th Sep, 2026",
-    price: 150,
+    price: 25000,
     category: "Culture",
     image: "/packages/rwanda.webp", 
     description: "Participate in the Strathmore University Foundation Annual Run followed by a guided Great Rift Valley Naivasha excursion."
@@ -114,7 +114,7 @@ const UPCOMING_TOURS = [
     subtitle: "Prime season river crossing & Big Five wildlife viewing",
     location: "Maasai Mara",
     date: "From 1st July to 1st October 2026",
-    price: 520,
+    price: 68000,
     category: "Wildlife Safari",
     image: "/packages/wildbeest.webp",
     description: "Witness millions of wildebeest braving the Mara River on this exclusive luxury safari expedition."
@@ -125,7 +125,7 @@ const UPCOMING_TOURS = [
     subtitle: "Full day Peninsular Tour",
     location: "Cape Town",
     date: "From 12th to 14th December, 2026",
-    price: 520,
+    price: 68000,
     category: "Safari",
     image: "/packages/capetown.webp",
     description: "Explore the stunning beauty of Cape Town with our full-day peninsular tour. Experience the iconic Table Mountain, Cape Point, and the charming coastal towns along the way."
@@ -136,7 +136,7 @@ const UPCOMING_TOURS = [
     subtitle: "Tropical white sand beaches, Stone Town & Dhow sailing",
     location: "Zanzibar",
     date: "From 14th to 18th October 2026",
-    price: 650,
+    price: 85000,
     category: "Beach & Culture",
     image: "/packages/zanzibar.webp", 
     description: "Relax on Zanzibar's turquoise coast with sunset dhow cruises and authentic Swahili spice tours."

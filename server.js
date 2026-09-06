@@ -2,6 +2,8 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const crypto = require("crypto");
+const compression = require("compression");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,25 +16,103 @@ const UPLOADS_DIR = IS_VERCEL ? path.join("/tmp", "uploads") : path.join(__dirna
 try { fs.mkdirSync(UPLOADS_DIR, { recursive: true }); } catch (e) {}
 try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
 
+// ==========================================================================
+// FILE UPLOAD VALIDATION & SECURITY CONFIGURATION (MAX 5MB)
+// ==========================================================================
+const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".svg"]);
+const ALLOWED_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif",
+  "image/svg+xml"
+]);
+
+// Magic byte signature checking for genuine images
+function isValidImageBuffer(buffer, originalname = "") {
+  if (!buffer || buffer.length < 4) return false;
+
+  // JPEG (FF D8 FF)
+  if (buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF) return true;
+
+  // PNG (89 50 4E 47)
+  if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47) return true;
+
+  // GIF (47 49 46 38)
+  if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38) return true;
+
+  // WEBP (52 49 46 46 .... 57 45 42 50)
+  if (buffer.length >= 12 &&
+      buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46 &&
+      buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50) {
+    return true;
+  }
+
+  // AVIF (ftypavif at offset 4..11)
+  if (buffer.length >= 12) {
+    const ftyp = buffer.toString("utf8", 4, 12);
+    if (ftyp.includes("avif") || ftyp.includes("mif1")) return true;
+  }
+
+  // SVG (XML / SVG text header)
+  const head = buffer.toString("utf8", 0, Math.min(buffer.length, 256)).toLowerCase().trim();
+  if (head.startsWith("<svg") || (head.startsWith("<?xml") && head.includes("<svg"))) return true;
+
+  return false;
+}
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOADS_DIR),
-    filename: (req, file, cb) => cb(null, `gallery-${Date.now()}${path.extname(file.originalname).toLowerCase()}`)
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      const safeExt = ALLOWED_EXTENSIONS.has(ext) ? ext : ".jpg";
+      const randomSuffix = crypto.randomBytes(8).toString("hex");
+      cb(null, `img-${Date.now()}-${randomSuffix}${safeExt}`);
+    }
   }),
-  fileFilter: (req, file, cb) => cb(null, file.mimetype.startsWith("image/")),
-  limits: { fileSize: 8 * 1024 * 1024 }
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const mime = (file.mimetype || "").toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(ext) || !ALLOWED_MIME_TYPES.has(mime)) {
+      return cb(new Error("Invalid file format. Only genuine image files (JPEG, PNG, WEBP, GIF, AVIF, SVG) are allowed."), false);
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-const compression = require("compression");
+function validateUploadedFile(file) {
+  if (!file) return true;
+  try {
+    const buffer = fs.readFileSync(file.path);
+    if (!isValidImageBuffer(buffer, file.originalname)) {
+      try { fs.unlinkSync(file.path); } catch (e) {}
+      return false;
+    }
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
+// ==========================================================================
+// SECURITY HEADERS & COMPRESSION MIDDLEWARE
+// ==========================================================================
 app.use(compression());
 app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-admin-key");
   if (req.method === "OPTIONS") return res.sendStatus(200);
   next();
 });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public"), {
@@ -40,6 +120,9 @@ app.use(express.static(path.join(__dirname, "public"), {
   etag: true
 }));
 
+// ==========================================================================
+// DATABASE UTILITIES & SEEDING
+// ==========================================================================
 function ensureDb() {
   try { if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
   if (!fs.existsSync(DB_FILE)) {
@@ -76,6 +159,10 @@ function readDb() {
   return db;
 }
 
+function writeDb(db) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
 function seedGallery() {
   return [
     { id: "g-01", place: "Maasai Mara, Kenya", caption: "Big Game & 4x4 Safari Expeditions", category: "safari", tag: "Safari Expedition", image: "/photos/jeep_safari.webp", featured: "wide" },
@@ -94,10 +181,6 @@ function seedGallery() {
   ];
 }
 
-function writeDb(db) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
-}
-
 function seedTours() {
   return [
     {
@@ -108,7 +191,7 @@ function seedTours() {
       location: "Masai Mara & Lake Nakuru",
       category: "Safari",
       duration: 4,
-      price: 520,
+      price: 68000,
       groupSize: 7,
       rating: 4.9,
       featured: true,
@@ -132,7 +215,7 @@ function seedTours() {
       location: "Amboseli",
       category: "Safari",
       duration: 3,
-      price: 390,
+      price: 48000,
       groupSize: 7,
       rating: 4.8,
       featured: true,
@@ -155,7 +238,7 @@ function seedTours() {
       location: "Nairobi, Nakuru & Masai Mara",
       category: "Adventure",
       duration: 5,
-      price: 680,
+      price: 85000,
       groupSize: 8,
       rating: 4.9,
       featured: true,
@@ -180,7 +263,7 @@ function seedTours() {
       location: "Arusha, Tarangire & Ngorongoro",
       category: "Wildlife",
       duration: 6,
-      price: 980,
+      price: 125000,
       groupSize: 7,
       rating: 5.0,
       featured: false,
@@ -219,7 +302,7 @@ function seedUpcoming() {
       subtitle: "Overland Truck party adventure",
       location: "Lake Baringo & Bogoria",
       date: "From 05th Sep, 2026",
-      price: 350,
+      price: 45000,
       category: "Overland Truck Party",
       image: "/packages/lake_Bogoria.webp",
       description: "Discover the stunning landscapes of Lake Baringo and Lake Bogoria on this adventure-filled tour."
@@ -230,7 +313,7 @@ function seedUpcoming() {
       subtitle: "Get a chance to visit the diverse Rwandan culture",
       location: "Rwanda",
       date: "From 05th Sep, 2026",
-      price: 150,
+      price: 25000,
       category: "Culture",
       image: "/packages/rwanda.webp",
       description: "Participate in the Strathmore University Foundation Annual Run followed by a guided Great Rift Valley Naivasha excursion."
@@ -241,7 +324,7 @@ function seedUpcoming() {
       subtitle: "Prime season river crossing & Big Five wildlife viewing",
       location: "Maasai Mara",
       date: "From 1st July to 1st October 2026",
-      price: 520,
+      price: 68000,
       category: "Wildlife Safari",
       image: "/packages/wildbeest.webp",
       description: "Witness millions of wildebeest braving the Mara River on this exclusive luxury safari expedition."
@@ -252,7 +335,7 @@ function seedUpcoming() {
       subtitle: "Full day Peninsular Tour",
       location: "Cape Town",
       date: "From 12th to 14th December, 2026",
-      price: 520,
+      price: 68000,
       category: "Safari",
       image: "/packages/capetown.webp",
       description: "Explore the stunning beauty of Cape Town with our full-day peninsular tour. Experience the iconic Table Mountain, Cape Point, and the charming coastal towns along the way."
@@ -263,7 +346,7 @@ function seedUpcoming() {
       subtitle: "Tropical white sand beaches, Stone Town & Dhow sailing",
       location: "Zanzibar",
       date: "From 14th to 18th October 2026",
-      price: 650,
+      price: 85000,
       category: "Beach & Culture",
       image: "/packages/zanzibar.webp",
       description: "Relax on Zanzibar's turquoise coast with sunset dhow cruises and authentic Swahili spice tours."
@@ -271,35 +354,35 @@ function seedUpcoming() {
   ];
 }
 
+// ==========================================================================
+// PUBLIC API ENDPOINTS
+// ==========================================================================
 app.get("/api/tours", (req, res) => {
-  const db = readDb();
-  let tours = db.tours;
-  const { destination, category, duration, maxPrice, search, featured } = req.query;
+  const { destination, category, duration, maxPrice, featured, search } = req.query;
+  let tours = readDb().tours;
 
   if (destination && destination !== "All destinations") {
     const d = destination.toLowerCase().trim();
-    tours = tours.filter(t => 
-      (t.destination && t.destination.toLowerCase().includes(d)) || 
-      (t.location && t.location.toLowerCase().includes(d)) || 
-      (t.title && t.title.toLowerCase().includes(d)) ||
-      (d.includes("mara") && (t.location.toLowerCase().includes("mara") || t.title.toLowerCase().includes("mara"))) ||
-      (d.includes("amboseli") && (t.location.toLowerCase().includes("amboseli") || t.title.toLowerCase().includes("amboseli"))) ||
-      (d.includes("zanzibar") && (t.location.toLowerCase().includes("zanzibar") || t.title.toLowerCase().includes("zanzibar"))) ||
-      (d.includes("mombasa") && (t.location.toLowerCase().includes("mombasa") || t.title.toLowerCase().includes("mombasa"))) ||
-      (d.includes("malindi") && (t.location.toLowerCase().includes("malindi") || t.title.toLowerCase().includes("malindi"))) ||
-      (d.includes("lamu") && (t.location.toLowerCase().includes("lamu") || t.title.toLowerCase().includes("lamu")))
-    );
+    tours = tours.filter(t => {
+      const dest = (t.destination || "").toLowerCase();
+      const loc = (t.location || "").toLowerCase();
+      const title = (t.title || "").toLowerCase();
+      return dest.includes(d) || loc.includes(d) || title.includes(d) || d.includes(dest) || d.includes(loc);
+    });
   }
 
   if (category && category !== "All types") {
     const c = category.toLowerCase().trim();
     tours = tours.filter(t => {
-      if (!t.category) return false;
-      const cat = t.category.toLowerCase();
-      return cat.includes(c) || c.includes(cat) ||
-        (c.includes("safari") && cat.includes("safari")) ||
-        (c.includes("beach") && (cat.includes("beach") || cat.includes("coastal") || cat.includes("marine"))) ||
-        (c.includes("culture") && (cat.includes("culture") || cat.includes("island"))) ||
+      const cat = (t.category || "").toLowerCase();
+      const title = (t.title || "").toLowerCase();
+      const desc = (t.shortDescription || t.description || "").toLowerCase();
+      return cat.includes(c) || c.includes(cat) || title.includes(c) || desc.includes(c) ||
+        (c.includes("safari") && (cat.includes("safari") || cat.includes("wildlife"))) ||
+        (c.includes("beach") && (cat.includes("beach") || cat.includes("coastal") || cat.includes("marine") || cat.includes("island"))) ||
+        (c.includes("culture") && (cat.includes("culture") || cat.includes("island") || cat.includes("heritage"))) ||
+        (c.includes("adventure") && (cat.includes("adventure") || cat.includes("overland") || cat.includes("safari"))) ||
+        (c.includes("overland") && (cat.includes("overland") || cat.includes("truck") || cat.includes("adventure"))) ||
         (c.includes("wildlife") && (cat.includes("wildlife") || cat.includes("safari")));
     });
   }
@@ -307,15 +390,18 @@ app.get("/api/tours", (req, res) => {
   if (duration && duration !== "Any duration") {
     const durNum = Number(duration);
     if (!isNaN(durNum)) {
-      tours = tours.filter(t => Number(t.duration) === durNum || (durNum === 5 && Number(t.duration) >= 5));
+      tours = tours.filter(t => {
+        const d = Number(t.duration) || 0;
+        return durNum >= 5 ? d >= 5 : d === durNum;
+      });
     }
   }
 
   if (maxPrice) tours = tours.filter(t => Number(t.price) <= Number(maxPrice));
   if (featured === "true") tours = tours.filter(t => t.featured);
   if (search) {
-    const q = search.toLowerCase();
-    tours = tours.filter(t => `${t.title} ${t.location} ${t.destination} ${t.category} ${t.shortDescription}`.toLowerCase().includes(q));
+    const q = search.toLowerCase().trim();
+    tours = tours.filter(t => `${t.title} ${t.location} ${t.destination} ${t.category} ${t.shortDescription} ${t.description}`.toLowerCase().includes(q));
   }
 
   res.json(tours);
@@ -360,37 +446,109 @@ app.post("/api/enquiries", (req, res) => {
   res.status(201).json({ message: "Message received", enquiry });
 });
 
-function getAdminKey() {
+// ==========================================================================
+// SECURE ADMIN AUTHENTICATION & PASSWORD HASHING (SCRYPT + TIMING SAFE)
+// ==========================================================================
+const failedLoginAttempts = new Map();
+
+function checkLoginRateLimit(ip) {
+  const now = Date.now();
+  const record = failedLoginAttempts.get(ip);
+  if (!record) return true;
+  if (record.count >= 5 && now - record.lastAttempt < 15 * 60 * 1000) {
+    return false;
+  }
+  if (now - record.lastAttempt >= 15 * 60 * 1000) {
+    failedLoginAttempts.delete(ip);
+    return true;
+  }
+  return true;
+}
+
+function recordFailedLogin(ip) {
+  const now = Date.now();
+  const record = failedLoginAttempts.get(ip) || { count: 0, lastAttempt: now };
+  record.count += 1;
+  record.lastAttempt = now;
+  failedLoginAttempts.set(ip, record);
+}
+
+function resetFailedLogin(ip) {
+  failedLoginAttempts.delete(ip);
+}
+
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = crypto.scryptSync(password, salt, 64);
+  return `${salt}:${derivedKey.toString("hex")}`;
+}
+
+function verifyPassword(password, storedHashOrPlain) {
+  if (!password || !storedHashOrPlain) return false;
+  
+  if (typeof storedHashOrPlain === "string" && storedHashOrPlain.includes(":")) {
+    const parts = storedHashOrPlain.split(":");
+    if (parts.length === 2) {
+      const [salt, key] = parts;
+      try {
+        const derivedKey = crypto.scryptSync(password, salt, 64);
+        const keyBuffer = Buffer.from(key, "hex");
+        if (derivedKey.length === keyBuffer.length && crypto.timingSafeEqual(derivedKey, keyBuffer)) {
+          return true;
+        }
+      } catch (e) {}
+    }
+  }
+  
+  // Fallback check for plain string (with constant-time safe comparison)
+  const a = Buffer.from(String(password));
+  const b = Buffer.from(String(storedHashOrPlain));
+  if (a.length === b.length && crypto.timingSafeEqual(a, b)) {
+    return true;
+  }
+  return false;
+}
+
+function getStoredAdminKey() {
   const db = readDb();
   return db.adminKey || process.env.ADMIN_KEY || "admin123";
 }
 
 function adminAuth(req, res, next) {
-  const key = req.headers["x-admin-key"];
-  const currentKey = getAdminKey();
-  if (!key || key !== currentKey) {
-    return res.status(401).json({ error: "Unauthorized" });
+  const clientIp = req.ip || req.connection.remoteAddress || "unknown";
+  if (!checkLoginRateLimit(clientIp)) {
+    return res.status(429).json({ error: "Too many failed sign-in attempts. Please try again in 15 minutes." });
   }
+
+  const key = req.headers["x-admin-key"];
+  const storedKey = getStoredAdminKey();
+
+  if (!key || !verifyPassword(key, storedKey)) {
+    recordFailedLogin(clientIp);
+    return res.status(401).json({ error: "Unauthorized access: Invalid admin key." });
+  }
+
+  resetFailedLogin(clientIp);
   next();
 }
 
 app.post("/api/admin/change-password", adminAuth, (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const currentKey = getAdminKey();
+  const storedKey = getStoredAdminKey();
 
-  if (!currentPassword || currentPassword !== currentKey) {
-    return res.status(400).json({ error: "Current password is incorrect" });
+  if (!currentPassword || !verifyPassword(currentPassword, storedKey)) {
+    return res.status(400).json({ error: "Current password is incorrect." });
   }
 
-  if (!newPassword || newPassword.trim().length < 4) {
-    return res.status(400).json({ error: "New password must be at least 4 characters long" });
+  if (!newPassword || newPassword.trim().length < 6) {
+    return res.status(400).json({ error: "New password must be at least 6 characters long." });
   }
 
   const db = readDb();
-  db.adminKey = newPassword.trim();
+  db.adminKey = hashPassword(newPassword.trim());
   writeDb(db);
 
-  res.json({ message: "Password updated successfully" });
+  res.json({ message: "Password updated successfully and encrypted with scrypt." });
 });
 
 app.get("/api/admin/stats", adminAuth, (req, res) => {
@@ -408,7 +566,14 @@ app.get("/api/admin/gallery", adminAuth, (req, res) => res.json(readDb().gallery
 app.get("/api/admin/destinations", adminAuth, (req, res) => res.json(readDb().destinations));
 app.get("/api/admin/upcoming", adminAuth, (req, res) => res.json(readDb().upcoming));
 
+// ==========================================================================
+// ADMIN MUTATION ROUTES WITH VALIDATED IMAGE UPLOADS
+// ==========================================================================
 app.post("/api/admin/upcoming", adminAuth, upload.single("image"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
   const item = {
     id: "up-" + Date.now(),
@@ -428,6 +593,10 @@ app.post("/api/admin/upcoming", adminAuth, upload.single("image"), (req, res) =>
 });
 
 app.put("/api/admin/upcoming/:id", adminAuth, upload.single("image"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
   const item = db.upcoming.find(u => u.id === req.params.id);
   if (!item) return res.status(404).json({ error: "Upcoming tour/event not found" });
@@ -461,6 +630,10 @@ app.delete("/api/admin/upcoming/:id", adminAuth, (req, res) => {
 });
 
 app.post("/api/admin/destinations", adminAuth, upload.single("image"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
   const dest = {
     id: "dest-" + Date.now(),
@@ -476,6 +649,10 @@ app.post("/api/admin/destinations", adminAuth, upload.single("image"), (req, res
 });
 
 app.put("/api/admin/destinations/:id", adminAuth, upload.single("image"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
   const dest = db.destinations.find(d => d.id === req.params.id);
   if (!dest) return res.status(404).json({ error: "Destination not found" });
@@ -498,9 +675,18 @@ app.delete("/api/admin/destinations/:id", adminAuth, (req, res) => {
 });
 
 app.post("/api/admin/gallery", adminAuth, upload.single("image"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
-  const image = { id: "gallery-" + Date.now(), place: req.body.place, caption: req.body.caption || "", image: req.file ? "/uploads/" + req.file.filename : req.body.imageUrl || req.body.image };
-  if (!image.image || !image.place) return res.status(400).json({ error: "place and image file are required" });
+  const image = {
+    id: "gallery-" + Date.now(),
+    place: req.body.place,
+    caption: req.body.caption || "",
+    image: req.file ? "/uploads/" + req.file.filename : req.body.imageUrl || req.body.image
+  };
+  if (!image.image || !image.place) return res.status(400).json({ error: "Place and image are required" });
   db.gallery.push(image);
   writeDb(db);
   res.status(201).json(image);
@@ -528,6 +714,10 @@ app.delete("/api/admin/gallery/:id", adminAuth, (req, res) => {
 });
 
 app.post("/api/admin/tours", adminAuth, upload.single("imageFile"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
   const tourImage = req.file ? "/uploads/" + req.file.filename : (req.body.image || req.body.imageUrl || "/photos/wild_beest.jpg");
   const tour = {
@@ -538,7 +728,7 @@ app.post("/api/admin/tours", adminAuth, upload.single("imageFile"), (req, res) =
     location: req.body.location || req.body.destination || "Kenya",
     category: req.body.category || "Safari",
     duration: Number(req.body.duration) || 3,
-    price: Number(req.body.price) || 500,
+    price: Number(req.body.price) || 65000,
     groupSize: Number(req.body.groupSize) || 7,
     rating: 5,
     featured: req.body.featured === "true" || req.body.featured === true,
@@ -558,6 +748,10 @@ app.post("/api/admin/tours", adminAuth, upload.single("imageFile"), (req, res) =
 });
 
 app.put("/api/admin/tours/:id", adminAuth, upload.single("imageFile"), (req, res) => {
+  if (req.file && !validateUploadedFile(req.file)) {
+    return res.status(400).json({ error: "Uploaded file is corrupted or not a valid image format." });
+  }
+
   const db = readDb();
   const index = db.tours.findIndex(t => t.id === req.params.id);
   if (index < 0) return res.status(404).json({ error: "Tour not found" });
@@ -584,15 +778,23 @@ app.delete("/api/admin/tours/:id", adminAuth, (req, res) => {
   res.json({ message: "Tour deleted" });
 });
 
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
+});
+
+// Multer & general error handler
+app.use((err, req, res, next) => {
+  if (err && err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({ error: "Image size exceeds 5MB limit. Please upload an image under 5MB." });
+  }
+  if (err) {
+    return res.status(400).json({ error: err.message || "An unexpected error occurred." });
+  }
+  next();
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Supreme Adventures website running at http://localhost:${PORT}`);
-    console.log(`Admin key: ${process.env.ADMIN_KEY || "admin123"}`);
-  });
+  app.listen(PORT, () => console.log(`Supreme Adventures server running on port ${PORT}`));
 }
 
 module.exports = app;

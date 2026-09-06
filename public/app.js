@@ -1,6 +1,6 @@
 const $ = id => document.getElementById(id);
 
-async function loadTours() {
+async function loadTours(shouldScroll = false) {
   const grid = $("tourGrid");
   if (!grid) return;
 
@@ -36,7 +36,7 @@ async function loadTours() {
             <h3>${escapeHtml(t.title)}</h3>
             <p>${escapeHtml(t.shortDescription || t.description || "")}</p>
             <div class="tour-bottom">
-              <div class="price">$${Number(t.price).toLocaleString()} <small>/ person</small></div>
+              <div class="price">KES ${Number(t.price).toLocaleString()} <small>/ person</small></div>
               <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
             </div>
           </div>
@@ -46,8 +46,19 @@ async function loadTours() {
     const emptyState = $("emptyState");
     if (emptyState) emptyState.classList.add("hidden");
 
+    if (!destination && !category && !duration && Array.isArray(tours) && tours.length > 0) {
+      updateSearchDropdownsFromData(tours);
+    }
+
     if (typeof initScrollReveal === "function") initScrollReveal();
     if (typeof AOS !== "undefined") AOS.refresh();
+
+    if (shouldScroll) {
+      const toursSec = document.getElementById("tours");
+      if (toursSec) {
+        toursSec.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   } catch (err) {
     console.error("Error loading tours:", err);
   }
@@ -66,7 +77,17 @@ function resetSearchFilters() {
   if (destText) destText.textContent = "All destinations";
   if (typeText) typeText.textContent = "All types";
 
-  loadTours();
+  document.querySelectorAll("#destMenu .custom-dropdown-item").forEach(item => {
+    if (item.getAttribute("data-val") === "") item.classList.add("selected");
+    else item.classList.remove("selected");
+  });
+
+  document.querySelectorAll("#typeMenu .custom-dropdown-item").forEach(item => {
+    if (item.getAttribute("data-val") === "") item.classList.add("selected");
+    else item.classList.remove("selected");
+  });
+
+  loadTours(false);
 }
 
 let allGalleryItems = [];
@@ -306,7 +327,7 @@ function bookOnWhatsApp(title, location, duration, price, inclusions, exclusions
   const inclusionsFormatted = incList.map(item => `  • ${item}`).join("\n");
   const exclusionsFormatted = excList.map(item => `  • ${item}`).join("\n");
 
-  const message = `Hello Supreme Adventures! 👋\n\nI would like to book:\n📌 *Trip:* ${title}\n📍 *Location:* ${location}\n📅 *Duration/Date:* ${duration}\n💰 *Price:* $${Number(price).toLocaleString()} / person\n\n✅ *What's Included:*\n${inclusionsFormatted}\n\n❌ *Exclusions:*\n${exclusionsFormatted}\n\nPlease confirm availability and booking details!`;
+  const message = `Hello Supreme Adventures! 👋\n\nI would like to book:\n📌 *Trip:* ${title}\n📍 *Location:* ${location}\n📅 *Duration/Date:* ${duration}\n💰 *Price:* KES ${Number(price).toLocaleString()} / person\n\n✅ *What's Included:*\n${inclusionsFormatted}\n\n❌ *Exclusions:*\n${exclusionsFormatted}\n\nPlease confirm availability and booking details!`;
 
   window.open(`https://wa.me/254759080100?text=${encodeURIComponent(message)}`, '_blank');
 }
@@ -336,7 +357,7 @@ async function openTour(slug) {
       <div class="modal-header-compact">
         <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((t.location || t.destination).toUpperCase())} · <i class="fa-solid fa-clock"></i> ${t.duration} DAYS</p>
         <h2>${escapeHtml(t.title)}</h2>
-        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize}</span><span>Price: <b>$${Number(t.price).toLocaleString()}</b> / person</span></div>
+        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize}</span><span>Price: <b>KES ${Number(t.price).toLocaleString()}</b> / person</span></div>
       </div>
       <p class="modal-desc">${escapeHtml(t.description || t.shortDescription)}</p>
       
@@ -597,7 +618,7 @@ function bookCurrentHeroPackage() {
         <h2>${escapeHtml(pkg.title)}</h2>
         <div class="tour-meta compact-meta">
           <span>Category: <b>${escapeHtml(pkg.category)}</b></span>
-          <span>Price: <b>$${Number(pkg.price).toLocaleString()}</b> / person</span>
+          <span>Price: <b>KES ${Number(pkg.price).toLocaleString()}</b> / person</span>
         </div>
       </div>
       <p class="modal-desc">${escapeHtml(pkg.tagline)}</p>
@@ -627,19 +648,37 @@ function setupDropdown({ menuId, triggerId, selectId, textId, items, iconClass }
 
   if (!menu || !trigger || !select) return;
 
+  const currentVal = select.value || "";
+
+  // Synchronize native select options
+  select.innerHTML = items.map(itemText => {
+    const isAll = itemText.startsWith("All");
+    const val = isAll ? "" : itemText;
+    const isSelected = val === currentVal;
+    return `<option value="${escapeHtml(val)}" ${isSelected ? 'selected' : ''}>${escapeHtml(itemText)}</option>`;
+  }).join("");
+
+  // Populate custom dropdown menu items
   menu.innerHTML = items.map(itemText => {
     const isAll = itemText.startsWith("All");
     const val = isAll ? "" : itemText;
-    const isSelected = select.value === val;
+    const isSelected = val === currentVal;
     return `
-      <div class="custom-dropdown-item ${isSelected ? 'selected' : ''}" data-val="${val}" data-label="${itemText}">
+      <div class="custom-dropdown-item ${isSelected ? 'selected' : ''}" data-val="${escapeHtml(val)}" data-label="${escapeHtml(itemText)}">
         <div class="icon-badge"><i class="${iconClass}"></i></div>
         <span>${escapeHtml(itemText)}</span>
       </div>
     `;
   }).join("");
 
-  trigger.addEventListener("click", (e) => {
+  // Update label text if needed
+  if (label) {
+    const selectedItem = items.find(i => (i.startsWith("All") ? "" : i) === currentVal);
+    label.textContent = selectedItem || items[0] || "";
+  }
+
+  // Trigger click handler
+  trigger.onclick = (e) => {
     e.stopPropagation();
     document.querySelectorAll(".custom-dropdown-menu").forEach(m => {
       if (m !== menu) m.classList.add("hidden");
@@ -649,10 +688,12 @@ function setupDropdown({ menuId, triggerId, selectId, textId, items, iconClass }
     });
     menu.classList.toggle("hidden");
     trigger.classList.toggle("open");
-  });
+  };
 
+  // Item click handlers
   menu.querySelectorAll(".custom-dropdown-item").forEach(item => {
-    item.addEventListener("click", () => {
+    item.onclick = (e) => {
+      e.stopPropagation();
       const val = item.getAttribute("data-val");
       const text = item.getAttribute("data-label");
 
@@ -665,17 +706,105 @@ function setupDropdown({ menuId, triggerId, selectId, textId, items, iconClass }
       menu.classList.add("hidden");
       trigger.classList.remove("open");
 
-      loadTours();
-    });
+      loadTours(false);
+    };
   });
 }
 
-function initCustomDropdowns() {
-  const destList = typeof DESTINATIONS !== "undefined" ? DESTINATIONS : [
-    "All destinations", "Malindi", "Zanzibar", "Mombasa", "Lamu", "Maasai Mara", "Amboseli"
+function updateSearchDropdownsFromData(tours = [], destinations = []) {
+  // 1. Compile Unique Destinations from live DB + seed fallbacks
+  const baseDests = [
+    "Malindi", "Zanzibar", "Mombasa", "Lamu", "Maasai Mara", "Amboseli",
+    "Cape Town", "Ethiopia", "Rwanda", "Burundi", "Tanzania", "Uganda", "Diani", "Tsavo", "Sagana"
   ];
-  const typeList = typeof TRIP_TYPES !== "undefined" ? TRIP_TYPES : [
-    "All types", "Safari", "Beach", "Culture", "Wildlife"
+  
+  const destSet = new Set(baseDests);
+  
+  if (Array.isArray(destinations)) {
+    destinations.forEach(d => {
+      if (d && d.name) destSet.add(d.name.trim());
+    });
+  }
+
+  if (Array.isArray(tours)) {
+    tours.forEach(t => {
+      if (t.destination && t.destination.trim()) {
+        destSet.add(t.destination.trim());
+      }
+      if (t.location) {
+        t.location.split(/[&,]/).forEach(loc => {
+          const cleaned = loc.trim();
+          if (cleaned.length > 2) destSet.add(cleaned);
+        });
+      }
+    });
+  }
+
+  const sortedDests = ["All destinations", ...Array.from(destSet).sort((a, b) => a.localeCompare(b))];
+
+  // 2. Compile Unique Trip Types / Categories from live DB + seed fallbacks
+  const baseTypes = ["Safari", "Beach", "Culture", "Wildlife", "Adventure", "Overland Truck Party"];
+  const typeSet = new Set(baseTypes);
+
+  if (Array.isArray(tours)) {
+    tours.forEach(t => {
+      if (t.category && t.category.trim()) {
+        typeSet.add(t.category.trim());
+      }
+    });
+  }
+
+  const sortedTypes = ["All types", ...Array.from(typeSet).sort((a, b) => a.localeCompare(b))];
+
+  // 3. Compile Unique Durations
+  const durationSelect = $("duration");
+  if (durationSelect && Array.isArray(tours) && tours.length > 0) {
+    const currentDurVal = durationSelect.value;
+    const durSet = new Set();
+    tours.forEach(t => {
+      const d = parseInt(t.duration, 10);
+      if (!isNaN(d) && d > 0) durSet.add(d);
+    });
+
+    const sortedDurs = Array.from(durSet).sort((a, b) => a - b);
+    let durOptionsHtml = `<option value="">Any duration</option>`;
+    sortedDurs.forEach(d => {
+      if (d < 5) {
+        durOptionsHtml += `<option value="${d}" ${currentDurVal === String(d) ? 'selected' : ''}>${d} days</option>`;
+      }
+    });
+    durOptionsHtml += `<option value="5" ${currentDurVal === '5' ? 'selected' : ''}>5+ days</option>`;
+    durationSelect.innerHTML = durOptionsHtml;
+  }
+
+  // 4. Update custom destination dropdown & select
+  setupDropdown({
+    menuId: "destMenu",
+    triggerId: "destTrigger",
+    selectId: "destination",
+    textId: "destSelectedText",
+    items: sortedDests,
+    iconClass: "fa-solid fa-location-dot"
+  });
+
+  // 5. Update custom category dropdown & select
+  setupDropdown({
+    menuId: "typeMenu",
+    triggerId: "typeTrigger",
+    selectId: "category",
+    textId: "typeSelectedText",
+    items: sortedTypes,
+    iconClass: "fa-solid fa-compass"
+  });
+}
+
+async function initCustomDropdowns() {
+  const defaultDests = typeof DESTINATIONS !== "undefined" ? DESTINATIONS : [
+    "All destinations", "Malindi", "Zanzibar", "Mombasa", "Lamu", "Maasai Mara", "Amboseli",
+    "Cape Town", "Ethiopia", "Rwanda", "Burundi", "Tanzania", "Uganda", "Diani", "Tsavo", "Sagana"
+  ];
+  const defaultTypes = typeof TRIP_TYPES !== "undefined" ? TRIP_TYPES : [
+    "All types", "Safari", "Beach", "Culture", "Wildlife", "Adventure", "Overland Truck Party"
   ];
 
   setupDropdown({
@@ -683,7 +812,7 @@ function initCustomDropdowns() {
     triggerId: "destTrigger",
     selectId: "destination",
     textId: "destSelectedText",
-    items: destList,
+    items: defaultDests,
     iconClass: "fa-solid fa-location-dot"
   });
 
@@ -692,14 +821,26 @@ function initCustomDropdowns() {
     triggerId: "typeTrigger",
     selectId: "category",
     textId: "typeSelectedText",
-    items: typeList,
+    items: defaultTypes,
     iconClass: "fa-solid fa-compass"
   });
 
-  document.addEventListener("click", () => {
+  document.onclick = () => {
     document.querySelectorAll(".custom-dropdown-menu").forEach(m => m.classList.add("hidden"));
     document.querySelectorAll(".custom-trigger").forEach(t => t.classList.remove("open"));
-  });
+  };
+
+  try {
+    const [toursRes, destsRes] = await Promise.all([
+      fetch("/api/tours").then(r => r.json()).catch(() => []),
+      fetch("/api/destinations").then(r => r.json()).catch(() => [])
+    ]);
+    if (Array.isArray(toursRes) && toursRes.length > 0) {
+      updateSearchDropdownsFromData(toursRes, Array.isArray(destsRes) ? destsRes : []);
+    }
+  } catch (err) {
+    console.warn("Could not dynamically load search dropdown options:", err);
+  }
 }
 
 let upcomingCarouselInterval = null;
@@ -789,7 +930,7 @@ function openUpcomingTour(id) {
         <h2 style="margin: 6px 0 10px; font-size: 24px; text-transform: uppercase;">${escapeHtml(pkg.title)}</h2>
         <div class="tour-meta compact-meta" style="justify-content: center; gap: 16px; margin-bottom: 12px;">
           <span>Category: <b>${escapeHtml(pkg.category || "Safari")}</b></span>
-          <span>Starting at: <b>$${Number(pkg.price || 0).toLocaleString()}</b> / person</span>
+          <span>Starting at: <b>KES ${Number(pkg.price || 0).toLocaleString()}</b> / person</span>
         </div>
       </div>
       <p class="modal-desc" style="margin: 10px 0 20px; font-size: 14.5px; color: #403D3D;">${escapeHtml(pkg.description || pkg.subtitle || "")}</p>
@@ -804,15 +945,13 @@ function openUpcomingTour(id) {
 const searchBtnEl = $("searchBtn");
 if (searchBtnEl) {
   searchBtnEl.addEventListener("click", () => {
-    loadTours();
-    const toursSec = document.getElementById("tours");
-    if (toursSec) toursSec.scrollIntoView({ behavior: "smooth" });
+    loadTours(true);
   });
 }
 
 ["destination", "category", "duration"].forEach(id => {
   const el = $(id);
-  if (el) el.addEventListener("change", loadTours);
+  if (el) el.addEventListener("change", () => loadTours(false));
 });
 
 const tourModalEl = $("tourModal");

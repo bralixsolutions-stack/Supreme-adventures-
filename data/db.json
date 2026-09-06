@@ -1,6 +1,57 @@
 {
   "tours": [
     {
+      "id": "tour-001",
+      "title": "4 Days Masai Mara & Lake Nakuru Safari",
+      "slug": "4-days-masai-mara-lake-nakuru",
+      "destination": "Kenya",
+      "location": "Masai Mara & Lake Nakuru",
+      "category": "Safari",
+      "duration": 4,
+      "price": 68000,
+      "groupSize": 7,
+      "rating": 4.9,
+      "featured": true,
+      "image": "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1400&q=85",
+      "shortDescription": "A classic Kenya safari combining the wildlife-rich Masai Mara with Lake Nakuru.",
+      "description": "Experience spectacular landscapes, big game and unforgettable safari moments on a carefully paced four-day adventure.",
+      "inclusions": [
+        "Transport in safari vehicle",
+        "Park entry fees",
+        "Professional guide",
+        "Accommodation",
+        "Daily breakfast and dinner"
+      ],
+      "exclusions": [
+        "International flights",
+        "Travel insurance",
+        "Personal expenses",
+        "Tips"
+      ],
+      "itinerary": [
+        [
+          "Day 1",
+          "Nairobi to Masai Mara",
+          "Drive through the Great Rift Valley and arrive in the Mara for an afternoon game drive."
+        ],
+        [
+          "Day 2",
+          "Masai Mara Full Day",
+          "Morning and afternoon game drives searching for the Big Five."
+        ],
+        [
+          "Day 3",
+          "Masai Mara to Lake Nakuru",
+          "Morning safari followed by a scenic transfer to Lake Nakuru."
+        ],
+        [
+          "Day 4",
+          "Lake Nakuru to Nairobi",
+          "Morning game drive, breakfast and return to Nairobi."
+        ]
+      ]
+    },
+    {
       "id": "tour-002",
       "title": "3 Days Amboseli National Park Safari",
       "slug": "3-days-amboseli-safari",
@@ -8,7 +59,7 @@
       "location": "Amboseli",
       "category": "Safari",
       "duration": 3,
-      "price": 390,
+      "price": 48000,
       "groupSize": 7,
       "rating": 4.8,
       "featured": true,
@@ -54,7 +105,7 @@
       "location": "Nairobi, Nakuru & Masai Mara",
       "category": "Adventure",
       "duration": 5,
-      "price": 680,
+      "price": 85000,
       "groupSize": 8,
       "rating": 4.9,
       "featured": true,
@@ -110,7 +161,7 @@
       "location": "Arusha, Tarangire & Ngorongoro",
       "category": "Wildlife",
       "duration": 6,
-      "price": 980,
+      "price": 125000,
       "groupSize": 7,
       "rating": 5,
       "featured": false,
@@ -177,7 +228,7 @@
       "location": "agaea",
       "category": "Safari",
       "duration": 3,
-      "price": 500,
+      "price": 65000,
       "image": "https://tse2.mm.bing.net/th/id/OIP.zP9hRFyYDGCkMShI0gXcoAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
       "shortDescription": "\\dbf\\df",
       "description": "F\\bre"
@@ -337,7 +388,7 @@
       "subtitle": "Overland Truck party adventure",
       "location": "Lake Baringo & Bogoria",
       "date": "From 05th Sep, 2026",
-      "price": 350,
+      "price": 45000,
       "category": "Overland Truck Party",
       "image": "/packages/lake_Bogoria.webp",
       "description": "Discover the stunning landscapes of Lake Baringo and Lake Bogoria on this adventure-filled tour."
@@ -348,7 +399,7 @@
       "subtitle": "Get a chance to visit the diverse Rwandan culture",
       "location": "Rwanda",
       "date": "From 05th Sep, 2026",
-      "price": 150,
+      "price": 25000,
       "category": "Culture",
       "image": "/packages/rwanda.webp",
       "description": "Participate in the Strathmore University Foundation Annual Run followed by a guided Great Rift Valley Naivasha excursion."
@@ -359,7 +410,7 @@
       "subtitle": "Prime season river crossing & Big Five wildlife viewing",
       "location": "Maasai Mara",
       "date": "From 1st July to 1st October 2026",
-      "price": 520,
+      "price": 68000,
       "category": "Wildlife Safari",
       "image": "/packages/wildbeest.webp",
       "description": "Witness millions of wildebeest braving the Mara River on this exclusive luxury safari expedition."
@@ -370,7 +421,7 @@
       "subtitle": "Full day Peninsular Tour",
       "location": "Cape Town",
       "date": "From 12th to 14th December, 2026",
-      "price": 520,
+      "price": 68000,
       "category": "Safari",
       "image": "/packages/capetown.webp",
       "description": "Explore the stunning beauty of Cape Town with our full-day peninsular tour. Experience the iconic Table Mountain, Cape Point, and the charming coastal towns along the way."
@@ -381,7 +432,7 @@
       "subtitle": "Tropical white sand beaches, Stone Town & Dhow sailing",
       "location": "Zanzibar",
       "date": "From 14th to 18th October 2026",
-      "price": 650,
+      "price": 85000,
       "category": "Beach & Culture",
       "image": "/packages/zanzibar.webp",
       "description": "Relax on Zanzibar's turquoise coast with sunset dhow cruises and authentic Swahili spice tours."
