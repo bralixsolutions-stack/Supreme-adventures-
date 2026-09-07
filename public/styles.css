@@ -1593,7 +1593,7 @@ nav a.active:not(.nav-cta)::after {
 }
 
 .view-btn {
-  background: var(--red);
+  background: var(--black, #221F1F);
   border: 0;
   color: #ffffff;
   font-family: 'Manrope', sans-serif;
@@ -1602,14 +1602,14 @@ nav a.active:not(.nav-cta)::after {
   cursor: pointer;
   padding: 8px 18px;
   border-radius: 50px;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(236, 31, 35, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(34, 31, 31, 0.22);
 }
 
 .view-btn:hover {
-  background: var(--red-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(236, 31, 35, 0.4);
+  background: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
 @media (max-width: 992px) {

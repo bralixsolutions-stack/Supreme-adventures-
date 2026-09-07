@@ -1150,10 +1150,22 @@ function initDomeCarousel() {
 function initAOS() {
   if (typeof AOS !== "undefined") {
     AOS.init({
+      // Core animation settings
       duration: 800,
       easing: "ease-out-cubic",
       once: true,
-      offset: 80
+      offset: 80,
+      // Additional performance tweaks
+      debounceDelay: 50, // debounce resize events
+      throttleDelay: 99, // throttle scroll events
+      mirror: false, // do not animate out of view elements
+      anchorPlacement: "top-bottom"
+    });
+    // Refresh AOS on viewport resize to recalculate positions
+    window.addEventListener("resize", () => {
+      if (typeof AOS !== "undefined") {
+        AOS.refresh();
+      }
     });
   }
 }

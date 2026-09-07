@@ -95,18 +95,23 @@
 }
 
 .view-btn {
-  background: transparent;
+  background: var(--black, #221F1F);
   border: 0;
-  color: var(--red);
-  font-size: 13px;
-  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
   cursor: pointer;
-  padding: 6px 0;
-  transition: color 0.2s ease;
+  padding: 8px 18px;
+  border-radius: 50px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(34, 31, 31, 0.22);
 }
 
 .view-btn:hover {
-  color: var(--red-hover);
+  background: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
 .empty {

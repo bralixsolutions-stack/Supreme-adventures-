@@ -213,25 +213,6 @@
           "Transfer to airport."
         ]
       ]
-    },
-    {
-      "id": "tour-1787731642886",
-      "rating": 5,
-      "groupSize": 7,
-      "featured": false,
-      "inclusions": [],
-      "exclusions": [],
-      "itinerary": [],
-      "title": "fsfa",
-      "slug": "agad",
-      "destination": "Kenya",
-      "location": "agaea",
-      "category": "Safari",
-      "duration": 3,
-      "price": 65000,
-      "image": "https://tse2.mm.bing.net/th/id/OIP.zP9hRFyYDGCkMShI0gXcoAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-      "shortDescription": "\\dbf\\df",
-      "description": "F\\bre"
     }
   ],
   "bookings": [],
