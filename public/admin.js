@@ -539,7 +539,7 @@ async function loadDestinations(){
       <div class="table-responsive">
         <table class="table">
           <thead>
-            <tr><th>Cover</th><th>Destination Name</th><th>Slug</th><th>Description</th><th>Actions</th></tr>
+            <tr><th>Cover</th><th>Destination Name</th><th>Slug</th><th>Search Bar</th><th>Description</th><th>Actions</th></tr>
           </thead>
           <tbody>
             ${dests.map(d => `
@@ -547,6 +547,15 @@ async function loadDestinations(){
                 <td><img src="${esc(d.image)}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
                 <td><b>${esc(d.name)}</b></td>
                 <td><code>${esc(d.slug)}</code></td>
+                <td>
+                  <button class="action ${d.showInSearch !== false ? 'success' : 'secondary'}" 
+                    style="padding: 4px 10px; font-size: 11px; border-radius: 12px; cursor: pointer;"
+                    onclick="toggleDestinationSearch('${d.id}')"
+                    title="Click to toggle visibility in search bar dropdown">
+                    <i class="fa-solid ${d.showInSearch !== false ? 'fa-check' : 'fa-eye-slash'}"></i> 
+                    ${d.showInSearch !== false ? 'Visible' : 'Hidden'}
+                  </button>
+                </td>
                 <td><small>${esc(d.description || "No description")}</small></td>
                 <td>
                   <button class="action" onclick='editDestination(${JSON.stringify(d).replace(/'/g, "&#39;")})'>Edit</button>
@@ -561,6 +570,16 @@ async function loadDestinations(){
   }
 }
 
+async function toggleDestinationSearch(id) {
+  try {
+    await api(`/api/admin/destinations/${id}/toggle-search`, { method: "PATCH" });
+    showToast("Search dropdown destination updated", "success");
+    loadDestinations();
+  } catch(err) {
+    showToast("Failed to toggle search status", "error");
+  }
+}
+
 function openDestForm(d=null){
   editingDestId = d?.id || "";
   document.getElementById("destForm").classList.remove("hidden");
@@ -568,6 +587,7 @@ function openDestForm(d=null){
   document.getElementById("destId").value = editingDestId;
   document.getElementById("dName").value = d?.name || "";
   document.getElementById("dSlug").value = d?.slug || "";
+  document.getElementById("dShowInSearch").checked = d ? (d.showInSearch !== false) : true;
   
   clearFileInput("dImageFile", "dImageFileName", null);
   document.getElementById("dImageUrl").value = d?.image || "";
@@ -628,6 +648,7 @@ async function saveDestination(e){
       formData.append("name", g("dName"));
       formData.append("slug", g("dSlug"));
       formData.append("description", g("dDescription"));
+      formData.append("showInSearch", document.getElementById("dShowInSearch").checked ? "true" : "false");
       if (file) formData.append("image", file);
       if (g("dImageUrl")) formData.append("imageUrl", g("dImageUrl"));
 

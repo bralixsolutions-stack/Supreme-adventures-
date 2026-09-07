@@ -1,4 +1,15 @@
 const $ = id => document.getElementById(id);
+let cachedDestinations = [];
+
+function handleEmptyContactSupport(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const contactSec = document.getElementById("contact");
+  if (contactSec) {
+    contactSec.scrollIntoView({ behavior: "smooth" });
+  } else {
+    window.location.hash = "contact";
+  }
+}
 
 async function loadTours(shouldScroll = false) {
   const grid = $("tourGrid");
@@ -18,11 +29,20 @@ async function loadTours(shouldScroll = false) {
 
     if (tours.length === 0) {
       grid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: #fff; border-radius: 16px; border: 1px dashed #cbd5e1; margin: 20px 0;">
+        <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: #fff; border-radius: 16px; border: 1px dashed #cbd5e1; margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
           <i class="fa-solid fa-compass-drafting" style="font-size: 38px; color: #94a3b8; margin-bottom: 12px;"></i>
-          <h3 style="font-size: 20px; color: #1e293b; margin-bottom: 8px;">No packages match your search filter</h3>
-          <p style="color: #64748b; margin-bottom: 20px; font-size: 14px;">Try selecting a different destination or duration, or click below to view all tours.</p>
-          <button onclick="resetSearchFilters()" style="background: #ec1f23; color: #fff; padding: 10px 24px; border: none; border-radius: 25px; font-weight: 700; cursor: pointer;">Reset All Filters</button>
+          <h3 style="font-size: 20px; color: #1e293b; margin-bottom: 8px; font-weight: 700;">No packages match your search filter</h3>
+          <p style="color: #64748b; margin-bottom: 22px; font-size: 14px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+            Looking for a custom safari or specific dates? Contact our support team for a personalized itinerary, or reset the filters to view all tours.
+          </p>
+          <div style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <a href="#contact" onclick="handleEmptyContactSupport(event)" style="display: inline-flex; align-items: center; gap: 8px; background: #ec1f23; color: #fff; padding: 10px 24px; border: none; border-radius: 25px; font-weight: 700; font-size: 14px; text-decoration: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 3px 12px rgba(236,31,35,0.25);">
+              <i class="fa-solid fa-headset"></i> Contact Support
+            </a>
+            <button onclick="resetSearchFilters()" style="display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #334155; padding: 10px 24px; border: 1px solid #cbd5e1; border-radius: 25px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s ease;">
+              <i class="fa-solid fa-rotate-left"></i> Reset Filter
+            </button>
+          </div>
         </div>`;
     } else {
       grid.innerHTML = tours.map((t, index) => `
@@ -47,7 +67,7 @@ async function loadTours(shouldScroll = false) {
     if (emptyState) emptyState.classList.add("hidden");
 
     if (!destination && !category && !duration && Array.isArray(tours) && tours.length > 0) {
-      updateSearchDropdownsFromData(tours);
+      updateSearchDropdownsFromData(tours, cachedDestinations);
     }
 
     if (typeof initScrollReveal === "function") initScrollReveal();
@@ -712,35 +732,24 @@ function setupDropdown({ menuId, triggerId, selectId, textId, items, iconClass }
 }
 
 function updateSearchDropdownsFromData(tours = [], destinations = []) {
-  // 1. Compile Unique Destinations from live DB + seed fallbacks
-  const baseDests = [
-    "Malindi", "Zanzibar", "Mombasa", "Lamu", "Maasai Mara", "Amboseli",
-    "Cape Town", "Ethiopia", "Rwanda", "Burundi", "Tanzania", "Uganda", "Diani", "Tsavo", "Sagana"
-  ];
-  
-  const destSet = new Set(baseDests);
-  
-  if (Array.isArray(destinations)) {
-    destinations.forEach(d => {
-      if (d && d.name) destSet.add(d.name.trim());
-    });
+  // 1. Compile Admin-Controlled Destinations from database
+  if (Array.isArray(destinations) && destinations.length > 0) {
+    cachedDestinations = destinations;
+  }
+  const destSource = (Array.isArray(destinations) && destinations.length > 0)
+    ? destinations
+    : (Array.isArray(cachedDestinations) && cachedDestinations.length > 0 ? cachedDestinations : []);
+
+  let destItems = [];
+  if (destSource.length > 0) {
+    destItems = destSource
+      .filter(d => d && d.name && d.showInSearch !== false)
+      .map(d => d.name.trim());
+  } else if (typeof DESTINATIONS !== "undefined" && Array.isArray(DESTINATIONS)) {
+    destItems = DESTINATIONS.filter(d => d && d !== "All destinations");
   }
 
-  if (Array.isArray(tours)) {
-    tours.forEach(t => {
-      if (t.destination && t.destination.trim()) {
-        destSet.add(t.destination.trim());
-      }
-      if (t.location) {
-        t.location.split(/[&,]/).forEach(loc => {
-          const cleaned = loc.trim();
-          if (cleaned.length > 2) destSet.add(cleaned);
-        });
-      }
-    });
-  }
-
-  const sortedDests = ["All destinations", ...Array.from(destSet).sort((a, b) => a.localeCompare(b))];
+  const sortedDests = ["All destinations", ...Array.from(new Set(destItems)).sort((a, b) => a.localeCompare(b))];
 
   // 2. Compile Unique Trip Types / Categories from live DB + seed fallbacks
   const baseTypes = ["Safari", "Beach", "Culture", "Wildlife", "Adventure", "Overland Truck Party"];
@@ -799,32 +808,6 @@ function updateSearchDropdownsFromData(tours = [], destinations = []) {
 }
 
 async function initCustomDropdowns() {
-  const defaultDests = typeof DESTINATIONS !== "undefined" ? DESTINATIONS : [
-    "All destinations", "Malindi", "Zanzibar", "Mombasa", "Lamu", "Maasai Mara", "Amboseli",
-    "Cape Town", "Ethiopia", "Rwanda", "Burundi", "Tanzania", "Uganda", "Diani", "Tsavo", "Sagana"
-  ];
-  const defaultTypes = typeof TRIP_TYPES !== "undefined" ? TRIP_TYPES : [
-    "All types", "Safari", "Beach", "Culture", "Wildlife", "Adventure", "Overland Truck Party"
-  ];
-
-  setupDropdown({
-    menuId: "destMenu",
-    triggerId: "destTrigger",
-    selectId: "destination",
-    textId: "destSelectedText",
-    items: defaultDests,
-    iconClass: "fa-solid fa-location-dot"
-  });
-
-  setupDropdown({
-    menuId: "typeMenu",
-    triggerId: "typeTrigger",
-    selectId: "category",
-    textId: "typeSelectedText",
-    items: defaultTypes,
-    iconClass: "fa-solid fa-compass"
-  });
-
   document.onclick = () => {
     document.querySelectorAll(".custom-dropdown-menu").forEach(m => m.classList.add("hidden"));
     document.querySelectorAll(".custom-trigger").forEach(t => t.classList.remove("open"));
@@ -835,9 +818,13 @@ async function initCustomDropdowns() {
       fetch("/api/tours").then(r => r.json()).catch(() => []),
       fetch("/api/destinations").then(r => r.json()).catch(() => [])
     ]);
-    if (Array.isArray(toursRes) && toursRes.length > 0) {
-      updateSearchDropdownsFromData(toursRes, Array.isArray(destsRes) ? destsRes : []);
+    if (Array.isArray(destsRes) && destsRes.length > 0) {
+      cachedDestinations = destsRes;
     }
+    updateSearchDropdownsFromData(
+      Array.isArray(toursRes) ? toursRes : [],
+      Array.isArray(destsRes) ? destsRes : []
+    );
   } catch (err) {
     console.warn("Could not dynamically load search dropdown options:", err);
   }

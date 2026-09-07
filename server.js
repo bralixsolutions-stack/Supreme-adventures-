@@ -286,11 +286,19 @@ function seedTours() {
 
 function seedDestinations() {
   return [
-    { id: "dest-mara", name: "Maasai Mara National Reserve", slug: "maasai-mara", image: "/photos/lion.webp", description: "World-famous Great Migration & Big Five game drives." },
-    { id: "dest-zanzibar", name: "Zanzibar Tropical Island", slug: "zanzibar", image: "/photos/zanzibar.webp", description: "White sand beaches, Stone Town culture & dhow cruises." },
-    { id: "dest-amboseli", name: "Amboseli National Park", slug: "amboseli", image: "/photos/amboseli.webp", description: "Majestic elephant herds under snow-capped Mt Kilimanjaro." },
-    { id: "dest-serengeti", name: "Serengeti National Park", slug: "serengeti", image: "/photos/jeep_safari.webp", description: "Endless savannah plains & legendary predator encounters." },
-    { id: "dest-rift", name: "Great Rift Valley & Lakes", slug: "rift-valley", image: "/photos/client_3.webp", description: "Geysers, flamingos & volcanic crater adventures." }
+    { id: "dest-mara", name: "Maasai Mara", slug: "maasai-mara", image: "/photos/lion.webp", description: "World-famous Great Migration & Big Five game drives.", showInSearch: true },
+    { id: "dest-zanzibar", name: "Zanzibar", slug: "zanzibar", image: "/photos/zanzibar.webp", description: "White sand beaches, Stone Town culture & dhow cruises.", showInSearch: true },
+    { id: "dest-amboseli", name: "Amboseli", slug: "amboseli", image: "/photos/amboseli.webp", description: "Majestic elephant herds under snow-capped Mt Kilimanjaro.", showInSearch: true },
+    { id: "dest-serengeti", name: "Serengeti", slug: "serengeti", image: "/photos/jeep_safari.webp", description: "Endless savannah plains & legendary predator encounters.", showInSearch: true },
+    { id: "dest-rift", name: "Great Rift Valley", slug: "rift-valley", image: "/photos/client_3.webp", description: "Geysers, flamingos & volcanic crater adventures.", showInSearch: true },
+    { id: "dest-mombasa", name: "Mombasa", slug: "mombasa", image: "/photos/mombasa.webp", description: "Coastal beach paradise and Swahili heritage.", showInSearch: true },
+    { id: "dest-malindi", name: "Malindi", slug: "malindi", image: "/photos/watamu_1.jpg", description: "Tropical marine parks and golden sand shores.", showInSearch: true },
+    { id: "dest-diani", name: "Diani", slug: "diani", image: "/photos/diani_1.jpg", description: "World-renowned white sand beaches and reef diving.", showInSearch: true },
+    { id: "dest-tsavo", name: "Tsavo", slug: "tsavo", image: "/photos/tsavo_1.jpg", description: "Red elephant herds and vast rugged wilderness.", showInSearch: true },
+    { id: "dest-sagana", name: "Sagana", slug: "sagana", image: "/photos/sagana_1.avif", description: "White water rafting and outdoor adrenaline adventures.", showInSearch: true },
+    { id: "dest-lamu", name: "Lamu", slug: "lamu", image: "/photos/watamu_1.jpg", description: "Unspoiled UNESCO Swahili island and dhow sailing.", showInSearch: true },
+    { id: "dest-capetown", name: "Cape Town", slug: "cape-town", image: "/photos/capetown.webp", description: "Table Mountain, coastal peninsulas, and winelands.", showInSearch: true },
+    { id: "dest-rwanda", name: "Rwanda", slug: "rwanda", image: "/packages/rwanda.webp", description: "Gorilla trekking in Volcanoes National Park.", showInSearch: true }
   ];
 }
 
@@ -635,12 +643,14 @@ app.post("/api/admin/destinations", adminAuth, upload.single("image"), (req, res
   }
 
   const db = readDb();
+  const showInSearch = req.body.showInSearch === "false" || req.body.showInSearch === false ? false : true;
   const dest = {
     id: "dest-" + Date.now(),
     name: req.body.name,
     slug: req.body.slug || req.body.name.toLowerCase().replace(/\s+/g, '-'),
     image: req.file ? "/uploads/" + req.file.filename : req.body.imageUrl || req.body.image || "/photos/zanzibar.jpg",
-    description: req.body.description || ""
+    description: req.body.description || "",
+    showInSearch: showInSearch
   };
   if (!dest.name) return res.status(400).json({ error: "Destination name is required" });
   db.destinations.push(dest);
@@ -657,14 +667,27 @@ app.put("/api/admin/destinations/:id", adminAuth, upload.single("image"), (req, 
   const dest = db.destinations.find(d => d.id === req.params.id);
   if (!dest) return res.status(404).json({ error: "Destination not found" });
 
-  dest.name = req.body.name || dest.name;
-  dest.slug = req.body.slug || dest.slug;
+  dest.name = req.body.name !== undefined ? req.body.name : dest.name;
+  dest.slug = req.body.slug !== undefined ? req.body.slug : dest.slug;
   if (req.file) dest.image = "/uploads/" + req.file.filename;
   else if (req.body.imageUrl || req.body.image) dest.image = req.body.imageUrl || req.body.image;
-  dest.description = req.body.description || dest.description;
+  if (req.body.description !== undefined) dest.description = req.body.description;
+  if (req.body.showInSearch !== undefined) {
+    dest.showInSearch = req.body.showInSearch === "true" || req.body.showInSearch === true;
+  }
 
   writeDb(db);
   res.json(dest);
+});
+
+app.patch("/api/admin/destinations/:id/toggle-search", adminAuth, (req, res) => {
+  const db = readDb();
+  const dest = db.destinations.find(d => d.id === req.params.id);
+  if (!dest) return res.status(404).json({ error: "Destination not found" });
+
+  dest.showInSearch = dest.showInSearch === false ? true : false;
+  writeDb(db);
+  res.json({ message: "Search status updated", dest });
 });
 
 app.delete("/api/admin/destinations/:id", adminAuth, (req, res) => {
