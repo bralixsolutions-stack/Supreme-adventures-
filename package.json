@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "generate-og": "node scripts/generate-og.js"
   },
   "dependencies": {
     "@supabase/server": "^1.5.3",
