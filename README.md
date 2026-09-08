@@ -17,13 +17,6 @@ This project is an original safari/tour website implementation inspired by the s
 - About/why-us section
 - Contact/footer
 
-### Admin dashboard
-Open `/admin.html`.
-
-Default development admin key:
-
-`admin123`
-
 Admin features:
 - Dashboard statistics
 - Add tours
