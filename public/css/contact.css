@@ -742,9 +742,92 @@ footer {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  footer {
+    padding-top: 50px;
+    text-align: left;
+  }
+
+  footer .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0;
+  }
+
   .footer-light-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 32px;
+    justify-items: start;
+    align-items: start;
+    padding-bottom: 40px;
+  }
+
+  .footer-brand-col,
+  .footer-links-col,
+  .footer-touch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-brand-col a.nav-brand,
+  .footer-logo-img {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    align-self: flex-start;
+    display: block;
+  }
+
+  .footer-brand-desc {
+    max-width: 100%;
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .footer-social-circles {
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .footer-col-title {
+    text-align: left;
+    align-self: flex-start;
+    margin-left: 0;
+  }
+
+  .footer-links-list {
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .footer-touch-list {
+    align-items: flex-start;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .touch-item {
+    justify-content: flex-start;
+    width: 100%;
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .touch-text {
+    text-align: left;
+    align-items: flex-start;
   }
 }
+

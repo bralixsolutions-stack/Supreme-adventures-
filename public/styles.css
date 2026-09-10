@@ -30,6 +30,65 @@
   --glass-scrolled-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
 }
 
+/* Preloader Styles — Full-screen loading canvas */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.6s cubic-bezier(0.77, 0, 0.175, 1),
+              visibility 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Mask wrapper preventing overflow during slide */
+.logo-container {
+  overflow: hidden;
+  display: inline-block;
+}
+
+/* The Reveal Animation */
+.revealing-logo {
+  width: 200px;
+  height: auto;
+  display: block;
+  transform: translateY(40px) scale(0.96);
+  opacity: 0;
+  clip-path: inset(100% 0 0 0); /* Bottom-up curtain mask */
+  animation: logoReveal 2.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+
+@keyframes logoReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+    clip-path: inset(100% 0 0 0);
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    clip-path: inset(0% 0 0 0); /* Fully unveiled */
+  }
+}
+
+/* Exit state triggered by JS */
+#preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Keep hero content invisible until preloader is gone */
+#preloader ~ .hero .hero-content,
+#preloader ~ * .hero .hero-content {
+  opacity: 0;
+}
+
 /* Font Display Swap for Performance */
 @font-face {
   font-family: 'Font Awesome 6 Free';
@@ -1612,6 +1671,41 @@ nav a.active:not(.nav-cta)::after {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
+/* Tours Action Container & See More Button */
+.tours-action-container {
+  display: none;
+}
+
+.btn-see-more-tours {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #cbd5e1;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px 32px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.btn-see-more-tours:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.15);
+}
+
+.btn-see-more-tours i {
+  font-size: 13px;
+  transition: transform 0.3s ease;
+}
+
 @media (max-width: 992px) {
   .tour-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1619,13 +1713,56 @@ nav a.active:not(.nav-cta)::after {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .tour-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory;
+    gap: 18px !important;
+    padding: 10px 4px 22px 4px !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    margin-top: 6px;
+    scrollbar-width: none;
   }
-  .tour-image {
-    height: 210px;
+
+  .tour-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tour-grid .tour-card {
+    flex: 0 0 84% !important;
+    width: 84% !important;
+    max-width: 340px !important;
+    min-width: 275px !important;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07) !important;
+  }
+
+  .tour-grid.expanded-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    overflow-x: visible !important;
+    padding: 10px 0 20px 0 !important;
+  }
+
+  .tour-grid.expanded-grid .tour-card {
+    flex: initial !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    scroll-snap-align: none !important;
+  }
+
+  .tours-action-container {
+    display: block;
+    margin-top: 18px;
   }
 }
 
@@ -1692,10 +1829,6 @@ nav a.active:not(.nav-cta)::after {
 }
 
 @media (max-width: 900px) {
-  .tour-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .split-section {
     grid-template-columns: 1fr;
   }
@@ -1706,10 +1839,6 @@ nav a.active:not(.nav-cta)::after {
 }
 
 @media (max-width: 600px) {
-  .tour-grid {
-    grid-template-columns: 1fr;
-  }
-
   .split-content {
     padding: 50px 5%;
   }
@@ -3411,7 +3540,7 @@ nav a.active:not(.nav-cta)::after {
 }
 
 .tripadvisor-rating-pill .stars {
-  color: #f59e0b;
+  color: #64748b;
   font-size: 14px;
 }
 
@@ -3488,7 +3617,7 @@ nav a.active:not(.nav-cta)::after {
 }
 
 .review-stars {
-  color: #f59e0b;
+  color: orangered;
   font-size: 13px;
   display: flex;
   gap: 2px;
@@ -3581,6 +3710,41 @@ nav a.active:not(.nav-cta)::after {
 .reviews-cta {
   margin-top: 42px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-rate-us {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--red, #ec1f23);
+  color: #ffffff !important;
+  border: 1.5px solid var(--red, #ec1f23);
+  font-family: 'Manrope', sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(236, 31, 35, 0.3);
+}
+
+.btn-rate-us i {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.btn-rate-us:hover {
+  background: var(--red-hover, #ff2d31);
+  border-color: var(--red-hover, #ff2d31);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(236, 31, 35, 0.45);
+  color: #ffffff !important;
 }
 
 .btn-more-reviews {
@@ -3593,7 +3757,7 @@ nav a.active:not(.nav-cta)::after {
   font-family: 'Manrope', sans-serif;
   font-size: 14.5px;
   font-weight: 700;
-  padding: 13px 30px;
+  padding: 13px 28px;
   border-radius: 30px;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -4116,15 +4280,339 @@ footer {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+  footer {
+    padding-top: 50px;
+    text-align: left;
+  }
+
+  footer .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0;
+  }
+
   .footer-light-grid {
     grid-template-columns: 1fr;
-    gap: 36px;
+    gap: 32px;
+    justify-items: start;
+    align-items: start;
+    padding-bottom: 40px;
+  }
+
+  .footer-brand-col,
+  .footer-links-col,
+  .footer-touch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-brand-col a.nav-brand,
+  .footer-logo-img {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    align-self: flex-start;
+    display: block;
+  }
+
+  .footer-brand-desc {
+    max-width: 100%;
+    text-align: left;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .footer-social-circles {
+    justify-content: flex-start;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .footer-col-title {
+    text-align: left;
+    align-self: flex-start;
+    margin-left: 0;
+  }
+
+  .footer-links-list {
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .footer-touch-list {
+    align-items: flex-start;
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .touch-item {
+    justify-content: flex-start;
+    width: 100%;
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .touch-text {
+    text-align: left;
+    align-items: flex-start;
   }
 }
 
 
 /* --- modals.css --- */
+
+/* ==========================================================================
+   Appointed Agents / Partner Airlines Section
+   ========================================================================== */
+
+.appointed-section {
+  background: #F7F5F0;
+  padding: 105px 0 115px;
+  position: relative;
+  border-top: 1px solid #EAE5DE;
+  border-bottom: 1px solid #EAE5DE;
+}
+
+.appointed-section .section-heading-center {
+  margin-top: 0;
+  margin-bottom: 52px;
+}
+
+.appointed-section .section-script-subtitle {
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+
+.appointed-main-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 4.4vw, 54px);
+  color: #0F172A;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin: 8px 0 16px;
+}
+
+.appointed-tagline-desc {
+  max-width: 780px;
+  color: #334155;
+  font-family: 'Manrope', sans-serif;
+  font-size: 17.5px;
+  line-height: 1.75;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Logos Cluster Container */
+.appointed-logos-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  padding: 16px 0 8px;
+  position: relative;
+}
+
+.appointed-wing {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Airline Logo Item (Pure, Free-Standing, Unboxed & Highly Visible) */
+.airline-logo-item {
+  width: 195px;
+  height: 85px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+}
+
+.airline-logo-item:hover {
+  transform: scale(1.08);
+}
+
+.airline-logo-item img {
+  max-width: 100%;
+  max-height: 64px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.28s ease;
+}
+
+/* Custom Size Boost for Emirates & Ethiopian Airlines */
+.airline-logo-item.logo-emirates img {
+  max-height: 74px;
+  transform: scale(1.18);
+}
+
+.airline-logo-item.logo-ethiopian img {
+  max-height: 74px;
+  transform: scale(1.22);
+}
+
+.airline-logo-item.logo-emirates:hover img {
+  transform: scale(1.26);
+}
+
+.airline-logo-item.logo-ethiopian:hover img {
+  transform: scale(1.30);
+}
+
+/* Center Supreme Logo (Prominent, As Is, No Additional Styling) */
+.appointed-center-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  flex-shrink: 0;
+}
+
+.appointed-center-logo {
+  width: 260px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 4px 14px rgba(15, 23, 42, 0.08));
+}
+
+.appointed-center-logo:hover {
+  transform: scale(1.03);
+}
+
+/* Tablet Responsiveness */
+@media (max-width: 1100px) {
+  .appointed-logos-cluster {
+    gap: 24px;
+  }
+  .appointed-wing {
+    gap: 16px;
+  }
+  .logo-col {
+    gap: 20px;
+  }
+  .airline-logo-item {
+    width: 160px;
+    height: 72px;
+  }
+  .airline-logo-item img {
+    max-height: 54px;
+  }
+  .airline-logo-item.logo-emirates img {
+    max-height: 64px;
+  }
+  .airline-logo-item.logo-ethiopian img {
+    max-height: 64px;
+  }
+  .appointed-center-logo {
+    width: 220px;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .appointed-section {
+    padding: 70px 0 75px;
+  }
+  .appointed-section .section-heading-center {
+    margin-bottom: 35px;
+  }
+  .appointed-tagline-desc {
+    font-size: 16px;
+  }
+  .appointed-logos-cluster {
+    flex-direction: column;
+    gap: 30px;
+    padding: 8px 0;
+  }
+  .appointed-center-brand {
+    display: none !important;
+  }
+  .appointed-wing {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
+  .logo-col {
+    flex-direction: row;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+  .airline-logo-item {
+    width: calc(50% - 12px);
+    max-width: 175px;
+    height: 72px;
+    padding: 6px 10px;
+  }
+  .airline-logo-item img {
+    max-height: 54px;
+  }
+  .airline-logo-item.logo-emirates img {
+    max-height: 64px;
+    transform: scale(1.18);
+  }
+  .airline-logo-item.logo-ethiopian img {
+    max-height: 64px;
+    transform: scale(1.22);
+  }
+}
+
+@media (max-width: 480px) {
+  .appointed-section {
+    padding: 55px 0 60px;
+  }
+  .appointed-wing {
+    gap: 12px;
+  }
+  .logo-col {
+    gap: 12px;
+  }
+  .airline-logo-item {
+    width: calc(50% - 8px);
+    height: 64px;
+    padding: 4px 6px;
+  }
+  .airline-logo-item img {
+    max-height: 48px;
+  }
+  .airline-logo-item.logo-emirates img {
+    max-height: 56px;
+    transform: scale(1.18);
+  }
+  .airline-logo-item.logo-ethiopian img {
+    max-height: 56px;
+    transform: scale(1.22);
+  }
+}
 /* ==========================================================================
    Modals, Lightbox & Inquiry Form System
    ========================================================================== */

@@ -45,10 +45,12 @@ async function loadTours(shouldScroll = false) {
           </div>
         </div>`;
     } else {
-      grid.innerHTML = tours.map((t, index) => `
+      grid.innerHTML = tours.map((t, index) => {
+        const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
+        return `
         <article class="tour-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}">
           <div class="tour-image">
-            <img src="${t.image}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
+            <img src="${tourImg}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
             ${t.featured ? '<span class="tag">Featured</span>' : ''}
           </div>
           <div class="tour-body">
@@ -60,7 +62,8 @@ async function loadTours(shouldScroll = false) {
               <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
             </div>
           </div>
-        </article>`).join("");
+        </article>`;
+      }).join("");
     }
 
     const emptyState = $("emptyState");
@@ -81,6 +84,28 @@ async function loadTours(shouldScroll = false) {
     }
   } catch (err) {
     console.error("Error loading tours:", err);
+  }
+}
+
+function toggleMoreTours() {
+  const grid = $("tourGrid");
+  const text = $("seeMoreToursText");
+  const icon = $("seeMoreToursIcon");
+  if (!grid) return;
+
+  grid.classList.toggle("expanded-grid");
+  const isExpanded = grid.classList.contains("expanded-grid");
+
+  if (text) text.textContent = isExpanded ? "Show Swipe View" : "See More Packages";
+  if (icon) {
+    icon.className = isExpanded ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down";
+  }
+
+  if (!isExpanded) {
+    const toursSec = document.getElementById("tours");
+    if (toursSec) {
+      toursSec.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 }
 
@@ -162,6 +187,7 @@ function renderGallery() {
 
   grid.innerHTML = visibleItems.map((item, index) => {
     const featClass = item.featured ? `featured-${item.featured}` : "";
+    const imgUrl = item.image || item.imageUrl || '/photos/client_1.webp';
 
     return `
       <figure class="gallery-item ${featClass}" 
@@ -171,7 +197,7 @@ function renderGallery() {
               data-aos-delay="${(index % 4) * 80}"
               onclick="openLightbox(${index})">
         <div class="gallery-img-wrapper">
-          <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.place || 'Gallery Photo')}" loading="lazy">
+          <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(item.place || 'Gallery Photo')}" loading="lazy">
           <div class="gallery-hover-overlay">
             <i class="fa-solid fa-magnifying-glass-plus"></i>
           </div>
@@ -486,8 +512,12 @@ function initHeroSlider() {
   if (prevBtn) prevBtn.addEventListener("click", () => prevHeroSlide());
   if (nextBtn) nextBtn.addEventListener("click", () => nextHeroSlide(true));
 
-  updateHeroContent(0);
-  startHeroTimer();
+  // Defer the first hero animation until after the preloader finishes.
+  // The preloader dismiss script will call window._startHeroAfterPreloader().
+  window._startHeroAfterPreloader = function () {
+    updateHeroContent(0);
+    startHeroTimer();
+  };
 }
 
 let heroTimeouts = [];
@@ -888,16 +918,19 @@ async function renderUpcomingTours() {
 
   if (!upcomingToursData || upcomingToursData.length === 0) return;
 
-  grid.innerHTML = upcomingToursData.map((t, index) => `
+  grid.innerHTML = upcomingToursData.map((t, index) => {
+    const upImg = t.image || t.imageUrl || '/packages/lake_Bogoria.webp';
+    return `
     <div class="upcoming-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}" onclick="openUpcomingTour('${t.id}')">
       <div class="upcoming-image-box">
-        <img src="${t.image}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
+        <img src="${upImg}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
         <div class="upcoming-location-badge">
           <i class="fa-solid fa-location-dot"></i> <span>${escapeHtml(t.location || t.title)}</span>
         </div>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
   if (typeof AOS !== "undefined") AOS.refresh();
   initUpcomingCarousel();
 }
@@ -905,10 +938,11 @@ async function renderUpcomingTours() {
 function openUpcomingTour(id) {
   const pkg = upcomingToursData.find(item => item.id === id);
   if (!pkg) return;
+  const pkgImg = pkg.image || pkg.imageUrl || '/packages/lake_Bogoria.webp';
 
   $("modalContent").innerHTML = `
-    <div class="modal-clear-image-container" onclick="openLightbox('${pkg.image}', '${escapeHtml(pkg.title).replace(/'/g, "\\'")}')" title="Click to view full screen">
-      <img src="${pkg.image}" alt="${escapeHtml(pkg.title)}" class="modal-clear-img">
+    <div class="modal-clear-image-container" onclick="openLightbox('${pkgImg}', '${escapeHtml(pkg.title).replace(/'/g, "\\'")}')" title="Click to view full screen">
+      <img src="${pkgImg}" alt="${escapeHtml(pkg.title)}" class="modal-clear-img">
       <span class="zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Screen</span>
     </div>
     <div class="modal-body compact-modal-body text-center">
@@ -1137,6 +1171,52 @@ function resetDomeTimer() {
   startDomeAutoPlay();
 }
 
+async function loadDestinations() {
+  const dome = $("destinationsDome");
+  const pagination = $("domePagination");
+  if (!dome) return;
+
+  try {
+    const res = await fetch("/api/destinations");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        cachedDestinations = data;
+        
+        dome.innerHTML = data.map((d, idx) => {
+          const initialPos = idx < 6 ? idx : -1;
+          const imgSrc = d.image || d.imageUrl || '/photos/mara_2.jpg';
+          const name = d.name || d.title || 'Destination';
+          return `
+            <div class="destination-card" data-index="${idx}" data-pos="${initialPos}"
+              onclick="handleDomeCardClick(${idx}, '${escapeHtml(name).replace(/'/g, "\\'")}')">
+              <div class="dest-img-box">
+                <img src="${imgSrc}" alt="${escapeHtml(name)}" width="300" height="400" loading="lazy" decoding="async">
+              </div>
+              <div class="dest-card-info">
+                <h3>${escapeHtml(name)}</h3>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        if (pagination) {
+          pagination.innerHTML = data.map((d, idx) => {
+            const name = d.name || d.title || 'Destination';
+            return `<span class="dot ${idx === currentDomeCenter ? 'active' : ''}" onclick="setDomeApex(${idx})" aria-label="${escapeHtml(name)}" title="${escapeHtml(name)}"></span>`;
+          }).join("");
+        }
+
+        currentDomeCenter = Math.min(2, Math.max(0, data.length - 1));
+        updateDomePositions();
+        startDomeAutoPlay();
+      }
+    }
+  } catch (err) {
+    console.warn("Could not dynamically load destinations:", err);
+  }
+}
+
 function initDomeCarousel() {
   const domeElem = document.getElementById('destinationsDome');
   if (domeElem) {
@@ -1172,6 +1252,7 @@ function initAOS() {
 
 initHeroSlider();
 initCustomDropdowns();
+loadDestinations();
 renderUpcomingTours();
 loadTours();
 loadGallery();

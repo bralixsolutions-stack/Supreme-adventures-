@@ -33,6 +33,9 @@ Thumbs.db
 public/uploads/*
 !public/uploads/.gitkeep
 
+# Runtime Database (seeded at startup; admin changes must persist in Supabase)
+data/db.json
+
 # Build & Cache Directories
 .cache/
 dist/
