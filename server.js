@@ -1011,10 +1011,7 @@ app.post("/api/admin/destinations", adminAuth, uploadImage, async (req, res) => 
     if (!dest.name) return res.status(400).json({ error: "Destination name is required" });
 
     if (supabase) {
-      const { data, error } = await supabase.from("destinations").insert({
-        ...dest,
-        show_in_search: showInSearch
-      }).select().single();
+      const { data, error } = await supabase.from("destinations").insert(dest).select().single();
       if (error) throw error;
       return res.status(201).json(destFromRow(data));
     }
@@ -1054,9 +1051,6 @@ app.put("/api/admin/destinations/:id", adminAuth, uploadImage, async (req, res) 
         updates.image = req.body.imageUrl || req.body.image;
       }
       if (req.body.description !== undefined) updates.description = req.body.description;
-      if (req.body.showInSearch !== undefined) {
-        updates.show_in_search = req.body.showInSearch === "true" || req.body.showInSearch === true;
-      }
 
       const { data, error } = await supabase.from("destinations").update(updates).eq("id", req.params.id).select().single();
       if (error) throw error;

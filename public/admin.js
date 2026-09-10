@@ -385,7 +385,7 @@ async function loadTours(){
           <tbody>
             ${tours.map(t => `
               <tr>
-                <td><img src="${esc(t.image)}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
+                <td><img src="${esc(t.image || t.imageUrl || '/photos/wild_beest.webp')}" onerror="this.onerror=null;this.src='/photos/wild_beest.webp';" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
                 <td><b>${esc(t.title)}</b></td>
                 <td>${esc(t.location || t.destination)}</td>
                 <td>${t.duration} days</td>
@@ -544,7 +544,7 @@ async function loadDestinations(){
           <tbody>
             ${dests.map(d => `
               <tr>
-                <td><img src="${esc(d.image)}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
+                <td><img src="${esc(d.image || d.imageUrl || '/photos/zanzibar.webp')}" onerror="this.onerror=null;this.src='/photos/zanzibar.webp';" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
                 <td><b>${esc(d.name)}</b></td>
                 <td><code>${esc(d.slug)}</code></td>
                 <td>
@@ -708,7 +708,7 @@ async function loadUpcoming(){
           <tbody>
             ${upcoming.map(u => `
               <tr>
-                <td><img src="${esc(u.image)}" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
+                <td><img src="${esc(u.image || u.imageUrl || '/packages/lake_Bogoria.webp')}" onerror="this.onerror=null;this.src='/packages/lake_Bogoria.webp';" alt="" style="width:48px;height:36px;object-fit:cover;border-radius:6px;"></td>
                 <td><b>${esc(u.title)}</b><br><small style="color:var(--muted)">${esc(u.subtitle || "")}</small></td>
                 <td>${esc(u.location || "-")}</td>
                 <td><small>${esc(u.date || "-")}</small></td>
@@ -858,7 +858,7 @@ async function loadGallery(){
         ${images.map(image => `
           <article class="admin-gallery-card">
             <div class="admin-gallery-img-wrap">
-              <img src="${esc(image.image)}" alt="${esc(image.place)}" loading="lazy">
+              <img src="${esc(image.image || image.imageUrl || '/photos/client_1.webp')}" onerror="this.onerror=null;this.src='/photos/client_1.webp';" alt="${esc(image.place)}" loading="lazy">
               <span class="admin-gallery-badge">${esc(image.place)}</span>
             </div>
             <div class="admin-gallery-body">
