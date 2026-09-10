@@ -321,11 +321,11 @@ function seedDestinations() {
     { id: "dest-serengeti", name: "Serengeti", slug: "serengeti", image: "/photos/jeep_safari.webp", description: "Endless savannah plains & legendary predator encounters.", showInSearch: true },
     { id: "dest-rift", name: "Great Rift Valley", slug: "rift-valley", image: "/photos/client_3.webp", description: "Geysers, flamingos & volcanic crater adventures.", showInSearch: true },
     { id: "dest-mombasa", name: "Mombasa", slug: "mombasa", image: "/photos/mombasa.webp", description: "Coastal beach paradise and Swahili heritage.", showInSearch: true },
-    { id: "dest-malindi", name: "Malindi", slug: "malindi", image: "/photos/watamu_1.jpg", description: "Tropical marine parks and golden sand shores.", showInSearch: true },
+    { id: "dest-malindi", name: "Malindi", slug: "malindi", image: "/photos/malindi.webp", description: "Tropical marine parks and golden sand shores.", showInSearch: true },
     { id: "dest-diani", name: "Diani", slug: "diani", image: "/photos/diani_1.jpg", description: "World-renowned white sand beaches and reef diving.", showInSearch: true },
     { id: "dest-tsavo", name: "Tsavo", slug: "tsavo", image: "/photos/tsavo_1.jpg", description: "Red elephant herds and vast rugged wilderness.", showInSearch: true },
     { id: "dest-sagana", name: "Sagana", slug: "sagana", image: "/photos/sagana_1.avif", description: "White water rafting and outdoor adrenaline adventures.", showInSearch: true },
-    { id: "dest-lamu", name: "Lamu", slug: "lamu", image: "/photos/watamu_1.jpg", description: "Unspoiled UNESCO Swahili island and dhow sailing.", showInSearch: true },
+    { id: "dest-lamu", name: "Lamu", slug: "lamu", image: "/photos/lamu.webp", description: "Unspoiled UNESCO Swahili island and dhow sailing.", showInSearch: true },
     { id: "dest-capetown", name: "Cape Town", slug: "cape-town", image: "/photos/capetown.webp", description: "Table Mountain, coastal peninsulas, and winelands.", showInSearch: true },
     { id: "dest-rwanda", name: "Rwanda", slug: "rwanda", image: "/packages/rwanda.webp", description: "Gorilla trekking in Volcanoes National Park.", showInSearch: true }
   ];

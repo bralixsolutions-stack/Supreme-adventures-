@@ -366,11 +366,11 @@ const ALL_DESTINATIONS = [
   { id: "dest-serengeti", name: "Serengeti", slug: "serengeti", image: "/photos/jeep_safari.webp", description: "Endless savannah plains & legendary predator encounters." },
   { id: "dest-rift", name: "Great Rift Valley", slug: "rift-valley", image: "/photos/client_3.webp", description: "Geysers, flamingos & volcanic crater adventures." },
   { id: "dest-mombasa", name: "Mombasa", slug: "mombasa", image: "/photos/mombasa.webp", description: "Coastal beach paradise and Swahili heritage." },
-  { id: "dest-malindi", name: "Malindi", slug: "malindi", image: "/photos/watamu_1.jpg", description: "Tropical marine parks and golden sand shores." },
+  { id: "dest-malindi", name: "Malindi", slug: "malindi", image: "/photos/malindi.webp", description: "Tropical marine parks and golden sand shores." },
   { id: "dest-diani", name: "Diani", slug: "diani", image: "/photos/diani_1.jpg", description: "World-renowned white sand beaches and reef diving." },
   { id: "dest-tsavo", name: "Tsavo", slug: "tsavo", image: "/photos/tsavo_1.jpg", description: "Red elephant herds and vast rugged wilderness." },
   { id: "dest-sagana", name: "Sagana", slug: "sagana", image: "/photos/sagana_1.avif", description: "White water rafting and outdoor adrenaline adventures." },
-  { id: "dest-lamu", name: "Lamu", slug: "lamu", image: "/photos/watamu_1.jpg", description: "Unspoiled UNESCO Swahili island and dhow sailing." },
+  { id: "dest-lamu", name: "Lamu", slug: "lamu", image: "/photos/lamu.webp", description: "Unspoiled UNESCO Swahili island and dhow sailing." },
   { id: "dest-capetown", name: "Cape Town", slug: "cape-town", image: "/photos/capetown.webp", description: "Table Mountain, coastal peninsulas, and winelands." },
   { id: "dest-rwanda", name: "Rwanda", slug: "rwanda", image: "/packages/rwanda.webp", description: "Gorilla trekking in Volcanoes National Park." }
 ];

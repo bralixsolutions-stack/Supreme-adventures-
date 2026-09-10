@@ -1191,7 +1191,7 @@ async function loadDestinations() {
             <div class="destination-card" data-index="${idx}" data-pos="${initialPos}"
               onclick="handleDomeCardClick(${idx}, '${escapeHtml(name).replace(/'/g, "\\'")}')">
               <div class="dest-img-box">
-                <img src="${imgSrc}" alt="${escapeHtml(name)}" width="300" height="400" loading="lazy" decoding="async">
+                <img src="${imgSrc}" onerror="this.onerror=null;this.src='/photos/mara_2.jpg';" alt="${escapeHtml(name)}" width="300" height="400" loading="lazy" decoding="async">
               </div>
               <div class="dest-card-info">
                 <h3>${escapeHtml(name)}</h3>
