@@ -47,11 +47,16 @@ async function loadTours(shouldScroll = false) {
     } else {
       grid.innerHTML = tours.map((t, index) => {
         const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
+        const escapedTitle = escapeHtml(t.title).replace(/'/g, "\\'");
+        const escapedLocation = escapeHtml(t.location || t.destination || "").replace(/'/g, "\\'");
         return `
         <article class="tour-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}">
-          <div class="tour-image">
+          <div class="tour-image" onclick="openLightbox('${tourImg}', '${escapedTitle}')" title="Click to view full image">
             <img src="${tourImg}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
             ${t.featured ? '<span class="tag">Featured</span>' : ''}
+            <div class="tour-image-overlay">
+              <span class="tour-zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Image</span>
+            </div>
           </div>
           <div class="tour-body">
             <div class="tour-meta"><span>${t.duration} days · ${t.category}</span><span>★ ${t.rating || 5}</span></div>
@@ -59,7 +64,9 @@ async function loadTours(shouldScroll = false) {
             <p>${escapeHtml(t.shortDescription || t.description || "")}</p>
             <div class="tour-bottom">
               <div class="price">KES ${Number(t.price).toLocaleString()} <small>/ person</small></div>
-              <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
+              <button class="tour-whatsapp-btn" onclick="bookOnWhatsApp('${escapedTitle}', '${escapedLocation}', '${t.duration} Days', '${t.price}')" aria-label="Book on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i> Book Now
+              </button>
             </div>
           </div>
         </article>`;
@@ -358,22 +365,20 @@ function closeLightbox() {
   if (modal) modal.classList.remove("active");
   const lb = $("imageLightbox");
   if (lb) lb.classList.add("hidden");
-  document.body.style.overflow = "";
+  const tourModal = $("tourModal");
+  if (!tourModal || tourModal.classList.contains("hidden")) {
+    document.body.style.overflow = "";
+  }
 }
 
 function bookOnWhatsApp(title, location, duration, price, inclusions, exclusions) {
-  let incList = (Array.isArray(inclusions) && inclusions.length > 0)
-    ? inclusions
-    : ["Transport in 4x4 safari vehicle", "Park & reserve entry fees", "Professional guide & driver", "Accommodation & daily meals"];
+  let incList = (Array.isArray(inclusions) && inclusions.length > 0) ? inclusions : [];
+  let excList = (Array.isArray(exclusions) && exclusions.length > 0) ? exclusions : [];
 
-  let excList = (Array.isArray(exclusions) && exclusions.length > 0)
-    ? exclusions
-    : ["International flights", "Travel & medical insurance", "Personal expenses & tips", "Visa fees"];
+  const inclusionsFormatted = incList.length > 0 ? `\n\n✅ *What's Included:*\n${incList.map(item => `  • ${item}`).join("\n")}` : "";
+  const exclusionsFormatted = excList.length > 0 ? `\n\n❌ *Exclusions:*\n${excList.map(item => `  • ${item}`).join("\n")}` : "";
 
-  const inclusionsFormatted = incList.map(item => `  • ${item}`).join("\n");
-  const exclusionsFormatted = excList.map(item => `  • ${item}`).join("\n");
-
-  const message = `Hello Supreme Adventures! 👋\n\nI would like to book:\n📌 *Trip:* ${title}\n📍 *Location:* ${location}\n📅 *Duration/Date:* ${duration}\n💰 *Price:* KES ${Number(price).toLocaleString()} / person\n\n✅ *What's Included:*\n${inclusionsFormatted}\n\n❌ *Exclusions:*\n${exclusionsFormatted}\n\nPlease confirm availability and booking details!`;
+  const message = `Hello Supreme Adventures! 👋\n\nI would like to book:\n📌 *Trip:* ${title}\n📍 *Location:* ${location}\n📅 *Duration/Date:* ${duration}\n💰 *Price:* KES ${Number(price).toLocaleString()} / person${inclusionsFormatted}${exclusionsFormatted}\n\nPlease confirm availability and booking details!`;
 
   window.open(`https://wa.me/254759080100?text=${encodeURIComponent(message)}`, '_blank');
 }
@@ -381,43 +386,24 @@ function bookOnWhatsApp(title, location, duration, price, inclusions, exclusions
 async function openTour(slug) {
   const res = await fetch("/api/tours/" + encodeURIComponent(slug));
   const t = await res.json();
-  const incArr = t.inclusions && t.inclusions.length ? t.inclusions : [
-    "Transport in 4x4 safari vehicle",
-    "All park & reserve entry fees",
-    "Professional guide & driver",
-    "Accommodation & daily meals"
-  ];
-  const excArr = t.exclusions && t.exclusions.length ? t.exclusions : [
-    "International flights",
-    "Travel & medical insurance",
-    "Personal expenses & tips",
-    "Visa fees"
-  ];
+  const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
+  const tourTitleEscaped = escapeHtml(t.title).replace(/'/g, "\\'");
+  const tourLocEscaped = escapeHtml(t.location || t.destination || "").replace(/'/g, "\\'");
 
   $("modalContent").innerHTML = `
-    <div class="modal-clear-image-container" onclick="openLightbox('${t.image}', '${escapeHtml(t.title).replace(/'/g, "\\'")}')" title="Click to view full screen">
-      <img src="${t.image}" alt="${escapeHtml(t.title)}" class="modal-clear-img">
+    <div class="modal-clear-image-container" onclick="openLightbox('${tourImg}', '${tourTitleEscaped}')" title="Click to view full screen">
+      <img src="${tourImg}" alt="${escapeHtml(t.title)}" class="modal-clear-img">
       <span class="zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Screen</span>
     </div>
     <div class="modal-body compact-modal-body">
       <div class="modal-header-compact">
-        <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((t.location || t.destination).toUpperCase())} · <i class="fa-solid fa-clock"></i> ${t.duration} DAYS</p>
+        <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((t.location || t.destination || "").toUpperCase())} · <i class="fa-solid fa-clock"></i> ${t.duration} DAYS</p>
         <h2>${escapeHtml(t.title)}</h2>
-        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize}</span><span>Price: <b>KES ${Number(t.price).toLocaleString()}</b> / person</span></div>
+        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize || 7}</span><span>Price: <b>KES ${Number(t.price).toLocaleString()}</b> / person</span></div>
       </div>
-      <p class="modal-desc">${escapeHtml(t.description || t.shortDescription)}</p>
+      <p class="modal-desc">${escapeHtml(t.description || t.shortDescription || "")}</p>
       
-      <h3 class="compact-h3">What This Trip Includes</h3>
-      <div class="modal-inclusions-list">
-        ${incArr.map(inc => `<div class="modal-inclusion-item"><i class="fa-solid fa-circle-check"></i> <span>${escapeHtml(inc)}</span></div>`).join("")}
-      </div>
-
-      <h3 class="compact-h3">What This Trip Excludes</h3>
-      <div class="modal-inclusions-list">
-        ${excArr.map(exc => `<div class="modal-exclusion-item"><i class="fa-solid fa-circle-xmark"></i> <span>${escapeHtml(exc)}</span></div>`).join("")}
-      </div>
-
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${escapeHtml(t.title).replace(/'/g, "\\'")}', '${escapeHtml(t.location || t.destination).replace(/'/g, "\\'")}', '${t.duration} Days', '${t.price}', ${JSON.stringify(incArr).replace(/"/g, '&quot;')}, ${JSON.stringify(excArr).replace(/"/g, '&quot;')})">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${tourTitleEscaped}', '${tourLocEscaped}', '${t.duration} Days', '${t.price}')">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
@@ -644,21 +630,11 @@ function bookCurrentHeroPackage() {
   const pkg = HERO_PACKAGES[currentHeroIndex];
   if (!pkg) return;
 
-  const incArr = [
-    "Transport in 4x4 safari vehicle",
-    "Professional driver & safari guide",
-    "Park & game reserve entry fees",
-    "Full board accommodation & meals"
-  ];
-  const excArr = [
-    "International flights",
-    "Travel & medical insurance",
-    "Personal purchases & tips",
-    "Visa fees"
-  ];
+  const pkgTitleEscaped = escapeHtml(pkg.title).replace(/'/g, "\\'");
+  const pkgDestEscaped = escapeHtml(pkg.destination).replace(/'/g, "\\'");
 
   $("modalContent").innerHTML = `
-    <div class="modal-clear-image-container" onclick="openLightbox('${pkg.image}', '${escapeHtml(pkg.title).replace(/'/g, "\\'")}')" title="Click to view full screen">
+    <div class="modal-clear-image-container" onclick="openLightbox('${pkg.image}', '${pkgTitleEscaped}')" title="Click to view full screen">
       <img src="${pkg.image}" alt="${escapeHtml(pkg.title)}" class="modal-clear-img">
       <span class="zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Screen</span>
     </div>
@@ -673,17 +649,7 @@ function bookCurrentHeroPackage() {
       </div>
       <p class="modal-desc">${escapeHtml(pkg.tagline)}</p>
       
-      <h3 class="compact-h3">What This Trip Includes</h3>
-      <div class="modal-inclusions-list">
-        ${incArr.map(inc => `<div class="modal-inclusion-item"><i class="fa-solid fa-circle-check"></i> <span>${escapeHtml(inc)}</span></div>`).join("")}
-      </div>
-
-      <h3 class="compact-h3">What This Trip Excludes</h3>
-      <div class="modal-inclusions-list">
-        ${excArr.map(exc => `<div class="modal-exclusion-item"><i class="fa-solid fa-circle-xmark"></i> <span>${escapeHtml(exc)}</span></div>`).join("")}
-      </div>
-
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${escapeHtml(pkg.title).replace(/'/g, "\\'")}', '${escapeHtml(pkg.destination).replace(/'/g, "\\'")}', '${pkg.duration}', '${pkg.price}', ${JSON.stringify(incArr).replace(/"/g, '&quot;')}, ${JSON.stringify(excArr).replace(/"/g, '&quot;')})">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${pkgTitleEscaped}', '${pkgDestEscaped}', '${pkg.duration}', '${pkg.price}')">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;

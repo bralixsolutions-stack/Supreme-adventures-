@@ -1548,22 +1548,67 @@ nav a.active:not(.nav-cta)::after {
 }
 
 .tour-image {
-  height: 230px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   position: relative;
   overflow: hidden;
   background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .tour-image img,
 .tour-image .card-flyer-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
+  object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
 }
 
-.tour-card:hover .tour-image img {
-  transform: scale(1.05);
+.tour-image:hover img,
+.tour-image:hover .card-flyer-img {
+  transform: scale(1.03);
+}
+
+.tour-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 3;
+}
+
+.tour-image:hover .tour-image-overlay {
+  opacity: 1;
+}
+
+.tour-zoom-badge {
+  background: rgba(15, 23, 42, 0.88);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  transform: translateY(6px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tour-image:hover .tour-zoom-badge {
+  transform: translateY(0);
 }
 
 .tour-card .tag {
@@ -1669,6 +1714,36 @@ nav a.active:not(.nav-cta)::after {
   background: #000000;
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.tour-whatsapp-btn {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  border: none;
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 9px 20px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+  letter-spacing: 0.2px;
+  text-decoration: none;
+}
+
+.tour-whatsapp-btn i {
+  font-size: 16px;
+}
+
+.tour-whatsapp-btn:hover {
+  background: linear-gradient(135deg, #20ba5a 0%, #0e7065 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+  color: #ffffff;
 }
 
 /* Tours Action Container & See More Button */
@@ -2657,7 +2732,7 @@ nav a.active:not(.nav-cta)::after {
 
 .lightbox-img-container {
   width: 100%;
-  max-height: 75vh;
+  max-height: 84vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2668,7 +2743,7 @@ nav a.active:not(.nav-cta)::after {
 
 .lightbox-img-container img {
   max-width: 100%;
-  max-height: 75vh;
+  max-height: 84vh;
   width: auto;
   height: auto;
   object-fit: contain;
