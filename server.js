@@ -174,12 +174,34 @@ function readLocalDb() {
   if (fs.existsSync(DB_FILE)) {
     try { db = JSON.parse(fs.readFileSync(DB_FILE, "utf8")); } catch (e) {}
   }
-  if (!Array.isArray(db.tours)) db.tours = [];
-  if (!Array.isArray(db.gallery)) db.gallery = [];
-  if (!Array.isArray(db.destinations)) db.destinations = [];
-  if (!Array.isArray(db.upcoming)) db.upcoming = [];
-  if (!Array.isArray(db.bookings)) db.bookings = [];
-  if (!Array.isArray(db.enquiries)) db.enquiries = [];
+  let modified = false;
+  if (!Array.isArray(db.tours)) { db.tours = []; modified = true; }
+  if (!Array.isArray(db.gallery)) { db.gallery = []; modified = true; }
+  if (!Array.isArray(db.destinations)) { db.destinations = []; modified = true; }
+  if (!Array.isArray(db.upcoming)) { db.upcoming = []; modified = true; }
+  if (!Array.isArray(db.bookings)) { db.bookings = []; modified = true; }
+  if (!Array.isArray(db.enquiries)) { db.enquiries = []; modified = true; }
+
+  // Auto-seed default data if arrays are empty so local fallback is never blank
+  if (db.upcoming.length === 0 && typeof seedUpcoming === "function") {
+    db.upcoming = seedUpcoming();
+    modified = true;
+  }
+  if (db.destinations.length === 0 && typeof seedDestinations === "function") {
+    db.destinations = seedDestinations();
+    modified = true;
+  }
+  if (db.gallery.length === 0 && typeof seedGallery === "function") {
+    db.gallery = seedGallery();
+    modified = true;
+  }
+  if (db.tours.length === 0 && typeof seedTours === "function") {
+    db.tours = seedTours();
+    modified = true;
+  }
+  if (modified) {
+    writeLocalDb(db);
+  }
   return db;
 }
 
@@ -434,6 +456,47 @@ function destFromRow(r) {
 // ==========================================================================
 // PUBLIC API ENDPOINTS
 // ==========================================================================
+app.get("/api/health", async (req, res) => {
+  const isSupabaseConfigured = !!supabase;
+  let supabaseStatus = "disconnected";
+  let counts = {};
+
+  if (supabase) {
+    try {
+      const [t, u, d, g] = await Promise.all([
+        supabase.from("tours").select("id", { count: "exact", head: true }),
+        supabase.from("upcoming").select("id", { count: "exact", head: true }),
+        supabase.from("destinations").select("id", { count: "exact", head: true }),
+        supabase.from("gallery").select("id", { count: "exact", head: true })
+      ]);
+      supabaseStatus = "connected";
+      counts = {
+        tours: t.count || 0,
+        upcoming: u.count || 0,
+        destinations: d.count || 0,
+        gallery: g.count || 0
+      };
+    } catch (e) {
+      supabaseStatus = "error: " + e.message;
+    }
+  } else {
+    const db = readLocalDb();
+    counts = {
+      tours: (db.tours || []).length,
+      upcoming: (db.upcoming || []).length,
+      destinations: (db.destinations || []).length,
+      gallery: (db.gallery || []).length
+    };
+  }
+
+  res.json({
+    status: "ok",
+    database: isSupabaseConfigured ? "supabase" : "local_json_ephemeral",
+    supabaseStatus,
+    counts
+  });
+});
+
 app.get("/api/tours", async (req, res) => {
   try {
     const { destination, category, duration, maxPrice, featured, search } = req.query;
@@ -1446,7 +1509,19 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => console.log(`Supreme Adventures server running on port ${PORT}`));
+  app.listen(PORT, () => {
+    console.log(`Supreme Adventures server running on port ${PORT}`);
+    if (supabase) {
+      console.log("✅ Supabase active: Production PostgreSQL database and Cloud Storage connected.");
+    } else {
+      console.warn("\n=============================================================");
+      console.warn("⚠️  WARNING: Supabase is NOT configured!");
+      console.warn("⚠️  Render/cloud containers have an EPHEMERAL filesystem.");
+      console.warn("⚠️  Any admin uploads will be lost on container restart/redeploy.");
+      console.warn("⚠️  Please set SUPABASE_URL and SUPABASE_SECRET_KEY in Render Dashboard.");
+      console.warn("=============================================================\n");
+    }
+  });
 }
 
 module.exports = app;
