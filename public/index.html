@@ -107,7 +107,7 @@
   <noscript>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
   </noscript>
-  <link rel="stylesheet" href="/styles.css?v=2.3">
+  <link rel="stylesheet" href="/styles.css?v=2.6">
 </head>
 
 <!-- Preloader Overlay -->
@@ -356,8 +356,16 @@
             </div>
           </div>
         </div>
-        <div id="upcomingGrid" class="upcoming-grid cards-container" data-aos="fade-up" data-aos-duration="900"
+        <div id="upcomingGrid" class="upcoming-grid" data-aos="fade-up" data-aos-duration="900"
           data-aos-delay="200"></div>
+        <div class="upcoming-carousel-controls" data-aos="fade-up" data-aos-delay="250">
+          <div id="upcomingDots" class="upcoming-dots"></div>
+          <div class="upcoming-toggle-wrap">
+            <button id="upcomingToggleBtn" class="upcoming-toggle-btn" onclick="toggleUpcomingView()" aria-label="Toggle upcoming events view">
+              <i class="fa-solid fa-table-cells"></i> View All (9)
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -976,8 +984,8 @@
 
   <!-- AOS (Animate On Scroll) Library JS & Application Scripts -->
   <script src="https://unpkg.com/aos@next/dist/aos.js" defer></script>
-  <script src="/constants.js" defer></script>
-  <script src="/app.js?v=2.3" defer></script>
+  <script src="/constants.js?v=2.6" defer></script>
+  <script src="/app.js?v=2.6" defer></script>
 <script>
   window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');

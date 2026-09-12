@@ -89,43 +89,70 @@ function renderToursGrid() {
   if (typeof AOS !== "undefined") AOS.refresh();
 }
 
-async function loadTours(shouldScroll = false) {
+function loadTours(shouldScroll = false) {
   const grid = $("tourGrid");
   if (!grid) return;
 
-  const params = new URLSearchParams();
   const destination = $("destination") ? $("destination").value : "";
   const category = $("category") ? $("category").value : "";
   const duration = $("duration") ? $("duration").value : "";
-  if (destination) params.set("destination", destination);
-  if (category) params.set("category", category);
-  if (duration) params.set("duration", duration);
 
-  try {
-    const res = await fetch("/api/tours?" + params.toString());
-    const tours = await res.json();
-    allToursData = Array.isArray(tours) ? tours : [];
-    isToursExpanded = false; // Collapse to initial view whenever filters change
+  let tours = (typeof TOURS !== "undefined" && Array.isArray(TOURS)) ? [...TOURS] : [];
 
-    renderToursGrid();
+  // 1. Filter by Destination
+  if (destination && destination !== "All destinations") {
+    const d = destination.toLowerCase().trim();
+    tours = tours.filter(t => {
+      const dest = (t.destination || "").toLowerCase();
+      const loc = (t.location || "").toLowerCase();
+      const title = (t.title || "").toLowerCase();
+      return dest.includes(d) || loc.includes(d) || title.includes(d) || d.includes(dest) || d.includes(loc);
+    });
+  }
 
-    const emptyState = $("emptyState");
-    if (emptyState) emptyState.classList.add("hidden");
+  // 2. Filter by Category / Trip Type
+  if (category && category !== "All types") {
+    const c = category.toLowerCase().trim();
+    tours = tours.filter(t => {
+      const cat = (t.category || "").toLowerCase();
+      const title = (t.title || "").toLowerCase();
+      const desc = (t.shortDescription || t.description || "").toLowerCase();
+      return cat.includes(c) || c.includes(cat) || title.includes(c) || desc.includes(c) ||
+        (c.includes("safari") && (cat.includes("safari") || cat.includes("wildlife"))) ||
+        (c.includes("beach") && (cat.includes("beach") || cat.includes("coastal") || cat.includes("marine") || cat.includes("island"))) ||
+        (c.includes("culture") && (cat.includes("culture") || cat.includes("island") || cat.includes("heritage"))) ||
+        (c.includes("adventure") && (cat.includes("adventure") || cat.includes("overland") || cat.includes("safari"))) ||
+        (c.includes("overland") && (cat.includes("overland") || cat.includes("truck") || cat.includes("adventure"))) ||
+        (c.includes("wildlife") && (cat.includes("wildlife") || cat.includes("safari")));
+    });
+  }
 
-    if (!destination && !category && !duration && Array.isArray(tours) && tours.length > 0) {
-      updateSearchDropdownsFromData(tours, cachedDestinations);
+  // 3. Filter by Duration
+  if (duration && duration !== "Any duration") {
+    const durNum = Number(duration);
+    if (!isNaN(durNum)) {
+      tours = tours.filter(t => {
+        const d = Number(t.duration) || 0;
+        return durNum >= 5 ? d >= 5 : d === durNum;
+      });
     }
+  }
 
-    if (typeof initScrollReveal === "function") initScrollReveal();
+  allToursData = tours;
+  isToursExpanded = false;
 
-    if (shouldScroll) {
-      const toursSec = document.getElementById("tours");
-      if (toursSec) {
-        toursSec.scrollIntoView({ behavior: "smooth" });
-      }
+  renderToursGrid();
+
+  const emptyState = $("emptyState");
+  if (emptyState) emptyState.classList.add("hidden");
+
+  if (typeof initScrollReveal === "function") initScrollReveal();
+
+  if (shouldScroll) {
+    const toursSec = document.getElementById("tours");
+    if (toursSec) {
+      toursSec.scrollIntoView({ behavior: "smooth" });
     }
-  } catch (err) {
-    console.error("Error loading tours:", err);
   }
 }
 
@@ -184,14 +211,9 @@ let isGalleryExpanded = false;
 let currentGalleryCategory = "all";
 const INITIAL_GALLERY_LIMIT = 7;
 
-async function loadGallery() {
-  try {
-    const res = await fetch("/api/gallery");
-    allGalleryItems = await res.json();
-    filterGallery("all");
-  } catch (err) {
-    console.error("Error loading gallery:", err);
-  }
+function loadGallery() {
+  allGalleryItems = (typeof GALLERY_PHOTOS !== "undefined" && Array.isArray(GALLERY_PHOTOS)) ? GALLERY_PHOTOS : [];
+  filterGallery("all");
 }
 
 function filterGallery(category, btnEl) {
@@ -418,12 +440,19 @@ function bookOnWhatsApp(title, location, duration, price, inclusions, exclusions
   window.open(`https://wa.me/254759080100?text=${encodeURIComponent(message)}`, '_blank');
 }
 
-async function openTour(slug) {
-  const res = await fetch("/api/tours/" + encodeURIComponent(slug));
-  const t = await res.json();
-  const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
+function openTour(slug) {
+  const toursList = (typeof TOURS !== "undefined" && Array.isArray(TOURS)) ? TOURS : [];
+  let t = toursList.find(item => item.slug === slug || item.id === slug);
+  if (!t && typeof HERO_PACKAGES !== "undefined") {
+    t = HERO_PACKAGES.find(item => item.id === slug);
+  }
+  if (!t) return;
+
+  const tourImg = t.image || t.imageUrl || '/supreme_packages/packages/wildbeest.webp';
   const tourTitleEscaped = escapeHtml(t.title).replace(/'/g, "\\'");
   const tourLocEscaped = escapeHtml(t.location || t.destination || "").replace(/'/g, "\\'");
+  const incData = JSON.stringify(t.inclusions || []).replace(/"/g, '&quot;');
+  const excData = JSON.stringify(t.exclusions || []).replace(/"/g, '&quot;');
 
   $("modalContent").innerHTML = `
     <div class="modal-clear-image-container" onclick="openLightbox('${tourImg}', '${tourTitleEscaped}')" title="Click to view full screen">
@@ -434,11 +463,11 @@ async function openTour(slug) {
       <div class="modal-header-compact">
         <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((t.location || t.destination || "").toUpperCase())} · <i class="fa-solid fa-clock"></i> ${t.duration} DAYS</p>
         <h2>${escapeHtml(t.title)}</h2>
-        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize || 7}</span><span>Price: <b>KES ${Number(t.price).toLocaleString()}</b> / person</span></div>
+        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize || 8}</span><span>Price: <b>KES ${Number(t.price).toLocaleString()}</b> / person</span></div>
       </div>
       <p class="modal-desc">${escapeHtml(t.description || t.shortDescription || "")}</p>
       
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${tourTitleEscaped}', '${tourLocEscaped}', '${t.duration} Days', '${t.price}')">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${tourTitleEscaped}', '${tourLocEscaped}', '${t.duration} Days', '${t.price}', ${incData}, ${excData})">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
@@ -838,37 +867,125 @@ function updateSearchDropdownsFromData(tours = [], destinations = []) {
   });
 }
 
-async function initCustomDropdowns() {
+function initCustomDropdowns() {
   document.onclick = () => {
     document.querySelectorAll(".custom-dropdown-menu").forEach(m => m.classList.add("hidden"));
     document.querySelectorAll(".custom-trigger").forEach(t => t.classList.remove("open"));
   };
 
-  try {
-    const [toursRes, destsRes] = await Promise.all([
-      fetch("/api/tours").then(r => r.json()).catch(() => []),
-      fetch("/api/destinations").then(r => r.json()).catch(() => [])
-    ]);
-    if (Array.isArray(destsRes) && destsRes.length > 0) {
-      cachedDestinations = destsRes;
-    }
-    updateSearchDropdownsFromData(
-      Array.isArray(toursRes) ? toursRes : [],
-      Array.isArray(destsRes) ? destsRes : []
-    );
-  } catch (err) {
-    console.warn("Could not dynamically load search dropdown options:", err);
-  }
+  const tours = (typeof TOURS !== "undefined" && Array.isArray(TOURS)) ? TOURS : [];
+  const dests = (typeof DESTINATIONS !== "undefined" && Array.isArray(DESTINATIONS))
+    ? DESTINATIONS.filter(d => d && d !== "All destinations").map(name => ({ name, showInSearch: true }))
+    : [];
+
+  updateSearchDropdownsFromData(tours, dests);
 }
 
 let upcomingCarouselInterval = null;
+let isUpcomingGridView = false;
 
 function scrollUpcoming(direction) {
   const grid = $("upcomingGrid");
   if (!grid) return;
-  const firstCard = grid.querySelector(".upcoming-card");
-  const scrollAmount = firstCard ? firstCard.offsetWidth + 18 : 320;
-  grid.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+  const cards = grid.querySelectorAll(".upcoming-card");
+  if (!cards.length) return;
+  
+  const cardWidth = cards[0].offsetWidth;
+  const gap = 24;
+  const scrollAmount = cardWidth + gap;
+  const maxScroll = grid.scrollWidth - grid.clientWidth;
+
+  if (direction > 0 && grid.scrollLeft >= maxScroll - 15) {
+    grid.scrollTo({ left: 0, behavior: "smooth" });
+  } else if (direction < 0 && grid.scrollLeft <= 15) {
+    grid.scrollTo({ left: maxScroll, behavior: "smooth" });
+  } else {
+    grid.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+  }
+}
+
+function scrollToUpcomingIndex(idx) {
+  const grid = $("upcomingGrid");
+  if (!grid) return;
+  const cards = grid.querySelectorAll(".upcoming-card");
+  if (!cards[idx]) return;
+  
+  const targetLeft = cards[idx].offsetLeft - grid.offsetLeft - 8;
+  grid.scrollTo({ left: Math.max(0, targetLeft), behavior: "smooth" });
+  updateUpcomingDots(idx);
+}
+
+function updateUpcomingDots(forceIndex) {
+  const dotsContainer = $("upcomingDots");
+  if (!dotsContainer) return;
+  const dots = dotsContainer.querySelectorAll(".upcoming-dot");
+  if (!dots.length) return;
+
+  let activeIdx = 0;
+  if (typeof forceIndex === "number") {
+    activeIdx = forceIndex;
+  } else {
+    const grid = $("upcomingGrid");
+    if (grid) {
+      const cards = grid.querySelectorAll(".upcoming-card");
+      if (cards.length) {
+        const scrollLeft = grid.scrollLeft;
+        let closestIdx = 0;
+        let closestDist = Infinity;
+        cards.forEach((c, i) => {
+          const dist = Math.abs((c.offsetLeft - grid.offsetLeft - 8) - scrollLeft);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestIdx = i;
+          }
+        });
+        activeIdx = closestIdx;
+      }
+    }
+  }
+
+  dots.forEach((d, i) => {
+    if (i === activeIdx) d.classList.add("active");
+    else d.classList.remove("active");
+  });
+}
+
+function renderUpcomingDots() {
+  const dotsContainer = $("upcomingDots");
+  if (!dotsContainer) return;
+  const count = (upcomingToursData && upcomingToursData.length) ? upcomingToursData.length : 0;
+  if (count <= 1 || isUpcomingGridView) {
+    dotsContainer.innerHTML = "";
+    return;
+  }
+
+  dotsContainer.innerHTML = Array.from({ length: count }, (_, i) => `
+    <button class="upcoming-dot ${i === 0 ? 'active' : ''}" 
+            onclick="scrollToUpcomingIndex(${i})" 
+            aria-label="Go to upcoming package ${i + 1}"></button>
+  `).join("");
+}
+
+function toggleUpcomingView() {
+  isUpcomingGridView = !isUpcomingGridView;
+  const grid = $("upcomingGrid");
+  const btn = $("upcomingToggleBtn");
+  const dots = $("upcomingDots");
+  const nav = document.querySelector(".upcoming-scroll-nav");
+
+  if (isUpcomingGridView) {
+    if (grid) grid.classList.add("grid-view");
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-sliders"></i> Show as Carousel';
+    if (dots) dots.style.display = "none";
+    if (nav) nav.style.opacity = "0.3";
+    if (upcomingCarouselInterval) clearInterval(upcomingCarouselInterval);
+  } else {
+    if (grid) grid.classList.remove("grid-view");
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-table-cells"></i> View All (' + (upcomingToursData ? upcomingToursData.length : 9) + ')';
+    if (dots) dots.style.display = "flex";
+    if (nav) nav.style.opacity = "1";
+    initUpcomingCarousel();
+  }
 }
 
 function initUpcomingCarousel() {
@@ -885,42 +1002,30 @@ function initUpcomingCarousel() {
     setTimeout(() => { isInteracting = false; }, 3000);
   }, { passive: true });
 
+  grid.addEventListener("scroll", () => {
+    clearTimeout(grid._scrollTimeout);
+    grid._scrollTimeout = setTimeout(updateUpcomingDots, 80);
+  }, { passive: true });
+
+  renderUpcomingDots();
+
   upcomingCarouselInterval = setInterval(() => {
-    if (window.innerWidth > 768 || isInteracting) return;
-    const firstCard = grid.querySelector(".upcoming-card");
-    if (!firstCard) return;
-    const cardWidth = firstCard.offsetWidth + 18;
-    const maxScroll = grid.scrollWidth - grid.clientWidth;
-    if (grid.scrollLeft >= maxScroll - 10) {
-      grid.scrollTo({ left: 0, behavior: "smooth" });
-    } else {
-      grid.scrollBy({ left: cardWidth, behavior: "smooth" });
-    }
-  }, 3500);
+    if (isUpcomingGridView || isInteracting) return;
+    scrollUpcoming(1);
+  }, 4500);
 }
 
 let upcomingToursData = typeof UPCOMING_TOURS !== "undefined" ? UPCOMING_TOURS : [];
 
-async function renderUpcomingTours() {
+function renderUpcomingTours() {
   const grid = $("upcomingGrid");
   if (!grid) return;
 
-  try {
-    const res = await fetch("/api/upcoming");
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        upcomingToursData = data;
-      }
-    }
-  } catch (e) {
-    console.warn("Using local upcoming data", e);
-  }
-
+  upcomingToursData = typeof UPCOMING_TOURS !== "undefined" && Array.isArray(UPCOMING_TOURS) ? UPCOMING_TOURS : [];
   if (!upcomingToursData || upcomingToursData.length === 0) return;
 
   grid.innerHTML = upcomingToursData.map((t, index) => {
-    const upImg = t.image || t.imageUrl || '/packages/lake_Bogoria.webp';
+    const upImg = t.image || t.imageUrl || '/supreme_packages/The One Watamu Bay Offer.jpg';
     return `
     <div class="upcoming-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}" onclick="openUpcomingTour('${t.id}')">
       <div class="upcoming-image-box">
@@ -939,10 +1044,15 @@ async function renderUpcomingTours() {
 function openUpcomingTour(id) {
   const pkg = upcomingToursData.find(item => item.id === id);
   if (!pkg) return;
-  const pkgImg = pkg.image || pkg.imageUrl || '/packages/lake_Bogoria.webp';
+  const pkgImg = pkg.image || pkg.imageUrl || '/supreme_packages/The One Watamu Bay Offer.jpg';
+  const pkgTitleEscaped = escapeHtml(pkg.title).replace(/'/g, "\\'");
+  const pkgLocEscaped = escapeHtml(pkg.location || "").replace(/'/g, "\\'");
+  const priceDisplay = pkg.price > 0 ? `KES ${Number(pkg.price).toLocaleString()} / person` : "Free / Community Event";
+  const incData = JSON.stringify(pkg.inclusions || []).replace(/"/g, '&quot;');
+  const excData = JSON.stringify(pkg.exclusions || []).replace(/"/g, '&quot;');
 
   $("modalContent").innerHTML = `
-    <div class="modal-clear-image-container" onclick="openLightbox('${pkgImg}', '${escapeHtml(pkg.title).replace(/'/g, "\\'")}')" title="Click to view full screen">
+    <div class="modal-clear-image-container" onclick="openLightbox('${pkgImg}', '${pkgTitleEscaped}')" title="Click to view full screen">
       <img src="${pkgImg}" alt="${escapeHtml(pkg.title)}" class="modal-clear-img">
       <span class="zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Screen</span>
     </div>
@@ -951,13 +1061,13 @@ function openUpcomingTour(id) {
         <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((pkg.location || "").toUpperCase())} · <i class="fa-solid fa-calendar-days"></i> ${escapeHtml(pkg.date || "")}</p>
         <h2 style="margin: 6px 0 10px; font-size: 24px; text-transform: uppercase;">${escapeHtml(pkg.title)}</h2>
         <div class="tour-meta compact-meta" style="justify-content: center; gap: 16px; margin-bottom: 12px;">
-          <span>Category: <b>${escapeHtml(pkg.category || "Safari")}</b></span>
-          <span>Starting at: <b>KES ${Number(pkg.price || 0).toLocaleString()}</b> / person</span>
+          <span>Category: <b>${escapeHtml(pkg.category || "Tour")}</b></span>
+          <span>Starting at: <b>${priceDisplay}</b></span>
         </div>
       </div>
       <p class="modal-desc" style="margin: 10px 0 20px; font-size: 14.5px; color: #403D3D;">${escapeHtml(pkg.description || pkg.subtitle || "")}</p>
       
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${escapeHtml(pkg.title).replace(/'/g, "\\'")}', '${escapeHtml(pkg.location || "").replace(/'/g, "\\'")}', '${escapeHtml(pkg.date || "")}', '${pkg.price || 0}')">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${pkgTitleEscaped}', '${pkgLocEscaped}', '${escapeHtml(pkg.date || '')}', '${pkg.price || 0}', ${incData}, ${excData})">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
@@ -1172,49 +1282,45 @@ function resetDomeTimer() {
   startDomeAutoPlay();
 }
 
-async function loadDestinations() {
+function loadDestinations() {
   const dome = $("destinationsDome");
   const pagination = $("domePagination");
   if (!dome) return;
 
-  try {
-    const res = await fetch("/api/destinations");
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        cachedDestinations = data;
-        
-        dome.innerHTML = data.map((d, idx) => {
-          const initialPos = idx < 6 ? idx : -1;
-          const imgSrc = d.image || d.imageUrl || '/photos/mara_2.jpg';
-          const name = d.name || d.title || 'Destination';
-          return `
-            <div class="destination-card" data-index="${idx}" data-pos="${initialPos}"
-              onclick="handleDomeCardClick(${idx}, '${escapeHtml(name).replace(/'/g, "\\'")}')">
-              <div class="dest-img-box">
-                <img src="${imgSrc}" onerror="this.onerror=null;this.src='/photos/mara_2.jpg';" alt="${escapeHtml(name)}" width="300" height="400" loading="lazy" decoding="async">
-              </div>
-              <div class="dest-card-info">
-                <h3>${escapeHtml(name)}</h3>
-              </div>
-            </div>
-          `;
-        }).join("");
+  const data = (typeof POPULAR_DESTINATIONS !== "undefined" && Array.isArray(POPULAR_DESTINATIONS))
+    ? POPULAR_DESTINATIONS
+    : [];
 
-        if (pagination) {
-          pagination.innerHTML = data.map((d, idx) => {
-            const name = d.name || d.title || 'Destination';
-            return `<span class="dot ${idx === currentDomeCenter ? 'active' : ''}" onclick="setDomeApex(${idx})" aria-label="${escapeHtml(name)}" title="${escapeHtml(name)}"></span>`;
-          }).join("");
-        }
+  if (data.length > 0) {
+    cachedDestinations = data;
 
-        currentDomeCenter = Math.min(2, Math.max(0, data.length - 1));
-        updateDomePositions();
-        startDomeAutoPlay();
-      }
+    dome.innerHTML = data.map((d, idx) => {
+      const initialPos = idx < 6 ? idx : -1;
+      const imgSrc = d.image || d.imageUrl || '/photos/mara_2.jpg';
+      const name = d.name || d.title || 'Destination';
+      return `
+        <div class="destination-card" data-index="${idx}" data-pos="${initialPos}"
+          onclick="handleDomeCardClick(${idx}, '${escapeHtml(name).replace(/'/g, "\\'")}')">
+          <div class="dest-img-box">
+            <img src="${imgSrc}" onerror="this.onerror=null;this.src='/photos/mara_2.jpg';" alt="${escapeHtml(name)}" width="300" height="400" loading="lazy" decoding="async">
+          </div>
+          <div class="dest-card-info">
+            <h3>${escapeHtml(name)}</h3>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    if (pagination) {
+      pagination.innerHTML = data.map((d, idx) => {
+        const name = d.name || d.title || 'Destination';
+        return `<span class="dot ${idx === currentDomeCenter ? 'active' : ''}" onclick="setDomeApex(${idx})" aria-label="${escapeHtml(name)}" title="${escapeHtml(name)}"></span>`;
+      }).join("");
     }
-  } catch (err) {
-    console.warn("Could not dynamically load destinations:", err);
+
+    currentDomeCenter = Math.min(2, Math.max(0, data.length - 1));
+    updateDomePositions();
+    startDomeAutoPlay();
   }
 }
 

@@ -1263,37 +1263,45 @@ nav a.active:not(.nav-cta)::after {
   position: relative;
 }
 
-.cards-container,
 .upcoming-grid {
-  display: block;
-  column-count: 1;
-  column-gap: 1.25rem;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  column-count: auto !important;
+  scroll-snap-type: x mandatory;
+  gap: 24px !important;
+  padding: 16px 8px 24px 8px !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 31, 35, 0.4) #f1f5f9;
 }
 
-@media (min-width: 640px) {
-
-  .cards-container,
-  .upcoming-grid {
-    column-count: 2;
-  }
+.upcoming-grid::-webkit-scrollbar {
+  height: 6px;
 }
 
-@media (min-width: 1024px) {
-
-  .cards-container,
-  .upcoming-grid {
-    column-count: 3;
-  }
+.upcoming-grid::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 999px;
 }
 
-.card-item,
+.upcoming-grid::-webkit-scrollbar-thumb {
+  background: var(--red, #ec1f23);
+  border-radius: 999px;
+}
+
+/* Card layout inside Carousel */
 .upcoming-card {
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
-  margin-bottom: 1.25rem;
-  display: inline-block;
-  width: 100%;
+  flex: 0 0 calc((100% - 48px) / 3) !important;
+  width: calc((100% - 48px) / 3) !important;
+  max-width: calc((100% - 48px) / 3) !important;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  margin-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 24px;
@@ -1302,6 +1310,24 @@ nav a.active:not(.nav-cta)::after {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .upcoming-card {
+    flex: 0 0 calc((100% - 24px) / 2) !important;
+    width: calc((100% - 24px) / 2) !important;
+    max-width: calc((100% - 24px) / 2) !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .upcoming-card {
+    flex: 0 0 85% !important;
+    width: 85% !important;
+    max-width: 340px !important;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
 }
 
 .upcoming-card:hover {
@@ -1313,6 +1339,7 @@ nav a.active:not(.nav-cta)::after {
 .upcoming-image-box {
   position: relative;
   width: 100%;
+  aspect-ratio: 4 / 5;
   border-radius: 22px;
   overflow: hidden;
   background: #0f172a;
@@ -1322,14 +1349,14 @@ nav a.active:not(.nav-cta)::after {
 .card-flyer-img,
 .upcoming-image-box img {
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .upcoming-card:hover .card-flyer-img {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
 /* Location Badge Tag */
@@ -1462,52 +1489,101 @@ nav a.active:not(.nav-cta)::after {
   transform: scale(0.95);
 }
 
-/* Horizontal Scroll Carousel on Small Screens (< 768px) */
-@media (max-width: 768px) {
-  .upcoming-section {
-    padding: 40px 0 45px 0 !important;
-  }
+/* Upcoming Carousel Controls & Dots */
+.upcoming-carousel-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 24px;
+}
 
-  .upcoming-heading-right {
-    align-items: flex-start;
-  }
+.upcoming-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
-  .upcoming-grid {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    column-count: auto !important;
-    scroll-snap-type: x mandatory;
-    gap: 18px !important;
-    padding: 12px 6px 24px 6px !important;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
+.upcoming-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  padding: 0;
+  outline: none;
+}
 
-  .upcoming-grid::-webkit-scrollbar {
-    height: 5px;
-  }
+.upcoming-dot:hover {
+  background: #94a3b8;
+  transform: scale(1.25);
+}
 
-  .upcoming-grid::-webkit-scrollbar-track {
-    background: #e2e8f0;
-    border-radius: 10px;
-  }
+.upcoming-dot.active {
+  width: 32px;
+  background: var(--red, #ec1f23);
+  box-shadow: 0 2px 10px rgba(236, 31, 35, 0.4);
+}
 
-  .upcoming-grid::-webkit-scrollbar-thumb {
-    background: var(--red);
-    border-radius: 10px;
-  }
+.upcoming-toggle-wrap {
+  display: flex;
+  justify-content: center;
+}
 
-  .upcoming-card {
-    flex: 0 0 84% !important;
-    width: 84% !important;
-    max-width: 350px !important;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
-    margin-bottom: 0 !important;
-    display: inline-block !important;
-    transition: transform 0.35s ease, box-shadow 0.35s ease !important;
+.upcoming-toggle-btn {
+  background: #ffffff;
+  color: #1e293b;
+  border: 1.5px solid #e2e8f0;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s ease;
+}
+
+.upcoming-toggle-btn:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+}
+
+/* Optional Grid View Toggle State */
+.upcoming-grid.grid-view {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+  scroll-snap-type: none !important;
+  gap: 24px !important;
+}
+
+.upcoming-grid.grid-view .upcoming-card {
+  flex: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 1023px) {
+  .upcoming-grid.grid-view {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .upcoming-grid.grid-view {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -2512,6 +2588,13 @@ nav a.active:not(.nav-cta)::after {
     grid-row: 3 / span 2;
     height: 68%;
     align-self: center;
+    border-radius: 20px;
+  }
+
+  .gallery-item:nth-child(15) {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    height: 280px;
     border-radius: 20px;
   }
 }
