@@ -48,7 +48,6 @@ async function loadTours(shouldScroll = false) {
       grid.innerHTML = tours.map((t, index) => {
         const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
         const escapedTitle = escapeHtml(t.title).replace(/'/g, "\\'");
-        const escapedLocation = escapeHtml(t.location || t.destination || "").replace(/'/g, "\\'");
         return `
         <article class="tour-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}">
           <div class="tour-image" onclick="openLightbox('${tourImg}', '${escapedTitle}')" title="Click to view full image">
@@ -64,9 +63,7 @@ async function loadTours(shouldScroll = false) {
             <p>${escapeHtml(t.shortDescription || t.description || "")}</p>
             <div class="tour-bottom">
               <div class="price">KES ${Number(t.price).toLocaleString()} <small>/ person</small></div>
-              <button class="tour-whatsapp-btn" onclick="bookOnWhatsApp('${escapedTitle}', '${escapedLocation}', '${t.duration} Days', '${t.price}')" aria-label="Book on WhatsApp">
-                <i class="fa-brands fa-whatsapp"></i> Book Now
-              </button>
+              <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
             </div>
           </div>
         </article>`;
