@@ -34,7 +34,7 @@ async function optimizeWebpPhotos() {
 
       let targetWidth = 1000;
       if (file.startsWith('client_')) {
-        targetWidth = 500; // Client photos displayed in small grid cards
+        targetWidth = 500;   
       }
 
       try {

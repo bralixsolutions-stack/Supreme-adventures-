@@ -1,7 +1,6 @@
 # Supreme Adventures — Full-Stack Tour Website
 
-This project is an original safari/tour website implementation inspired by the structure and visual language of modern East African tour websites. It is not a copy of the reference site's source code, branding, or proprietary assets.
-
+This project is an original safari/tour website implementation inspired by the structure and visual language of modern East African tour websites.  . 
 ## Included
 
 ### Public website
@@ -63,22 +62,8 @@ $env:ADMIN_KEY="your-secure-password"
 npm start
 ```
 
-Linux/macOS:
+ 
 
-```bash
-ADMIN_KEY="your-secure-password" npm start
-```
+ 
 
-## Production upgrades recommended
-
-Before public deployment:
-- Replace JSON storage with Supabase/PostgreSQL.
-- Add proper hashed admin/user authentication.
-- Add CSRF/rate-limit/security middleware.
-- Store images in Supabase Storage or another image CDN.
-- Add payment integration if online payments are required.
-- Add email notifications for booking enquiries.
-- Move secrets to environment variables.
-- Add SEO metadata and sitemap.
-# Supreme-adventures-
-# Supreme-adventures-
+ 
