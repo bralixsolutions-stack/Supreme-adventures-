@@ -11,6 +11,84 @@ function handleEmptyContactSupport(e) {
   }
 }
 
+let allToursData = [];
+let isToursExpanded = false;
+const INITIAL_TOURS_LIMIT = 6;
+
+function renderToursGrid() {
+  const grid = $("tourGrid");
+  const actionContainer = $("toursActionContainer");
+  const seeMoreText = $("seeMoreToursText");
+  const seeMoreIcon = $("seeMoreToursIcon");
+  if (!grid) return;
+
+  if (allToursData.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: #fff; border-radius: 16px; border: 1px dashed #cbd5e1; margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+        <i class="fa-solid fa-compass-drafting" style="font-size: 38px; color: #94a3b8; margin-bottom: 12px;"></i>
+        <h3 style="font-size: 20px; color: #1e293b; margin-bottom: 8px; font-weight: 700;">No packages match your search filter</h3>
+        <p style="color: #64748b; margin-bottom: 22px; font-size: 14px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+          Looking for a custom safari or specific dates? Contact our support team for a personalized itinerary, or reset the filters to view all tours.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <a href="#contact" onclick="handleEmptyContactSupport(event)" style="display: inline-flex; align-items: center; gap: 8px; background: #ec1f23; color: #fff; padding: 10px 24px; border: none; border-radius: 25px; font-weight: 700; font-size: 14px; text-decoration: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 3px 12px rgba(236,31,35,0.25);">
+            <i class="fa-solid fa-headset"></i> Contact Support
+          </a>
+          <button onclick="resetSearchFilters()" style="display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #334155; padding: 10px 24px; border: 1px solid #cbd5e1; border-radius: 25px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s ease;">
+            <i class="fa-solid fa-rotate-left"></i> Reset Filter
+          </button>
+        </div>
+      </div>`;
+    if (actionContainer) actionContainer.style.display = "none";
+    return;
+  }
+
+  const shouldLimit = !isToursExpanded && allToursData.length > INITIAL_TOURS_LIMIT;
+  const visibleTours = shouldLimit ? allToursData.slice(0, INITIAL_TOURS_LIMIT) : allToursData;
+
+  grid.innerHTML = visibleTours.map((t, index) => {
+    const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
+    const escapedTitle = escapeHtml(t.title).replace(/'/g, "\\'");
+    return `
+    <article class="tour-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}">
+      <div class="tour-image" onclick="openLightbox('${tourImg}', '${escapedTitle}')" title="Click to view full image">
+        <img src="${tourImg}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
+        ${t.featured ? '<span class="tag">Featured</span>' : ''}
+        <div class="tour-image-overlay">
+          <span class="tour-zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Image</span>
+        </div>
+      </div>
+      <div class="tour-body">
+        <div class="tour-meta"><span>${t.duration} days · ${t.category}</span><span>★ ${t.rating || 5}</span></div>
+        <h3>${escapeHtml(t.title)}</h3>
+        <p>${escapeHtml(t.shortDescription || t.description || "")}</p>
+        <div class="tour-bottom">
+          <div class="price">KES ${Number(t.price).toLocaleString()} <small>/ person</small></div>
+          <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+
+  if (actionContainer) {
+    if (allToursData.length > INITIAL_TOURS_LIMIT) {
+      actionContainer.style.display = "block";
+      const remaining = allToursData.length - INITIAL_TOURS_LIMIT;
+      if (!isToursExpanded) {
+        if (seeMoreText) seeMoreText.textContent = `View More Tours & Packages (${remaining} more)`;
+        if (seeMoreIcon) seeMoreIcon.className = "fa-solid fa-chevron-down";
+      } else {
+        if (seeMoreText) seeMoreText.textContent = "Show Fewer Packages";
+        if (seeMoreIcon) seeMoreIcon.className = "fa-solid fa-chevron-up";
+      }
+    } else {
+      actionContainer.style.display = "none";
+    }
+  }
+
+  if (typeof AOS !== "undefined") AOS.refresh();
+}
+
 async function loadTours(shouldScroll = false) {
   const grid = $("tourGrid");
   if (!grid) return;
@@ -26,49 +104,10 @@ async function loadTours(shouldScroll = false) {
   try {
     const res = await fetch("/api/tours?" + params.toString());
     const tours = await res.json();
+    allToursData = Array.isArray(tours) ? tours : [];
+    isToursExpanded = false; // Collapse to initial view whenever filters change
 
-    if (tours.length === 0) {
-      grid.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: #fff; border-radius: 16px; border: 1px dashed #cbd5e1; margin: 20px 0; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-          <i class="fa-solid fa-compass-drafting" style="font-size: 38px; color: #94a3b8; margin-bottom: 12px;"></i>
-          <h3 style="font-size: 20px; color: #1e293b; margin-bottom: 8px; font-weight: 700;">No packages match your search filter</h3>
-          <p style="color: #64748b; margin-bottom: 22px; font-size: 14px; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-            Looking for a custom safari or specific dates? Contact our support team for a personalized itinerary, or reset the filters to view all tours.
-          </p>
-          <div style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;">
-            <a href="#contact" onclick="handleEmptyContactSupport(event)" style="display: inline-flex; align-items: center; gap: 8px; background: #ec1f23; color: #fff; padding: 10px 24px; border: none; border-radius: 25px; font-weight: 700; font-size: 14px; text-decoration: none; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 3px 12px rgba(236,31,35,0.25);">
-              <i class="fa-solid fa-headset"></i> Contact Support
-            </a>
-            <button onclick="resetSearchFilters()" style="display: inline-flex; align-items: center; gap: 8px; background: #f1f5f9; color: #334155; padding: 10px 24px; border: 1px solid #cbd5e1; border-radius: 25px; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s ease;">
-              <i class="fa-solid fa-rotate-left"></i> Reset Filter
-            </button>
-          </div>
-        </div>`;
-    } else {
-      grid.innerHTML = tours.map((t, index) => {
-        const tourImg = t.image || t.imageUrl || '/photos/wild_beest.webp';
-        const escapedTitle = escapeHtml(t.title).replace(/'/g, "\\'");
-        return `
-        <article class="tour-card card-item" data-aos="fade-up" data-aos-duration="800" data-aos-delay="${(index % 3) * 150}">
-          <div class="tour-image" onclick="openLightbox('${tourImg}', '${escapedTitle}')" title="Click to view full image">
-            <img src="${tourImg}" alt="${escapeHtml(t.title)}" class="card-flyer-img" loading="lazy" decoding="async">
-            ${t.featured ? '<span class="tag">Featured</span>' : ''}
-            <div class="tour-image-overlay">
-              <span class="tour-zoom-badge"><i class="fa-solid fa-magnifying-glass-plus"></i> View Full Image</span>
-            </div>
-          </div>
-          <div class="tour-body">
-            <div class="tour-meta"><span>${t.duration} days · ${t.category}</span><span>★ ${t.rating || 5}</span></div>
-            <h3>${escapeHtml(t.title)}</h3>
-            <p>${escapeHtml(t.shortDescription || t.description || "")}</p>
-            <div class="tour-bottom">
-              <div class="price">KES ${Number(t.price).toLocaleString()} <small>/ person</small></div>
-              <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
-            </div>
-          </div>
-        </article>`;
-      }).join("");
-    }
+    renderToursGrid();
 
     const emptyState = $("emptyState");
     if (emptyState) emptyState.classList.add("hidden");
@@ -78,7 +117,6 @@ async function loadTours(shouldScroll = false) {
     }
 
     if (typeof initScrollReveal === "function") initScrollReveal();
-    if (typeof AOS !== "undefined") AOS.refresh();
 
     if (shouldScroll) {
       const toursSec = document.getElementById("tours");
@@ -93,19 +131,19 @@ async function loadTours(shouldScroll = false) {
 
 function toggleMoreTours() {
   const grid = $("tourGrid");
-  const text = $("seeMoreToursText");
-  const icon = $("seeMoreToursIcon");
   if (!grid) return;
 
-  grid.classList.toggle("expanded-grid");
-  const isExpanded = grid.classList.contains("expanded-grid");
+  isToursExpanded = !isToursExpanded;
 
-  if (text) text.textContent = isExpanded ? "Show Swipe View" : "See More Packages";
-  if (icon) {
-    icon.className = isExpanded ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down";
+  if (isToursExpanded) {
+    grid.classList.add("expanded-grid");
+  } else {
+    grid.classList.remove("expanded-grid");
   }
 
-  if (!isExpanded) {
+  renderToursGrid();
+
+  if (!isToursExpanded) {
     const toursSec = document.getElementById("tours");
     if (toursSec) {
       toursSec.scrollIntoView({ behavior: "smooth", block: "start" });

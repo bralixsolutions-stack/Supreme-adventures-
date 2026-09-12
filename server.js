@@ -497,67 +497,103 @@ app.get("/api/health", async (req, res) => {
   });
 });
 
+// ==========================================================================
+// IN-MEMORY CACHE LAYER
+// Keeps public endpoints blazing fast (<1ms) and saves Supabase DB egress.
+// Revalidates automatically after TTL or immediately upon any Admin mutation.
+// ==========================================================================
+const memoryCache = {
+  tours: { data: null, timestamp: 0 },
+  destinations: { data: null, timestamp: 0 },
+  gallery: { data: null, timestamp: 0 },
+  upcoming: { data: null, timestamp: 0 },
+  TTL: 10 * 60 * 1000 // 10 minutes cache TTL
+};
+
+function invalidateCache(key) {
+  if (key && memoryCache[key]) {
+    memoryCache[key].data = null;
+    memoryCache[key].timestamp = 0;
+  } else {
+    Object.keys(memoryCache).forEach(k => {
+      if (k !== "TTL") {
+        memoryCache[k].data = null;
+        memoryCache[k].timestamp = 0;
+      }
+    });
+  }
+}
+
+async function getCached(key, fetcher) {
+  const now = Date.now();
+  const cached = memoryCache[key];
+  if (cached && cached.data && (now - cached.timestamp < memoryCache.TTL)) {
+    return cached.data;
+  }
+  const freshData = await fetcher();
+  if (cached) {
+    cached.data = freshData;
+    cached.timestamp = now;
+  }
+  return freshData;
+}
+
+// Helper to fetch full raw tours list
+async function fetchAllTours() {
+  if (supabase) {
+    const { data, error } = await supabase.from("tours").select("*");
+    if (error) throw error;
+    return (data || []).map(tourFromRow);
+  }
+  return readLocalDb().tours || [];
+}
+
+// Helper to fetch destinations
+async function fetchAllDestinations() {
+  if (supabase) {
+    const { data, error } = await supabase.from("destinations").select("*");
+    if (error) throw error;
+    return (data || []).map(destFromRow);
+  }
+  return readLocalDb().destinations || [];
+}
+
+// Helper to fetch gallery
+async function fetchAllGallery() {
+  if (supabase) {
+    const { data, error } = await supabase.from("gallery").select("*");
+    if (error) throw error;
+    return data || [];
+  }
+  return readLocalDb().gallery || [];
+}
+
+// Helper to fetch upcoming
+async function fetchAllUpcoming() {
+  if (supabase) {
+    const { data, error } = await supabase.from("upcoming").select("*");
+    if (error) throw error;
+    return data || [];
+  }
+  return readLocalDb().upcoming || [];
+}
+
 app.get("/api/tours", async (req, res) => {
   try {
     const { destination, category, duration, maxPrice, featured, search } = req.query;
 
-    if (supabase) {
-      let query = supabase.from("tours").select("*");
+    // Retrieve from in-memory cache
+    const allTours = await getCached("tours", fetchAllTours);
+    let tours = [...allTours];
 
-      if (featured === "true") query = query.eq("featured", true);
-      if (maxPrice) query = query.lte("price", Number(maxPrice));
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      let tours = (data || []).map(tourFromRow);
-
-      if (destination && destination !== "All destinations") {
-        const d = destination.toLowerCase().trim();
-        tours = tours.filter(t => {
-          const dest = (t.destination || "").toLowerCase();
-          const loc = (t.location || "").toLowerCase();
-          const title = (t.title || "").toLowerCase();
-          return dest.includes(d) || loc.includes(d) || title.includes(d) || d.includes(dest) || d.includes(loc);
-        });
-      }
-
-      if (category && category !== "All types") {
-        const c = category.toLowerCase().trim();
-        tours = tours.filter(t => {
-          const cat = (t.category || "").toLowerCase();
-          const title = (t.title || "").toLowerCase();
-          const desc = (t.shortDescription || t.description || "").toLowerCase();
-          return cat.includes(c) || c.includes(cat) || title.includes(c) || desc.includes(c) ||
-            (c.includes("safari") && (cat.includes("safari") || cat.includes("wildlife"))) ||
-            (c.includes("beach") && (cat.includes("beach") || cat.includes("coastal") || cat.includes("marine") || cat.includes("island"))) ||
-            (c.includes("culture") && (cat.includes("culture") || cat.includes("island") || cat.includes("heritage"))) ||
-            (c.includes("adventure") && (cat.includes("adventure") || cat.includes("overland") || cat.includes("safari"))) ||
-            (c.includes("overland") && (cat.includes("overland") || cat.includes("truck") || cat.includes("adventure"))) ||
-            (c.includes("wildlife") && (cat.includes("wildlife") || cat.includes("safari")));
-        });
-      }
-
-      if (duration && duration !== "Any duration") {
-        const durNum = Number(duration);
-        if (!isNaN(durNum)) {
-          tours = tours.filter(t => {
-            const d = Number(t.duration) || 0;
-            return durNum >= 5 ? d >= 5 : d === durNum;
-          });
-        }
-      }
-
-      if (search) {
-        const q = search.toLowerCase().trim();
-        tours = tours.filter(t => `${t.title} ${t.location} ${t.destination} ${t.category} ${t.shortDescription} ${t.description}`.toLowerCase().includes(q));
-      }
-
-      return res.json(tours);
+    if (featured === "true") {
+      tours = tours.filter(t => t.featured);
     }
 
-    // Fallback: local JSON
-    let tours = readLocalDb().tours;
+    if (maxPrice) {
+      tours = tours.filter(t => Number(t.price) <= Number(maxPrice));
+    }
+
     if (destination && destination !== "All destinations") {
       const d = destination.toLowerCase().trim();
       tours = tours.filter(t => {
@@ -567,6 +603,7 @@ app.get("/api/tours", async (req, res) => {
         return dest.includes(d) || loc.includes(d) || title.includes(d) || d.includes(dest) || d.includes(loc);
       });
     }
+
     if (category && category !== "All types") {
       const c = category.toLowerCase().trim();
       tours = tours.filter(t => {
@@ -582,17 +619,25 @@ app.get("/api/tours", async (req, res) => {
           (c.includes("wildlife") && (cat.includes("wildlife") || cat.includes("safari")));
       });
     }
+
     if (duration && duration !== "Any duration") {
       const durNum = Number(duration);
-      if (!isNaN(durNum)) tours = tours.filter(t => { const d = Number(t.duration) || 0; return durNum >= 5 ? d >= 5 : d === durNum; });
+      if (!isNaN(durNum)) {
+        tours = tours.filter(t => {
+          const d = Number(t.duration) || 0;
+          return durNum >= 5 ? d >= 5 : d === durNum;
+        });
+      }
     }
-    if (maxPrice) tours = tours.filter(t => Number(t.price) <= Number(maxPrice));
-    if (featured === "true") tours = tours.filter(t => t.featured);
+
     if (search) {
       const q = search.toLowerCase().trim();
       tours = tours.filter(t => `${t.title} ${t.location} ${t.destination} ${t.category} ${t.shortDescription} ${t.description}`.toLowerCase().includes(q));
     }
-    res.json(tours);
+
+    // Edge & browser cache headers: 60s max-age with 5 min stale-while-revalidate
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    return res.json(tours);
   } catch (err) {
     console.error("GET /api/tours error:", err.message);
     res.status(500).json({ error: "Failed to fetch tours" });
@@ -601,12 +646,9 @@ app.get("/api/tours", async (req, res) => {
 
 app.get("/api/destinations", async (req, res) => {
   try {
-    if (supabase) {
-      const { data, error } = await supabase.from("destinations").select("*");
-      if (error) throw error;
-      return res.json((data || []).map(destFromRow));
-    }
-    res.json(readLocalDb().destinations);
+    const destinations = await getCached("destinations", fetchAllDestinations);
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    res.json(destinations);
   } catch (err) {
     console.error("GET /api/destinations error:", err.message);
     res.status(500).json({ error: "Failed to fetch destinations" });
@@ -615,18 +657,24 @@ app.get("/api/destinations", async (req, res) => {
 
 app.get("/api/tours/:slug", async (req, res) => {
   try {
-    if (supabase) {
-      // Try slug first, then id
-      let { data, error } = await supabase.from("tours").select("*").eq("slug", req.params.slug).maybeSingle();
+    const target = req.params.slug;
+    // Check in cached tours first
+    const allTours = await getCached("tours", fetchAllTours);
+    let tour = allTours.find(t => t.slug === target || t.id === target);
+
+    if (!tour && supabase) {
+      // If not in cache, fallback to direct query in case of fresh direct ID lookup
+      let { data, error } = await supabase.from("tours").select("*").eq("slug", target).maybeSingle();
       if (!data) {
-        ({ data, error } = await supabase.from("tours").select("*").eq("id", req.params.slug).maybeSingle());
+        ({ data, error } = await supabase.from("tours").select("*").eq("id", target).maybeSingle());
       }
       if (error) throw error;
-      if (!data) return res.status(404).json({ error: "Tour not found" });
-      return res.json(tourFromRow(data));
+      if (data) tour = tourFromRow(data);
     }
-    const tour = readLocalDb().tours.find(t => t.slug === req.params.slug || t.id === req.params.slug);
+
     if (!tour) return res.status(404).json({ error: "Tour not found" });
+
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
     res.json(tour);
   } catch (err) {
     console.error("GET /api/tours/:slug error:", err.message);
@@ -636,12 +684,9 @@ app.get("/api/tours/:slug", async (req, res) => {
 
 app.get("/api/gallery", async (req, res) => {
   try {
-    if (supabase) {
-      const { data, error } = await supabase.from("gallery").select("*");
-      if (error) throw error;
-      return res.json(data || []);
-    }
-    res.json(readLocalDb().gallery);
+    const gallery = await getCached("gallery", fetchAllGallery);
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    res.json(gallery);
   } catch (err) {
     console.error("GET /api/gallery error:", err.message);
     res.status(500).json({ error: "Failed to fetch gallery" });
@@ -650,12 +695,9 @@ app.get("/api/gallery", async (req, res) => {
 
 app.get("/api/upcoming", async (req, res) => {
   try {
-    if (supabase) {
-      const { data, error } = await supabase.from("upcoming").select("*");
-      if (error) throw error;
-      return res.json(data || []);
-    }
-    res.json(readLocalDb().upcoming);
+    const upcoming = await getCached("upcoming", fetchAllUpcoming);
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    res.json(upcoming);
   } catch (err) {
     console.error("GET /api/upcoming error:", err.message);
     res.status(500).json({ error: "Failed to fetch upcoming" });
@@ -962,12 +1004,14 @@ app.post("/api/admin/upcoming", adminAuth, uploadImage, async (req, res) => {
     if (supabase) {
       const { data, error } = await supabase.from("upcoming").insert(item).select().single();
       if (error) throw error;
+      invalidateCache("upcoming");
       return res.status(201).json(data);
     }
 
     const db = readLocalDb();
     db.upcoming.push(item);
     writeLocalDb(db);
+    invalidateCache("upcoming");
     res.status(201).json(item);
   } catch (err) {
     console.error("POST /api/admin/upcoming error:", err.message);
@@ -1008,6 +1052,7 @@ app.put("/api/admin/upcoming/:id", adminAuth, uploadImage, async (req, res) => {
 
       const { data, error } = await supabase.from("upcoming").update(updates).eq("id", req.params.id).select().single();
       if (error) throw error;
+      invalidateCache("upcoming");
       return res.json(data);
     }
 
@@ -1026,6 +1071,7 @@ app.put("/api/admin/upcoming/:id", adminAuth, uploadImage, async (req, res) => {
     item.description = req.body.description !== undefined ? req.body.description : item.description;
 
     writeLocalDb(db);
+    invalidateCache("upcoming");
     res.json(item);
   } catch (err) {
     console.error("PUT /api/admin/upcoming error:", err.message);
@@ -1042,12 +1088,14 @@ app.delete("/api/admin/upcoming/:id", adminAuth, async (req, res) => {
 
       const { error } = await supabase.from("upcoming").delete().eq("id", req.params.id);
       if (error) throw error;
+      invalidateCache("upcoming");
       return res.json({ message: "Upcoming tour/event deleted" });
     }
 
     const db = readLocalDb();
     db.upcoming = db.upcoming.filter(u => u.id !== req.params.id);
     writeLocalDb(db);
+    invalidateCache("upcoming");
     res.json({ message: "Upcoming tour/event deleted" });
   } catch (err) {
     console.error("DELETE /api/admin/upcoming error:", err.message);
@@ -1076,6 +1124,7 @@ app.post("/api/admin/destinations", adminAuth, uploadImage, async (req, res) => 
     if (supabase) {
       const { data, error } = await supabase.from("destinations").insert(dest).select().single();
       if (error) throw error;
+      invalidateCache("destinations");
       return res.status(201).json(destFromRow(data));
     }
 
@@ -1083,6 +1132,7 @@ app.post("/api/admin/destinations", adminAuth, uploadImage, async (req, res) => 
     const db = readLocalDb();
     db.destinations.push(dest);
     writeLocalDb(db);
+    invalidateCache("destinations");
     res.status(201).json(dest);
   } catch (err) {
     console.error("POST /api/admin/destinations error:", err.message);
@@ -1117,6 +1167,7 @@ app.put("/api/admin/destinations/:id", adminAuth, uploadImage, async (req, res) 
 
       const { data, error } = await supabase.from("destinations").update(updates).eq("id", req.params.id).select().single();
       if (error) throw error;
+      invalidateCache("destinations");
       return res.json(destFromRow(data));
     }
 
@@ -1134,6 +1185,7 @@ app.put("/api/admin/destinations/:id", adminAuth, uploadImage, async (req, res) 
     }
 
     writeLocalDb(db);
+    invalidateCache("destinations");
     res.json(dest);
   } catch (err) {
     console.error("PUT /api/admin/destinations error:", err.message);
@@ -1151,6 +1203,7 @@ app.patch("/api/admin/destinations/:id/toggle-search", adminAuth, async (req, re
       const newVal = dest.show_in_search === false ? true : false;
       const { data, error } = await supabase.from("destinations").update({ show_in_search: newVal }).eq("id", req.params.id).select().single();
       if (error) throw error;
+      invalidateCache("destinations");
       return res.json({ message: "Search status updated", dest: destFromRow(data) });
     }
 
@@ -1159,6 +1212,7 @@ app.patch("/api/admin/destinations/:id/toggle-search", adminAuth, async (req, re
     if (!dest) return res.status(404).json({ error: "Destination not found" });
     dest.showInSearch = dest.showInSearch === false ? true : false;
     writeLocalDb(db);
+    invalidateCache("destinations");
     res.json({ message: "Search status updated", dest });
   } catch (err) {
     console.error("PATCH /api/admin/destinations/:id/toggle-search error:", err.message);
@@ -1174,12 +1228,14 @@ app.delete("/api/admin/destinations/:id", adminAuth, async (req, res) => {
 
       const { error } = await supabase.from("destinations").delete().eq("id", req.params.id);
       if (error) throw error;
+      invalidateCache("destinations");
       return res.json({ message: "Destination deleted" });
     }
 
     const db = readLocalDb();
     db.destinations = db.destinations.filter(d => d.id !== req.params.id);
     writeLocalDb(db);
+    invalidateCache("destinations");
     res.json({ message: "Destination deleted" });
   } catch (err) {
     console.error("DELETE /api/admin/destinations error:", err.message);
@@ -1206,12 +1262,14 @@ app.post("/api/admin/gallery", adminAuth, uploadImage, async (req, res) => {
     if (supabase) {
       const { data, error } = await supabase.from("gallery").insert(image).select().single();
       if (error) throw error;
+      invalidateCache("gallery");
       return res.status(201).json(data);
     }
 
     const db = readLocalDb();
     db.gallery.push(image);
     writeLocalDb(db);
+    invalidateCache("gallery");
     res.status(201).json(image);
   } catch (err) {
     console.error("POST /api/admin/gallery error:", err.message);
@@ -1232,6 +1290,7 @@ app.put("/api/admin/gallery/:id", adminAuth, async (req, res) => {
 
       const { data, error } = await supabase.from("gallery").update(updates).eq("id", req.params.id).select().single();
       if (error) throw error;
+      invalidateCache("gallery");
       return res.json(data);
     }
 
@@ -1242,6 +1301,7 @@ app.put("/api/admin/gallery/:id", adminAuth, async (req, res) => {
     if (req.body.place !== undefined) image.place = req.body.place;
     image.caption = req.body.caption || "";
     writeLocalDb(db);
+    invalidateCache("gallery");
     res.json(image);
   } catch (err) {
     console.error("PUT /api/admin/gallery error:", err.message);
@@ -1257,12 +1317,14 @@ app.delete("/api/admin/gallery/:id", adminAuth, async (req, res) => {
 
       const { error } = await supabase.from("gallery").delete().eq("id", req.params.id);
       if (error) throw error;
+      invalidateCache("gallery");
       return res.json({ message: "Gallery image deleted" });
     }
 
     const db = readLocalDb();
     db.gallery = db.gallery.filter(image => image.id !== req.params.id);
     writeLocalDb(db);
+    invalidateCache("gallery");
     res.json({ message: "Gallery image deleted" });
   } catch (err) {
     console.error("DELETE /api/admin/gallery error:", err.message);
@@ -1324,12 +1386,14 @@ app.post("/api/admin/tours", adminAuth, uploadImage, async (req, res) => {
         itinerary: tour.itinerary
       }).select().single();
       if (error) throw error;
+      invalidateCache("tours");
       return res.status(201).json(tourFromRow(data));
     }
 
     const db = readLocalDb();
     db.tours.push(tour);
     writeLocalDb(db);
+    invalidateCache("tours");
     res.status(201).json(tour);
   } catch (err) {
     console.error("POST /api/admin/tours error:", err.message);
@@ -1371,6 +1435,7 @@ app.put("/api/admin/tours/:id", adminAuth, uploadImage, async (req, res) => {
 
       const { data, error } = await supabase.from("tours").update(updates).eq("id", req.params.id).select().single();
       if (error) throw error;
+      invalidateCache("tours");
       return res.json(tourFromRow(data));
     }
 
@@ -1390,6 +1455,7 @@ app.put("/api/admin/tours/:id", adminAuth, uploadImage, async (req, res) => {
       image: tourImage
     };
     writeLocalDb(db);
+    invalidateCache("tours");
     res.json(db.tours[index]);
   } catch (err) {
     console.error("PUT /api/admin/tours error:", err.message);
@@ -1405,12 +1471,14 @@ app.delete("/api/admin/tours/:id", adminAuth, async (req, res) => {
 
       const { error } = await supabase.from("tours").delete().eq("id", req.params.id);
       if (error) throw error;
+      invalidateCache("tours");
       return res.json({ message: "Tour deleted" });
     }
 
     const db = readLocalDb();
     db.tours = db.tours.filter(t => t.id !== req.params.id);
     writeLocalDb(db);
+    invalidateCache("tours");
     res.json({ message: "Tour deleted" });
   } catch (err) {
     console.error("DELETE /api/admin/tours error:", err.message);
@@ -1476,6 +1544,8 @@ app.post("/api/admin/seed", adminAuth, async (req, res) => {
     } else {
       results.upcoming = `Already has ${existingUpcoming.length} items, skipped`;
     }
+
+    invalidateCache(); // Invalidate all cached data upon seeding
 
     // Seed default admin key
     const { data: existingKey } = await supabase.from("admin_settings").select("key").eq("key", "adminKey").maybeSingle();
