@@ -273,8 +273,14 @@ function renderGallery() {
   if (actionsBox) {
     if (shouldLimit) {
       actionsBox.innerHTML = `
-        <button class="gallery-view-all-btn" onclick="expandGallery()">
+        <button id="galleryViewAllBtn" class="gallery-view-all-btn" onclick="expandGallery()" aria-label="View all photos">
           <i class="fa-solid fa-images"></i> View All Photos
+        </button>
+      `;
+    } else if (isGalleryExpanded && activeGalleryItems.length > INITIAL_GALLERY_LIMIT) {
+      actionsBox.innerHTML = `
+        <button id="galleryCollapseBtn" class="gallery-view-all-btn gallery-collapse-btn" onclick="collapseGallery()" aria-label="See fewer images">
+          <i class="fa-solid fa-chevron-up"></i> See Fewer Images
         </button>
       `;
     } else {
@@ -283,11 +289,24 @@ function renderGallery() {
   }
 
   if (typeof AOS !== "undefined") AOS.refresh();
+  if (typeof initScrollReveal === "function") initScrollReveal();
 }
 
 function expandGallery() {
   isGalleryExpanded = true;
   renderGallery();
+}
+
+function collapseGallery() {
+  isGalleryExpanded = false;
+  renderGallery();
+
+  const gallerySection = $("gallery");
+  if (gallerySection) {
+    const yOffset = -70;
+    const y = gallerySection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+  }
 }
 
 let isSingleImageMode = false;
