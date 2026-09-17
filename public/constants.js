@@ -332,26 +332,7 @@ const UPCOMING_TOURS = [
     exclusions: [
       "Tips and personal expenses"
     ]
-  },
-  {
-    id: "up-capetown staycation",
-    title: "Cape Town Staycation",
-    subtitle: "5 Days 4 Nights, Table Mountain, Cape Point, Winelands & City Tours",
-    location: "Cape Town, South Africa",
-    date: "10th to 14th December 2026",
-    price: 89999,
-    category: "Culture",
-    image: "/supreme_packages/Supreme CSR.jpg",
-    description: "Join the Supreme Adventures family as we give back to our community at Estel Children's Home. Support with foodstuff, toiletries, stationery, and hygiene items for children.",
-    inclusions: [
-      "Group coordination and meetup",
-      "Mentorship activities with the children",
-      "Official Supreme Adventures volunteer certificate"
-    ],
-    exclusions: [
-      "Voluntary donations of goods and groceries"
-    ]
-  }
+  } 
 ];
 
 // ==========================================================================
