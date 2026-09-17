@@ -247,14 +247,14 @@ const UPCOMING_TOURS = [
     ]
   },
   {
-    id: "up-capetown-staycation",
-    title: "Cape Town South Africa Staycation",
+    id: "up-capetown-experience",
+    title: "Cape Town South Africa Experience",
     subtitle: "Table Mountain, Peninsula Tour, Wine Tasting & Sunset Yacht Cruise",
     location: "Cape Town, South Africa",
-    date: "16th-23rd Nov & 21st-28th Dec 2026",
-    price: 185000,
+    date: "20th-25th October 2026",
+    price: 197500,
     category: "Safari",
-    image: "/supreme_packages/CapeTown SA.jpg",
+    image: "/supreme_packages/capetown.jpeg",
     description: "Discover the breathtaking beauty of South Africa's Mother City. Ascend Table Mountain, taste world-class wines, meet the Boulders Beach penguins, and cruise the Atlantic on a luxury sunset yacht.",
     inclusions: [
       "Return air tickets (TAAG Airlines)",
@@ -300,6 +300,46 @@ const UPCOMING_TOURS = [
     location: "Estel Children's Home, Kayole, Nairobi",
     date: "Sunday, 31st October 2026",
     price: 0,
+    category: "Culture",
+    image: "/supreme_packages/Supreme CSR.jpg",
+    description: "Join the Supreme Adventures family as we give back to our community at Estel Children's Home. Support with foodstuff, toiletries, stationery, and hygiene items for children.",
+    inclusions: [
+      "Group coordination and meetup",
+      "Mentorship activities with the children",
+      "Official Supreme Adventures volunteer certificate"
+    ],
+    exclusions: [
+      "Voluntary donations of goods and groceries"
+    ]
+  },
+  {
+    id: "up-mt-kenya-conservancy",
+    title: "Mt Kenya Conservancy",
+    subtitle: " Family experience",
+    location: "Mount Kenya Conservancy",
+    date: "13th December  2026",
+    price: 36000,
+    category: "Safari",
+    image: "/supreme_packages/mtkenya.jpeg",
+    description: "Experience the breathtaking beauty of Mount Kenya Conservancy. Enjoy nature walks, wildlife viewing, and stunning landscapes.",
+    inclusions: [
+      "Accommodation on Full Board",
+      "Park fees",
+      "Guided nature walks",
+      "Bonfire",
+      "Transport from Nairobi",
+    ],
+    exclusions: [
+      "Tips and personal expenses"
+    ]
+  },
+  {
+    id: "up-capetown staycation",
+    title: "Cape Town Staycation",
+    subtitle: "5 Days 4 Nights, Table Mountain, Cape Point, Winelands & City Tours",
+    location: "Cape Town, South Africa",
+    date: "10th to 14th December 2026",
+    price: 89999,
     category: "Culture",
     image: "/supreme_packages/Supreme CSR.jpg",
     description: "Join the Supreme Adventures family as we give back to our community at Estel Children's Home. Support with foodstuff, toiletries, stationery, and hygiene items for children.",
