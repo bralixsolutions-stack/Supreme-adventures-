@@ -389,7 +389,7 @@ async function loadTours(){
                 <td><b>${esc(t.title)}</b></td>
                 <td>${esc(t.location || t.destination)}</td>
                 <td>${t.duration} days</td>
-                <td><b>KES ${Number(t.price).toLocaleString()}</b></td>
+                <td><b>${(t.currency === '$' || t.currency === 'USD' || /mara|tsavo|amboseli/i.test(`${t.destination || ''} ${t.location || ''} ${t.title || ''}`)) ? '$' : 'KES '}${Number(t.price).toLocaleString()}</b></td>
                 <td>${t.featured ? '<span style="color:#ec1f23;font-weight:700;">★ Featured</span>' : 'Standard'}</td>
                 <td>
                   <button class="action" onclick='editTour(${JSON.stringify(t).replace(/'/g, "&#39;")})'>Edit</button>

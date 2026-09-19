@@ -242,7 +242,8 @@ function seedTours() {
       location: "Masai Mara & Lake Nakuru",
       category: "Safari",
       duration: 4,
-      price: 68000,
+      price: 525,
+      currency: "$",
       groupSize: 7,
       rating: 4.9,
       featured: true,
@@ -266,7 +267,8 @@ function seedTours() {
       location: "Amboseli",
       category: "Safari",
       duration: 3,
-      price: 48000,
+      price: 370,
+      currency: "$",
       groupSize: 7,
       rating: 4.8,
       featured: true,
@@ -279,6 +281,30 @@ function seedTours() {
         ["Day 1", "Nairobi to Amboseli", "Travel south and enjoy an afternoon game drive."],
         ["Day 2", "Amboseli Full Day", "Full-day exploration with excellent opportunities for elephant sightings."],
         ["Day 3", "Amboseli to Nairobi", "Final morning drive and return to Nairobi."]
+      ]
+    },
+    {
+      id: "tour-006",
+      title: "3 Days Tsavo National Park Safari",
+      slug: "3-days-tsavo-safari",
+      destination: "Tsavo",
+      location: "Tsavo East & West",
+      category: "Safari",
+      duration: 3,
+      price: 370,
+      currency: "$",
+      groupSize: 7,
+      rating: 4.8,
+      featured: true,
+      image: "/photos/tsavo_1.jpg",
+      shortDescription: "Untamed landscapes, famous red elephants, Mzima Springs, and rugged volcanic scenery.",
+      description: "Explore Kenya's largest national park with dramatic views of Yatta Plateau, crystal-clear underwater hippo viewing at Mzima Springs, and red-dust elephant herds.",
+      inclusions: ["4x4 safari vehicle transport", "Park entrance fees", "Full board accommodation", "Game drives and guided nature walk"],
+      exclusions: ["Travel insurance", "Personal drinks and tips", "Visa fees"],
+      itinerary: [
+        ["Day 1", "Nairobi to Tsavo West", "Drive to Tsavo West, check in at lodge, visit Shetani lava flow and afternoon game drive."],
+        ["Day 2", "Mzima Springs to Tsavo East", "Morning walk at Mzima Springs, transfer to Tsavo East for red elephant tracking."],
+        ["Day 3", "Tsavo East to Nairobi", "Sunrise game drive along Galana River, breakfast, and return drive to Nairobi."]
       ]
     },
     {

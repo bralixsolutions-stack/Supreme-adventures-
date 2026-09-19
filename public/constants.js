@@ -13,10 +13,11 @@ const HERO_PACKAGES = [
     destination: "Maasai Mara",
     title: "Maasai Mara Wildlife Safari",
     tagline: "Witness the Great Wildebeest Migration & the Big Five in Kenya's legendary game reserve.",
-    price: 68000,
+    price: 525,
+    currency: "$",
     duration: "4 Days",
     category: "Safari",
-    image: "/photos/wild_beest.webp"
+    image: "/supreme_packages/packages/mara.jpg" 
   },
   {
     id: "pkg-zanzibar",
@@ -33,10 +34,22 @@ const HERO_PACKAGES = [
     destination: "Tsavo",
     title: "Into the Wild Tsavo Expedition",
     tagline: "Where untamed landscapes meet unforgettable red elephant encounters.",
-    price: 48000,
+    price: 370,
+    currency: "$",
     duration: "3 Days",
     category: "Wildlife Safari",
-    image: "/photos/tsavo_1.jpg"
+    image: "/supreme_packages/packages/tsavo.jpg" 
+  },
+  {
+    id: "pkg-amboseli",
+    destination: "Amboseli",
+    title: "Amboseli Elephant Paradise Safari",
+    tagline: "Majestic elephant herds roaming open savannah under snow-capped Mount Kilimanjaro.",
+    price: 370,
+    currency: "$",
+    duration: "3 Days",
+    category: "Wildlife Safari",
+    image: "/supreme_packages/packages/amboseli.jpg" 
   },
   {
     id: "pkg-sagana",
@@ -489,11 +502,12 @@ const TOURS = [
     location: "Maasai Mara National Reserve",
     category: "Safari",
     duration: 4,
-    price: 68000,
+    price: 525,
+    currency: "$",
     groupSize: 7,
     rating: 5.0,
     featured: true,
-    image: "/supreme_packages/packages/wildbeest.webp",
+    image: "/supreme_packages/packages/mara.jpg",
     shortDescription: "Witness the legendary Great Wildebeest Migration, Mara River crossings, and Big Five predator action.",
     description: "The crown jewel of African safaris. Spend 4 unforgettable days tracking lions, leopards, cheetahs, and elephants across the vast savannah of Maasai Mara with our expert safari guides in custom 4x4 Land Cruisers.",
     inclusions: [
@@ -508,6 +522,65 @@ const TOURS = [
       "Hot air balloon safari (optional)",
       "Maasai cultural village visit fee",
       "Tips & personal drinks"
+    ]
+  },
+  {
+    id: "pkg-tsavo-safari",
+    slug: "3-days-tsavo-safari-expedition",
+    title: "3 Days Tsavo National Park Safari",
+    destination: "Tsavo",
+    location: "Tsavo East & West",
+    category: "Safari",
+    duration: 3,
+    price: 370,
+    currency: "$",
+    groupSize: 7,
+    rating: 4.8,
+    featured: true,
+    image: "/supreme_packages/packages/tsavo.jpg",
+    shortDescription: "Untamed landscapes, famous red elephants, Mzima Springs, and rugged volcanic scenery.",
+    description: "Explore Kenya's largest national park with dramatic views of Yatta Plateau, crystal-clear underwater hippo viewing at Mzima Springs, and red-dust elephant herds.",
+    inclusions: [
+      "4x4 safari vehicle transport",
+      "Park entrance fees to Tsavo East and Tsavo West",
+      "Full board safari lodge accommodation",
+      "Game drives and Mzima Springs guided nature walk",
+      "Driver guide services"
+    ],
+    exclusions: [
+      "Travel insurance",
+      "Personal drinks and tips",
+      "Visa fees"
+    ]
+  },
+  {
+    id: "pkg-amboseli-safari",
+    slug: "3-days-amboseli-safari-kilimanjaro",
+    title: "3 Days Amboseli National Park Safari",
+    destination: "Amboseli",
+    location: "Amboseli National Park",
+    category: "Safari",
+    duration: 3,
+    price: 370,
+    currency: "$",
+    groupSize: 7,
+    rating: 4.8,
+    featured: true,
+    image: "/supreme_packages/packages/amboseli.jpg",
+    shortDescription: "Majestic elephant herds roaming open savannah under snow-capped Mount Kilimanjaro.",
+    description: "Discover Amboseli's world-famous elephant herds, observation hill panoramic views, and dramatic Kilimanjaro backdrops on a compact three-day safari.",
+    inclusions: [
+      "Transport in 4x4 safari cruiser with pop-up roof",
+      "Amboseli National Park entry fees",
+      "Professional tour guide and driver",
+      "2 nights full board accommodation at safari lodge",
+      "Comprehensive daily game drives"
+    ],
+    exclusions: [
+      "International flights and visa fees",
+      "Travel insurance",
+      "Personal purchases and tips",
+      "Optional Maasai village cultural visit"
     ]
   },
   

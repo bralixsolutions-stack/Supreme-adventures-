@@ -15,6 +15,26 @@ let allToursData = [];
 let isToursExpanded = false;
 const INITIAL_TOURS_LIMIT = 6;
 
+function formatPrice(itemOrPrice, customCurrency) {
+  let price = itemOrPrice;
+  let currency = customCurrency || "";
+  if (typeof itemOrPrice === "object" && itemOrPrice !== null) {
+    price = itemOrPrice.price;
+    currency = itemOrPrice.currency || (
+      /mara|tsavo|amboseli/i.test(`${itemOrPrice.destination || ''} ${itemOrPrice.title || ''} ${itemOrPrice.location || ''}`)
+        ? "$"
+        : "KES"
+    );
+  } else if (!currency) {
+    currency = "KES";
+  }
+  const formattedNum = Number(price || 0).toLocaleString();
+  if (currency === "$" || currency === "USD") {
+    return `$${formattedNum}`;
+  }
+  return `KES ${formattedNum}`;
+}
+
 function renderToursGrid() {
   const grid = $("tourGrid");
   const actionContainer = $("toursActionContainer");
@@ -63,7 +83,7 @@ function renderToursGrid() {
         <h3>${escapeHtml(t.title)}</h3>
         <p>${escapeHtml(t.shortDescription || t.description || "")}</p>
         <div class="tour-bottom">
-          <div class="price">KES ${Number(t.price).toLocaleString()} <small>/ person</small></div>
+          <div class="price">${formatPrice(t)} <small>/ person</small></div>
           <button class="view-btn" onclick="openTour('${t.slug || t.id}')">VIEW TOUR →</button>
         </div>
       </div>
@@ -447,14 +467,17 @@ function closeLightbox() {
   }
 }
 
-function bookOnWhatsApp(title, location, duration, price, inclusions, exclusions) {
+function bookOnWhatsApp(title, location, duration, price, inclusions, exclusions, currency = "KES") {
   let incList = (Array.isArray(inclusions) && inclusions.length > 0) ? inclusions : [];
   let excList = (Array.isArray(exclusions) && exclusions.length > 0) ? exclusions : [];
 
   const inclusionsFormatted = incList.length > 0 ? `\n\n✅ *What's Included:*\n${incList.map(item => `  • ${item}`).join("\n")}` : "";
   const exclusionsFormatted = excList.length > 0 ? `\n\n❌ *Exclusions:*\n${excList.map(item => `  • ${item}`).join("\n")}` : "";
 
-  const message = `Hello Supreme Adventures! 👋\n\nI would like to book:\n📌 *Trip:* ${title}\n📍 *Location:* ${location}\n📅 *Duration/Date:* ${duration}\n💰 *Price:* KES ${Number(price).toLocaleString()} / person${inclusionsFormatted}${exclusionsFormatted}\n\nPlease confirm availability and booking details!`;
+  const isDollar = currency === "$" || currency === "USD" || /mara|tsavo|amboseli/i.test(`${title} ${location}`);
+  const priceFormatted = isDollar ? `$${Number(price).toLocaleString()}` : `KES ${Number(price).toLocaleString()}`;
+
+  const message = `Hello Supreme Adventures! 👋\n\nI would like to book:\n📌 *Trip:* ${title}\n📍 *Location:* ${location}\n📅 *Duration/Date:* ${duration}\n💰 *Price:* ${priceFormatted} / person${inclusionsFormatted}${exclusionsFormatted}\n\nPlease confirm availability and booking details!`;
 
   window.open(`https://wa.me/254759080100?text=${encodeURIComponent(message)}`, '_blank');
 }
@@ -482,11 +505,11 @@ function openTour(slug) {
       <div class="modal-header-compact">
         <p class="eyebrow dark"><i class="fa-solid fa-location-dot"></i> ${escapeHtml((t.location || t.destination || "").toUpperCase())} · <i class="fa-solid fa-clock"></i> ${t.duration} DAYS</p>
         <h2>${escapeHtml(t.title)}</h2>
-        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize || 8}</span><span>Price: <b>KES ${Number(t.price).toLocaleString()}</b> / person</span></div>
+        <div class="tour-meta compact-meta"><span>Group size: up to ${t.groupSize || 8}</span><span>Price: <b>${formatPrice(t)}</b> / person</span></div>
       </div>
       <p class="modal-desc">${escapeHtml(t.description || t.shortDescription || "")}</p>
       
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${tourTitleEscaped}', '${tourLocEscaped}', '${t.duration} Days', '${t.price}', ${incData}, ${excData})">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${tourTitleEscaped}', '${tourLocEscaped}', '${t.duration} Days', '${t.price}', ${incData}, ${excData}, '${t.currency || ''}')">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
@@ -727,12 +750,12 @@ function bookCurrentHeroPackage() {
         <h2>${escapeHtml(pkg.title)}</h2>
         <div class="tour-meta compact-meta">
           <span>Category: <b>${escapeHtml(pkg.category)}</b></span>
-          <span>Price: <b>KES ${Number(pkg.price).toLocaleString()}</b> / person</span>
+          <span>Price: <b>${formatPrice(pkg)}</b> / person</span>
         </div>
       </div>
       <p class="modal-desc">${escapeHtml(pkg.tagline)}</p>
       
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${pkgTitleEscaped}', '${pkgDestEscaped}', '${pkg.duration}', '${pkg.price}')">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${pkgTitleEscaped}', '${pkgDestEscaped}', '${pkg.duration}', '${pkg.price}', [], [], '${pkg.currency || ''}')">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
@@ -1066,7 +1089,7 @@ function openUpcomingTour(id) {
   const pkgImg = pkg.image || pkg.imageUrl || '/supreme_packages/The One Watamu Bay Offer.jpg';
   const pkgTitleEscaped = escapeHtml(pkg.title).replace(/'/g, "\\'");
   const pkgLocEscaped = escapeHtml(pkg.location || "").replace(/'/g, "\\'");
-  const priceDisplay = pkg.price > 0 ? `KES ${Number(pkg.price).toLocaleString()} / person` : "Free / Community Event";
+  const priceDisplay = pkg.price > 0 ? `${formatPrice(pkg)} / person` : "Free / Community Event";
   const incData = JSON.stringify(pkg.inclusions || []).replace(/"/g, '&quot;');
   const excData = JSON.stringify(pkg.exclusions || []).replace(/"/g, '&quot;');
 
@@ -1086,7 +1109,7 @@ function openUpcomingTour(id) {
       </div>
       <p class="modal-desc" style="margin: 10px 0 20px; font-size: 14.5px; color: #403D3D;">${escapeHtml(pkg.description || pkg.subtitle || "")}</p>
       
-      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${pkgTitleEscaped}', '${pkgLocEscaped}', '${escapeHtml(pkg.date || '')}', '${pkg.price || 0}', ${incData}, ${excData})">
+      <button class="modal-book-now-whatsapp-btn" onclick="bookOnWhatsApp('${pkgTitleEscaped}', '${pkgLocEscaped}', '${escapeHtml(pkg.date || '')}', '${pkg.price || 0}', ${incData}, ${excData}, '${pkg.currency || ''}')">
         <i class="fa-brands fa-whatsapp"></i> Book Now
       </button>
     </div>`;
