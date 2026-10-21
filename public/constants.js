@@ -111,241 +111,192 @@ const TRIP_TYPES = [
 // ==========================================================================
 const UPCOMING_TOURS = [
   {
-    id: "up-watamu-offer",
-    title: "The One Watamu Bay - Pay 2 Nights Stay 3",
-    subtitle: "Special SGR holiday offer with return train tickets & shared transfers",
-    location: "Watamu & Malindi",
-    date: "Valid 21st Sep to 20th Dec 2026",
-    price: 26000,
-    category: "Beach",
-    image: "/supreme_packages/The One Watamu Bay Offer.jpg",
-    description: "Enjoy an unforgettable beach getaway at The One Watamu Bay. Pay for 2 nights and get your 3rd night free on Half Board or Full Board, including return SGR train tickets and shared transfers.",
-    inclusions: [
-      "Return SGR tickets",
-      "Return shared transfers",
-      "Meals on selected meal plan (HB/FB)",
-      "3 Nights accommodation (per person sharing)",
-      "Access to hotel amenities & private beach"
-    ],
-    exclusions: [
-      "Flight rates & SGR upgrade (available upon request)",
-      "Personal expenses and anything not mentioned"
-    ]
-  },
-  {
-    id: "up-samburu-overland",
-    title: "Samburu x Buffalo Springs Overland Safari",
-    subtitle: "2 Days 1 Night Adrenaline Overland Safari Truck Adventure",
-    location: "Samburu & Buffalo Springs",
-    date: "10th to 11th October 2026",
-    price: 11000,
-    category: "Overland Truck Party",
-    image: "/supreme_packages/Samburu Overland Safari.jpg",
-    description: "Join the legendary Supreme Overland Safari truck party to Samburu and Buffalo Springs. Enjoy game drives, swimming in the natural spring pools, campfire bonfires, and professional photography.",
-    inclusions: [
-      "Transport in custom overland truck",
-      "Camping accommodation (2 sharing tent, single @ 2k extra)",
-      "Park entry fees & game drives",
-      "Meals on half board (Dinner & Breakfast)",
-      "Natural swimming at Buffalo Springs",
-      "Refill mineral water",
-      "Bonfire night entertainment",
-      "Professional photography"
-    ],
-    exclusions: [
-      "Drinks (bottled water, soft drinks & alcohol)",
-      "En route lunch",
-      "Personal items not mentioned"
-    ]
-  },
-  {
-    id: "up-tanzania-arusha",
-    title: "Tanzania Moshi & Arusha - October Edition",
-    subtitle: "Kikuletwa Hot Springs, Marangu Waterfalls & Cultural Experience",
+    id: "tanzania",
+    title: "Jamhuri Weekend Tanzania: Moshi & Arusha",
+    subtitle: "3 Days 2 Nights Moshi, Arusha, Kilasiya Water Fall & Kikuletwa Hot Springs",
     location: "Moshi & Arusha, Tanzania",
-    date: "9th to 11th October 2026 (Fri - Sun)",
+    date: "11th to 13th Dec 2026",
     price: 19000,
     category: "Culture",
-    image: "/supreme_packages/TZ Moshi & Arusha October.jpg",
-    description: "Explore northern Tanzania across 3 thrilling days. Take a dip in the crystal turquoise Kikuletwa Hot Springs, visit Marangu Waterfalls at the base of Mt Kilimanjaro, and experience Arusha's rich culture.",
+    image: "/supreme_packages/tanzania_1.jpeg", 
+    description: "Celebrate Jamhuri Weekend exploring Tanzania's vibrant culture and hidden gems. Soak in the crystal-clear Kikuletwa Hot Springs with natural fish massage, hike to scenic Kilasiya Water Falls, and explore the bustling streets and rich heritage of Moshi and Arusha.",
     inclusions: [
-      "3 Days overland / bus transport",
-      "2 Nights hotel accommodation",
+      "3 Days transport in a comfortable tour bus",
+      "2 Nights hotel accommodation (2 people per room / 2 beds)",
+      "Meals on Half Board basis",
+      "Kilasiya Water Fall excursion",
+      "Entry fee at Kikuletwa Hot Springs",
+      "Natural fish massage",
+      "Moshi & Arusha city tour",
+      "Arusha Cultural Heritage tour",
+      "Professional photography",
+      "Complimentary mineral water"
+    ],
+    exclusions: [
+      "Single room supplement (Ksh 8,000)",
+      "Drinks (alcoholic & soft drinks)",
+      "En route lunch & personal items",
+      "Yellow fever certificate & border documents"
+    ]
+  },
+  {
+    id: "mombasa",
+    title: "Parents & Kids Edition Mombasa Holiday Deal",
+    subtitle: "3 Days 2 Nights Coastal Family Getaway with SGR / Flight, Marine Tour & Villa Stay",
+    location: "Mombasa, Kenya",
+    date: "03rd to 06th Dec 2026",
+    price: 24500,
+    category: "Beach",
+    image: "/supreme_packages/mombasa.jpeg",
+    description: "An extraordinary beach escape tailored for families! Enjoy 3 days and 2 nights of coastal sun and fun with return SGR or Flight transfers, villa accommodation with private pool access, glass-bottom boat tour, marine park snorkelling, and team-building games for parents and kids.",
+    inclusions: [
+      "Return SGR transport (or Flight + SGR option)",
+      "2 Nights accommodation (per person sharing)",
       "Meals on Half Board",
-      "Entry fee to Kikuletwa Hot Springs",
-      "Entry to Marangu Waterfalls",
-      "Arusha Cultural Heritage Centre visit",
-      "COMESA charges & cross-border facilitation",
-      "Mineral water & fish massage",
-      "Professional photography"
+      "SGR station transfers in Mombasa",
+      "Marine Park tour",
+      "Glass-bottom boat ride & snorkelling",
+      "Team building facilitation",
+      "Professional photography",
+      "Access to villa amenities including swimming pool",
+      "Mineral drinking water"
     ],
     exclusions: [
-      "Yellow fever certificate",
-      "Temporary permit or passport charges"
+      "Haller park entry (Ksh 1,600 with return transport)",
+      "Wild Waters entry (Ksh 2,500 with return transport)",
+      "Personal expenses and drinks not mentioned"
     ]
   },
   {
-    id: "up-ethiopia-odyssey",
-    title: "Ethiopian Grand Odyssey Overland Truck Trip",
-    subtitle: "10 Days 9 Nights Epic Road Trip from Nairobi to Addis Ababa",
-    location: "Ethiopia (Nairobi to Addis Ababa)",
-    date: "21st Sept to 1st Oct 2026",
-    price: 75000,
+    id: "Uganda Nyege",
+    title: "Uganda Nyege Nyege Festival",
+    subtitle: "4 Days 3 Nights Overland Party, Source of the Nile & Live Music Festival",
+    location: "Jinja, Uganda",
+    date: "18th - 22nd Nov 2026",
+    price: 27500,
     category: "Overland Truck Party",
-    image: "/supreme_packages/Ethiopian Grand Odyssey.jpg",
-    description: "The ultimate East Africa expedition! Journey through southern Ethiopia's Ommo Valley, Hawassa lake nightlife, hot springs at Wondo Genet, Shashamene, and cultural tours in Addis Ababa.",
+    image: "/supreme_packages/uganda_1.jpeg", 
+    description: "Embark on an epic 4-day overland journey to Jinja for East Africa's biggest music and arts celebration. Experience high-energy overland truck road trips, scenic camping by the Nile, a boat cruise to the Source of the Nile, Jinja bridge tour, and non-stop music stages.",
     inclusions: [
-      "Transport in fully equipped overland truck (charging ports & fridge)",
-      "Hotel accommodation per person sharing",
-      "2 meals a day (Breakfast & Dinner)",
-      "Wondo Genet & Teddy Dan's entry",
-      "Roots gallery entry fee",
-      "Addis Ababa city tour & leather market",
-      "Lake Hawassa boat ride & nightlife",
-      "Professional Ethiopian tour guide on board"
+      "Transport in a custom overland safari truck",
+      "3 Nights camping accommodation",
+      "Meals on Half Board",
+      "Second Nile Bridge tour",
+      "Entrance fee to the Source of The Nile",
+      "Boat ride to the Source of The Nile",
+      "Drinking water",
+      "Professional photography",
+      "Birthday cake for November celebrants",
+      "Uganda road usage fee & COMESA charges"
     ],
     exclusions: [
-      "Lunch & personal drinks",
-      "Tips & gratuities",
-      "Medical insurance & visa fees for non-residents"
-    ]
-  },
-  {
-    id: "up-malaysia-shopping",
-    title: "Kuala Lumpur Malaysia Shopping Tour",
-    subtitle: "6 Days 4 Nights International Shopping & Sightseeing Experience",
-    location: "Kuala Lumpur, Malaysia",
-    date: "14th to 19th October 2026",
-    price: 175000,
-    category: "Adventure",
-    image: "/supreme_packages/Malaysia Shopping Tour 1.jpg",
-    description: "Experience the vibrant modern city of Kuala Lumpur. Featuring KLCC Observation Tower, Genting Highlands cable car ride, Chin Swee Caves Temple, Batu Caves, and guided shopping sprees.",
-    inclusions: [
-      "Return flight tickets",
-      "Return airport transfers in Malaysia",
-      "4 Nights accommodation on Bed & Breakfast",
-      "Kuala Lumpur city tour",
-      "KLCC Observation Tower ticket",
-      "Genting Highlands cable car tour",
-      "Chin Swee Caves Temple tour",
-      "Batu Caves tour & shopping guide",
-      "Professional driver guide & tourism tax"
-    ],
-    exclusions: [
-      "Extra personal activities & shopping expenses"
+      "Festival entrance ticket",
+      "Water slide & bungee jumping",
+      "Alcoholic beverages & personal lunch",
+      "Yellow fever certificate & border travel permits"
     ]
   },
   {
     id: "up-rwanda-vuka",
-    title: "Rwanda Vuka Mwaka New Year Celebration",
-    subtitle: "Ring in the New Year with Rwandan culture, Kigali & Lake Kivu",
+    title: "Vuka Mwaka Rwanda New Year Celebration",
+    subtitle: "7 Days Tour: Kigali, Nyungwe Canopy Walk, King's Palace & Lake Kivu",
     location: "Kigali & Lake Kivu, Rwanda",
     date: "27th Dec 2026 to 2nd Jan 2027",
     price: 68000,
     category: "Culture",
     image: "/supreme_packages/Rwanda Vuka Mwaka.jpg",
-    description: "Celebrate New Year's Eve in the clean, green hills of Rwanda! Visit Kigali City, the Genocide Memorial, King's Palace at Nyanza, Nyungwe Canopy Walk, and enjoy boat rides on scenic Lake Kivu.",
+    description: "Ring in the New Year with an unforgettable cross-border adventure through the Land of a Thousand Hills! Visit Kigali city landmarks, pay tribute at Kigali Genocide Memorial, tour King's Palace in Nyanza, cross the heights of Nyungwe Forest Canopy Walk, relax at Lake Kivu hot springs, and explore vibrant Kimironko market.",
     inclusions: [
       "Return transport from Nairobi",
       "Rwanda Parliament & Kigali city tour",
       "Kigali Genocide Memorial & Convention Centre",
-      "King's Palace Nyanza & Nyungwe Canopy Walk",
-      "Boat ride at Lake Kivu & Hot Springs visit",
-      "Kimironko market tour",
+      "King's Palace Nyanza tour",
+      "Nyungwe Forest canopy walkway excursion",
+      "Boat ride at Lake Kivu & hot springs visit",
+      "Kimironko market shopping experience",
       "Meals on Half Board (Dinner & Breakfast)",
-      "All transfers in Rwanda & twin/double accommodation"
+      "All ground transfers within Rwanda",
+      "Hotel accommodation (2 pax sharing per room)"
     ],
     exclusions: [
-      "Personal expenses & border documents"
+      "Personal expenses, lunches & extra beverages",
+      "Yellow fever certificate & passport/temporary permit fees"
     ]
   },
   {
     id: "up-capetown-experience",
-    title: "Cape Town South Africa Experience",
-    subtitle: "Table Mountain, Peninsula Tour, Wine Tasting & Sunset Yacht Cruise",
+    title: "Cape Town Staycation",
+    subtitle: "7 Days 6 Nights Table Mountain, Boulders Beach Penguins, Wine Tasting & Sunset Yacht Cruise",
     location: "Cape Town, South Africa",
-    date: "20th-25th October 2026",
-    price: 197500,
+    date: "16th-23rd Nov 2026 / 21st-28th Dec 2026",
+    price: 185000,
     category: "Safari",
-    image: "/supreme_packages/capetown.jpeg",
-    description: "Discover the breathtaking beauty of South Africa's Mother City. Ascend Table Mountain, taste world-class wines, meet the Boulders Beach penguins, and cruise the Atlantic on a luxury sunset yacht.",
+    image: "/supreme_packages/CapeTown SA.jpg", 
+    description: "Experience the ultimate South African holiday in the Mother City! Fly with TAAG Airlines and immerse yourself in 7 days and 6 nights of wonder: ascend Table Mountain by cable car, sunset at Signal Hill, tour colorful Bo-Kaap and Camps Bay, hang out with Boulders Beach penguins, drive along Chapman's Peak, indulge in wine tasting, and cruise the Atlantic on a luxury sunset yacht.",
     inclusions: [
-      "Return air tickets (TAAG Airlines)",
-      "Airport to hotel transfers",
-      "6 Nights accommodation on per person sharing",
+      "Return air tickets via TAAG Airlines",
+      "Airport to hotel transfers in Cape Town",
+      "6 Nights hotel accommodation (per person sharing)",
       "Daily breakfast",
       "Signal Hill sunset watch & Cape Town city tour",
-      "Redbus city tour experience",
-      "Table Mountain cable ride",
-      "Wine tasting & Bo-Kaap tour",
-      "Camps Bay & Boulders Beach penguin visit",
-      "Chapmans Peak drive & Sunset yacht cruise"
+      "Red Bus hop-on hop-off city tour",
+      "Table Mountain cable car ride",
+      "Constantia / Stellenbosch wine tasting",
+      "Bo-Kaap cultural heritage tour",
+      "Camps Bay scenic coastal visit",
+      "Boulders Beach penguin colony entry",
+      "Chapman's Peak scenic coastal drive",
+      "Luxury Atlantic sunset yacht cruise"
     ],
     exclusions: [
-      "Visa fees & lunches/dinners not mentioned"
-    ]
-  },
-  {
-    id: "up-zanzibar-getaway",
-    title: "Zanzibar Cultural & Ocean Beach Getaway",
-    subtitle: "Tropical white sand beaches, Stone Town culture & Dhow sailing",
-    location: "Zanzibar",
-    date: "14th to 18th October 2026",
-    price: 85000,
-    category: "Beach",
-    image: "/supreme_packages/zanzibar.webp",
-    description: "Relax on Zanzibar's turquoise coast with sunset dhow cruises, historic Stone Town walking tours, and authentic Swahili spice farm excursions.",
-    inclusions: [
-      "Return flight / ferry transfers",
-      "Beach resort accommodation",
-      "Stone Town walking tour & Spice tour",
-      "Sunset dhow cruise with refreshments",
-      "Daily breakfast & dinner"
-    ],
-    exclusions: [
-      "Tips and personal expenses"
+      "South African visa fees",
+      "Lunches, dinners, and drinks not specified",
+      "Personal expenses and optional excursions"
     ]
   },
   {
     id: "up-supreme-csr",
     title: "Supreme Adventures CSR - Estel Children's Home",
-    subtitle: "Community outreach and charity support day in Kayole",
+    subtitle: "Community Outreach & Charity Support Day in Kayole",
     location: "Estel Children's Home, Kayole, Nairobi",
     date: "Sunday, 31st October 2026",
     price: 0,
     category: "Culture",
     image: "/supreme_packages/Supreme CSR.jpg",
-    description: "Join the Supreme Adventures family as we give back to our community at Estel Children's Home. Support with foodstuff, toiletries, stationery, and hygiene items for children.",
+    description: "Join hands with the Supreme Adventures family as we give back to the community at Estel Children's Home in Kayole. Spend meaningful time with the children through mentorship and games, and contribute vital supplies to support their daily living and education.",
     inclusions: [
-      "Group coordination and meetup",
-      "Mentorship activities with the children",
-      "Official Supreme Adventures volunteer certificate"
+      "Volunteer coordination & community meetup",
+      "Mentorship sessions & games with the children",
+      "Official Supreme Adventures CSR participation"
     ],
     exclusions: [
-      "Voluntary donations of goods and groceries"
+      "Voluntary donations: Foodstuff, Toiletries, Stationaries, Groceries, Bedsheets, Hygiene items"
     ]
   },
   {
     id: "up-mt-kenya-conservancy",
-    title: "Mt Kenya Conservancy",
-    subtitle: " Family experience",
-    location: "Mount Kenya Conservancy",
-    date: "13th December  2026",
-    price: 36000,
+    title: "Mt Kenya Conservancy Family Experience",
+    subtitle: "Full Day Wildlife Tour: Mountain Bongos, Animal Orphanage, Equator & Games",
+    location: "Mount Kenya Conservancy, Nanyuki",
+    date: "Sunday, 13th December 2026",
+    price: 3600,
     category: "Safari",
     image: "/supreme_packages/mtkenya.jpeg",
-    description: "Experience the breathtaking beauty of Mount Kenya Conservancy. Enjoy nature walks, wildlife viewing, and stunning landscapes.",
+    description: "An exciting family day trip to Mount Kenya Conservancy and Wildlife Orphanage! Encounter rare endangered Mountain Bongos, cheetahs, lions, rhinos, hyenas, llamas, elands, colobus monkeys, ostriches, reticulated giraffes, and diverse bird species. Enjoy an equator crossing tour, sumptuous lunch, family games, and epic photography.",
     inclusions: [
-      "Accommodation on Full Board",
-      "Park fees",
-      "Guided nature walks",
-      "Bonfire",
-      "Transport from Nairobi",
+      "Return transport to and fro Nairobi",
+      "Entry fees to Mount Kenya Conservancy & Animal Orphanage",
+      "Professional tour guide fee",
+      "Sumptuous lunch with fresh juice",
+      "Equator crossing landmark visit",
+      "Epic group & portrait photography",
+      "Family-oriented games & networking"
     ],
     exclusions: [
-      "Tips and personal expenses"
+      "Snacks and drinks outside the provided lunch",
+      "Tips and personal gratuities"
     ]
-  } 
+  }
 ];
 
 // ==========================================================================
@@ -413,33 +364,7 @@ const TOURS = [
       "Personal laundry & tips"
     ]
   },
-  {
-    id: "pkg-sun-n-sand",
-    slug: "sun-n-sand-beach-resort-special",
-    title: "4 Days Sun n Sand Beach Resort Special (Pay 2 Stay 3)",
-    destination: "Mombasa",
-    location: "Kikambala, North Coast Mombasa",
-    category: "Beach",
-    duration: 4,
-    price: 20700,
-    groupSize: 8,
-    rating: 4.8,
-    featured: true,
-    image: "/supreme_packages/packages/Sun n Sand Beach Resort Pay 2 stay 3 nights.jpg",
-    shortDescription: "Special promotion: Pay for 2 nights and get your 3rd night free with SGR train tickets and resort transfers included.",
-    description: "Escape to the peaceful palms of Kikambala at Sun n Sand Beach Resort. Benefit from our exclusive Pay 2 Stay 3 promotion with 3 full nights of accommodation, half board dining, Olympic-sized swimming pools, and beach volleyball.",
-    inclusions: [
-      "3 Nights hotel accommodation",
-      "Meals on Half Board (Breakfast & Dinner)",
-      "Return SGR train economy tickets",
-      "Return SGR shared transfers",
-      "Full access to Olympic swimming pool & resort amenities"
-    ],
-    exclusions: [
-      "Excursions outside the resort",
-      "Beverages not included in the meal plan"
-    ]
-  },
+   
   {
     id: "pkg-malindi-watamu",
     slug: "malindi-watamu-coastal-getaway",
